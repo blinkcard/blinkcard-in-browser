@@ -1,6 +1,6 @@
 # BlinkCard In-browser SDK
 
-[![Build Status](https://travis-ci.org/BlinkCard/blinkcard-in-browser.svg?branch=master)](https://travis-ci.org/BlinkCard/blinkcard-in-browser) [![npm version](https://badge.fury.io/js/%40microblink%2Fblinkcard-in-browser-sdk.svg)](https://badge.fury.io/js/%40microblink%2Fblinkcard-in-browser-sdk)
+[![Build Status](https://travis-ci.org/blinkcard/blinkcard-in-browser.svg?branch=master)](https://travis-ci.org/blinkcard/blinkcard-in-browser) [![npm version](https://badge.fury.io/js/%40microblink%2Fblinkcard-in-browser-sdk.svg)](https://badge.fury.io/js/%40microblink%2Fblinkcard-in-browser-sdk)
 
 BlinkCard In-browser SDK enables scanning of various credit or payment cards. The SDK provides real-time in-browser data extraction, without any need for sending images to servers for processing.
 
@@ -9,15 +9,17 @@ For more information on how to integrate BlinkCard SDK into your web app, read t
 <!-- 
 Notice: Uncomment line below when demo app is created and available in public
 
-Check out the [official demo app](https://demo.microblink.com/in-browser-sdk/blinkcard/index.html) or live examples of BlinkCard SDK in action: 
+Check out the [official demo app](https://demo.microblink.com/in-browser-sdk/blinkcard) or live examples of BlinkCard SDK in action: 
 -->
 
-1. Example with UI component at [Codepen](https://codepen.io/microblink/pen/LYbZRwE)
-2. Example without UI at [Codepen](https://codepen.io/microblink/pen/YzpWGMw)
+1. [BlinkCard SDK with built-in UI](https://blinkcard.github.io/blinkcard-in-browser/ui/demo.html)
+    * See what the bare UI looks like at [Codepen](https://codepen.io/microblink/pen/LYbZRwE)
+2. [Scan the payment card with a web camera](https://blinkcard.github.io/blinkcard-in-browser/examples/umd/index.html)
+    * See example at [Codepen](https://codepen.io/microblink/pen/YzpWGMw)
 
 To see the source code of the above examples, check out the [examples directory](examples). If you'd like to run examples of the UI component, either through the browser or locally, see the [ui/examples](ui/examples) directory.
 
-Please keep in mind that BlinkCard In-browser SDK is meant to be used natively in a web browser. It will not work correctly within a iOS/Android WebView or NodeJS backend service.
+Please keep in mind that BlinkCard In-browser SDK is meant to be used natively in a web browser. It will not work correctly within a iOS/Android WebView or NodeJS backend service. If you want to use BlinkCard as a backend service, check out [BlinkCard Self-hosted API](https://microblink.com/products/blinkcard/self-hosted-api).
 
 ## Table of contents
 

@@ -1,0 +1,93 @@
+/**
+ * Copyright (c) Microblink Ltd. All rights reserved.
+ */
+
+@import "../styles/globals-sass";
+
+:host {
+  box-sizing: border-box;
+
+  display: none;
+
+  a {
+    display: block;
+    margin: 0 auto;
+
+    width: calc(var(--mb-component-button-size) - 2 * var(--mb-component-button-border-width));
+    height: calc(var(--mb-component-button-size) - 2 * var(--mb-component-button-border-width));
+
+    background: var(--mb-component-button-background);
+    border-color: var(--mb-component-button-border-color);
+
+    border-radius: var(--mb-component-button-border-radius);
+    border-style: var(--mb-component-button-border-style);
+    border-width: var(--mb-component-button-border-width);
+
+    box-shadow: var(--mb-component-button-box-shadow);
+
+    text-decoration: none;
+  }
+
+  a:hover,
+  a:active,
+  a:focus {
+    cursor: pointer;
+  }
+}
+
+:host a:focus {
+  border-color: var(--mb-component-button-border-color-focus);
+}
+:host a:hover {
+  border-color: var(--mb-component-button-border-color-hover);
+}
+
+:host(.disabled) {
+  a {
+    border-color: var(--mb-component-button-border-color-disabled);
+    box-shadow: var(--mb-component-button-box-shadow-disabled);
+    cursor: default;
+  }
+
+  img { opacity: .5; }
+}
+
+:host(.visible) {
+  display: block;
+}
+
+:host(.icon) {
+  a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+/**
+ * Action buttons
+ */
+
+:host label {
+  cursor: inherit;
+}
+
+:host img {
+  display: block;
+  width: var(--mb-component-button-icon-size);
+  height: var(--mb-component-button-icon-size);
+}
+
+/**
+ * Action labels
+ */
+:host span {
+  display: block;
+  padding-top: $padding-unit-medium;
+
+  font-size: var(--mb-component-font-size);
+  font-weight: var(--mb-component-font-weight);
+  line-height: var(--mb-component-line-height);
+
+  color: var(--mb-feedback-font-color-info);
+}
