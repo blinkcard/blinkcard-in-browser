@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0">
+        <title>Example: BlinkCard UI</title>
+
+        <!-- Import UI component which includes WASM library -->
+        <script type="module" src="/ui/dist/blinkcard-in-browser/blinkcard-in-browser.esm.js"></script>
+
+        <style type="text/css">
+            html,
+            body {
+                margin: 0;
+                padding: 0;
+
+                width: 100%;
+                height: 100%;
+            }
+
+            html {
+                font-family: "Avenir Next", sans-serif;
+            }
+
+            body {
+                background-color: #fff;
+                box-sizing: border-box;
+
+                display: flex;
+                justify-content: center;
+                align-items: center;
+
+                padding: 20px;
+            }
+        </style>
+    </head>
+    <body>
+        <!-- It's possible to obtain a free trial license key on microblink.com -->
+        <blinkcard-in-browser
+            license-key="sRwAAAYJbG9jYWxob3N0r/lOPmg/w35CpOHWKrE6YH5ih33s/TJkODw0u0DaeG+uUSHj28ftv86lELB6BU+CiM7ZoW1Tqw1VgaEho8ywZiMgTrMdxX/f+z8my6mMI3hK/RAIws6/5x48RGEcboN4uDYr6b1yIsPfgnfXVJGBSIZdsquKvWb3yuNGztL7MoQGQxc27YBYnuwAfxWQyoTv2ka8ZzZFKlnMxhUaQxq5WSKCCVAK5+0J1ByofyQSkw=="
+            recognizers="BlinkCardRecognizer"
+        ></blinkcard-in-browser>
+
+        <script type="text/javascript">
+            function run()
+            {
+                // Important: if attributes or properties are changed, whole component is rerendered
+                const blinkCard = document.querySelector( "blinkcard-in-browser" );
+
+                if ( window.location.hostname === "blinkcard.github.io" )
+                {
+                    blinkCard.licenseKey = "sRwAAAYTYmxpbmtjYXJkLmdpdGh1Yi5pby+N7zvpysD9Mbe+K31x71ZYbnFQar6E8nzwX4o9Gr5AKHPKWQgoth5h+ONtiT8FGw+9h/5L9KW+MSrQc4pwnK9g0CwWF+UklQ0HE6Iz47WciKURxLDe6XyJrtFBYCWvYgxC3dmuW2Km25ELDwvIZMfEWIPbEJULDbpX6pzfh/ANXBNDEPUUsy5jTa569imyu+mgbRubPVsw+SymvIzhVR9Xr6LydUfb/fQ/JFcUTrk=";
+                }
+
+                blinkCard.engineLocation = window.location.origin + "/resources/";
+
+                blinkCard.translations = {
+                    'camera-feedback-scan-front': 'Scan the card number',
+                    'camera-feedback-scan-back': 'Scan the card number',
+                    'camera-feedback-flip': 'Flip the card over'
+                };
+
+                blinkCard.addEventListener
+                (
+                    "fatalError",
+                    ev => console.log( "fatalError", ev.detail )
+                );
+
+                blinkCard.addEventListener
+                (
+                    "ready",
+                    ev => console.log( "ready", ev.detail )
+                );
+
+                blinkCard.addEventListener
+                (
+                    "scanError",
+                    ev => console.log( "scanError", ev.detail )
+                );
+
+                blinkCard.addEventListener
+                (
+                    "scanSuccess",
+                    ev => console.log( "scanSuccess", ev.detail )
+                );
+
+                blinkCard.addEventListener
+                (
+                    "feedback",
+                    ev => console.log( "feedback", ev.detail )
+                );
+            }
+
+            window.addEventListener( "DOMContentLoaded", ev => run() );
+        </script>
+    </body>
+</html>
