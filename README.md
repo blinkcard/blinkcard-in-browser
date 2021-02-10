@@ -1,0 +1,738 @@
+# BlinkCard In-browser SDK
+
+[![Build Status](https://travis-ci.org/BlinkCard/blinkcard-in-browser.svg?branch=master)](https://travis-ci.org/BlinkCard/blinkcard-in-browser) [![npm version](https://badge.fury.io/js/%40microblink%2Fblinkcard-in-browser-sdk.svg)](https://badge.fury.io/js/%40microblink%2Fblinkcard-in-browser-sdk)
+
+BlinkCard In-browser SDK enables scanning of various credit or payment cards. The SDK provides real-time in-browser data extraction, without any need for sending images to servers for processing.
+
+For more information on how to integrate BlinkCard SDK into your web app, read the [instructions](#integration) below. Make sure you read the latest [CHANGELOG.md](CHANGELOG.md) file to see the most recent changes and improvements.
+
+<!-- 
+Notice: Uncomment line below when demo app is created and available in public
+
+Check out the [official demo app](https://demo.microblink.com/in-browser-sdk/blinkcard/index.html) or live examples of BlinkCard SDK in action: 
+-->
+
+1. Example with UI component at [Codepen](https://codepen.io/microblink/pen/LYbZRwE)
+2. Example without UI at [Codepen](https://codepen.io/microblink/pen/YzpWGMw)
+
+To see the source code of the above examples, check out the [examples directory](examples). If you'd like to run examples of the UI component, either through the browser or locally, see the [ui/examples](ui/examples) directory.
+
+Please keep in mind that BlinkCard In-browser SDK is meant to be used natively in a web browser. It will not work correctly within a iOS/Android WebView or NodeJS backend service.
+
+## Table of contents
+
+* [Components of SDK](#components-of-sdk)
+* [Integration instructions](#integration)
+    * [Obtaining a license key](#obtainingalicensekey)
+    * [Installation](#installation)
+    * [Performing your first scan](#firstScan)
+    * [Recognizing still images](#stillImagesRecognition)
+    * [Configuration of SDK](#sdkConfiguration)
+    * [Deployment guidelines](#deploymentGuidelines)
+* [The `Recognizer` concept, `RecognizerRunner` and `VideoRecognizer`](#availableRecognizers)
+    * [The `Recognizer` concept](#recognizerConcept)
+    * [`RecognizerRunner`](#recognizerRunner)
+    * [Performing recognition of video streams using `VideoRecognizer`](#videoRecognizer)
+    * [Custom UX with `VideoRecognizer`](#customUXWithVideoRecognizer)
+* [Handling processing events with `MetadataCallbacks`](#metadataCallbacks)
+* [List of available recognizers](#recognizerList)
+    * [Success Frame Grabber Recognizer](#successFrameGrabber)
+    * [Blink Card recognizer](#BlinkCardRecognizer)
+* [Recognizer settings](#recognizerSettings)
+* [Technical requirements](#technicalRequirements)
+* [Supported browsers](#webassembly-support)
+* [Camera devices](#camera-devices)
+* [Device support](#device-support)
+* [Troubleshooting](#troubleshoot)
+    * [Integration problems](#integrationProblems)
+    * [SDK problems](#sdkProblems)
+        * [Licensing problems](#licensingProblems)
+        * [Other problems](#otherProblems)
+* [FAQ and known issues](#faq)
+* [Additional info](#info)
+
+## <a name="components-of-sdk"></a> Components of SDK
+
+BlinkCard In-browser SDK consists of: 
+
+* WASM library that recognizes a document a user is holding and extracts an image of the most suitable frame from the camera feed. 
+* Web component with a prebuilt and customizable UI, which acts as a wrapper for the WASM library to provide a straightforward integration. 
+
+You can add it to your website or web app in two ways:
+
+1. For the simplest form of integration, use a web component with a prebuilt and customizable UI.
+    * Follow the integration instructions in the [ui/README.md](ui/README.md) file.
+    * You can find the source code of example applications in the [ui/examples](ui/examples) directory.
+2. For an advanced form of integration where UI has to be built from scratch, use a WASM library instead.
+    * See the integration instructions [here](#integration).
+    * Find the source code of example applications in the [examples](examples) directory.
+## <a name="integration"></a> Integration instructions
+
+This repository contains WebAssembly files and supporting JS files which contain the core implementation of BlinkCard functionalities.
+
+In order to make integration of the WebAssembly easier and more developer friendly, a JavaScript/TypeScript support code is also provided, giving you an  easy-to-use integration API.
+
+This repository also contains a sample JS/TS integration app which demonstrates how you can integrate the BlinkCard into your web app.
+
+BlinkCard will work in any browser that supports [WebAssembly](https://webassembly.org), but works best with the latest versions of Firefox, Chrome, Safari and Microsoft Edge. It's worth noting that scan performance depends on the device processing capabilities.
+
+### <a name="obtainingalicensekey"></a> Obtaining a license key
+
+Using BlinkCard in your web app requires a valid license key.
+
+You can obtain a free trial license key by registering to [Microblink dashboard](https://microblink.com/login). After registering, you will be able to generate a license key for your web app.
+
+Make sure you enter a [fully qualified domain name](https://en.wikipedia.org/wiki/Fully_qualified_domain_name) of your web app when filling out the form — the license key will be bound to it. Also, if you plan to serve your web app from different domains, you'll need a license key for each one.
+
+**Keep in mind:** Versions BlinkCard 2.0.0 and above require an internet connection to work under our new License Management Program.
+
+This means your web app has to be connected to the Internet in order for us to validate your trial license key. Scanning or data extraction of identity documents still happens offline, in the browser itself. 
+
+Once the validation is complete, you can continue using the SDK in an offline mode (or over a private network) until the next check.
+
+We've added error callback to Microblink SDK to inform you about the status of your license key.
+
+### <a name="installation"></a> Installation
+
+We recommend you install a stable version via NPM or Yarn:
+
+```sh
+# NPM
+npm install @microblink/blinkcard-in-browser-sdk
+
+# Yarn
+yarn add @microblink/blinkcard-in-browser-sdk
+```
+
+Which can then be used with a module bundler in Node environment:
+
+```javascript
+import * as BlinkCardSDK from "@microblink/blinkcard-in-browser-sdk";
+```
+
+Source code of `BlinkCardSDK` is written in TypeScript and types are exposed in the public NPM package, so it's possible
+to use the SDK in both JavaScript and TypeScript projects.
+
+---
+
+Alternatively, it's possible to use UMD builds, which can be loaded from [the `dist` folder on unpkg](https://unpkg.com/@microblink/blinkcard-in-browser-sdk/dist/). The UMD builds make `BlinkCardSDK` available as a `window.BlinkCardSDK` global variable:
+
+```html
+<script src="https://unpkg.com/@microblink/blinkcard-in-browser-sdk/dist/blinkcard-sdk.min.js"></script>
+```
+
+Finally, it's possible to use ES builds, which can be downloaded from [the `es` folder on unpkg](https://unpkg.com/@microblink/blinkcard-in-browser-sdk/es/). ES modules are used in a similar manner as NPM package:
+
+```javascript
+import * as BlinkCardSDK from "./es/blinkcard-sdk.js";
+```
+
+**Important:** Unpkg CDN is used here due to simplicity of usage. It's not intended to be used in production!
+
+#### WASM Resources
+
+After adding BlinkCard SDK to your project, make sure to include all files from its `resources` folder in your distribution. Those files contain a compiled WebAssembly module and support JS code.
+
+Do not add those files to the main app bundle, but rather place them on a publicly available location so that the SDK can load them at an appropriate time. For example, place the resources in `my-angular-app/src/assets/` folder if using `ng new` or in `my-react-app/public/` folder if using `create-react-app`.
+
+For more information on how to setup aforementioned resources, check out the [Configuration of SDK](#sdkConfiguration) section.
+
+#### Versions and backward compatibility
+
+Even though the API is not going to change between minor versions, the structure of results for various recognizers might change between minor versions.
+
+This is due to the improvements we make to our recognizers with every minor release. We suggest you familiarize yourself with what [Recognizer, RecognizerRunner and VideoRecognizer](#availableRecognizers) are before moving on.
+
+It's a good practice to always lock your minor version and check the [CHANGELOG.md](CHANGELOG.md) file before upgrading to a new minor version.
+
+For example, in `package.json` you should have something like `"@microblink/blinkcard-in-browser-sdk": "~4.1.1"` instead of the default `"@microblink/blinkcard-in-browser-sdk": "^4.1.1"`.
+
+### <a name="firstScan"></a> Performing your first scan
+
+*Note: the following code snippets are written in TypeScript, but it's possible to use them in plain JavaScript.*
+
+1. Make sure you have a valid license key. See [Obtaining a license key](#obtainingalicensekey).
+
+2. Add the SDK to your web app by using one of the options provided in the [Installation](#installation) section.
+
+3. Initialize the SDK using the following code snippet:
+
+    ```typescript
+    import * as BlinkCardSDK from "@microblink/blinkcard-in-browser-sdk";
+
+    // Check if browser is supported
+    if ( BlinkCardSDK.isBrowserSupported() )
+    {
+        const loadSettings = new BlinkCardSDK.WasmSDKLoadSettings( "your-base64-license-key" );
+
+        BlinkCardSDK.loadWasmModule( loadSettings ).then
+        (
+            ( wasmSDK: BlinkCardSDK.WasmSDK ) =>
+            {
+                // The SDK was initialized successfully, save the wasmSDK for future use
+            },
+            ( error: any ) =>
+            {
+                // Error happened during the initialization of the SDK
+                console.log( "Error during the initialization of the SDK!", error );
+            }
+        )
+    }
+    else
+    {
+        console.log( "This browser is not supported by the SDK!" );
+    }
+    ```
+
+4. Create recognizer objects that will perform image recognition, configure them to your needs (to scan specific types of identity documents, for example) and use them to create a `RecognizerRunner` object:
+
+    ```typescript
+    import * as BlinkCardSDK from "@microblink/blinkcard-in-browser-sdk";
+
+    const recognizer = await BlinkCardSDK.createBlinkCardRecognizer( wasmSDK );
+    const recognizerRunner = await BlinkCardSDK.createRecognizerRunner( wasmSDK, [ recognizer ], true );
+    ```
+
+5. Obtain a reference to your HTML video element and create a `VideoRecognizer` using the element and your instance of `RecognizerRunner` which then can be used to process input video stream:
+
+    ```typescript
+    const cameraFeed = document.getElementById( "myCameraVideoElement" ) as HTMLVideoElement;
+    try
+    {
+        const videoRecognizer = await BlinkCardSDK.VideoRecognizer.createVideoRecognizerFromCameraStream(
+            cameraFeed,
+            recognizerRunner
+        );
+        const processResult = await videoRecognizer.recognize();
+        // To obtain recognition results see next step
+    }
+    catch ( error )
+    {
+        if ( error.name === "VideoRecognizerError" )
+        {
+            // Reason is of type BlinkCardSDK.NotSupportedReason and contains information why video
+            // recognizer could not be used. Usually this happens when user didn't grant access to a
+            // camera or when a hardware or OS error occurs.
+            const reason = ( error as BlinkCardSDK.VideoRecognizerError ).reason;
+        }
+    }
+    ```
+
+6. If `processResult` returned from `VideoRecognizer's` method `recognize` is not `BlinkCardSDK.RecognizerResultState.Empty`, then at least one recognizer given to the `RecognizerRunner` above contains a recognition result. You can extract the result from each recognizer using its `getResult` method:
+
+    ```typescript
+    if ( processResult !== BlinkCardSDK.RecognizerResultState.Empty )
+    {
+        const recognitionResult = await recognizer.getResult();
+        console.log( recognitionResult );
+    }
+    else
+    {
+        console.log( "Recognition was not successful!" );
+    }
+    ```
+
+7. Finally, release the memory on the WebAssembly heap by calling `delete` method on both `RecognizerRunner` and each of your recognizers. Also, release the camera stream by calling `releaseVideoFeed` on instance of `VideoRecognizer`:
+
+    ```typescript
+    videoRecognizer.releaseVideoFeed();
+    recognizerRunner.delete();
+    recognizer.delete();
+    ```
+
+    Note that after releasing those objects it is not valid to call any methods on them, as they are literally destroyed. This is required to release memory resources on WebAssembly heap which are not automatically released with JavaScript's garbage collector. Also, note that results returned from `getResult` method are placed on JavaScript's heap and will be cleaned by its garbage collector, just like any other normal JavaScript object.
+
+### <a name="stillImagesRecognition"></a> Recognizing still images
+
+If you just want to perform recognition of still images and do not need live camera recognition, you can do that as well.
+
+1. Initialize recognizers and `RecognizerRunner` as described in the [steps 1-4 above](#firstScan).
+
+2. Make sure you have the image set to a `HTMLImageElement`. If you only have the URL of the image that needs recognizing, you can attach it to the image element with following code snippet:
+
+    ```typescript
+    const imageElement = document.getElementById( "imageToProcess" ) as HTMLImageElement;
+    imageElement.src = URL.createObjectURL( imageURL );
+    await imageElement.decode();
+    ```
+
+3. Obtain the `CapturedFrame` object using function `captureFrame` and give it to the `processImage` method of the `RecognizerRunner`:
+
+    ```typescript
+    const imageFrame = BlinkCardSDK.captureFrame( imageElement );
+    const processResult = await recognizerRunner.processImage( imageFrame );
+    ```
+
+4. Proceed as in [steps 6-7 above](#firstScan). Note that you don't have to release any resources of `VideoRecognizer` here as we were only recognizing a single image, but `RecognizerRunner` and recognizers must be deleted using the `delete` method.
+
+### <a name="sdkConfiguration"></a> Configuration of SDK
+
+You can modify the default behaviour of the SDK before a WASM module is loaded.
+
+Check out the following code snippet to learn how to configure the SDK and which non-development options are available:
+
+```typescript
+// Create instance of WASM SDK load settings
+const loadSettings = new BlinkCardSDK.WasmSDKLoadSettings( "your-base64-license-key" );
+
+/**
+ * Write a hello message to the browser console when license check is successfully performed.
+ *
+ * Hello message will contain the name and version of the SDK, which are required information for all support
+ * tickets.
+ *
+ * Default value is true.
+ */
+loadSettings.allowHelloMessage = true;
+
+/**
+ * Absolute location of WASM and related JS/data files. Useful when resource files should be loaded over CDN, or
+ * when web frameworks/libraries are used which store resources in specific locations, e.g. inside "assets" folder.
+ *
+ * Important: if the engine is hosted on another origin, CORS must be enabled between two hosts. That is, server where
+ * engine is hosted must have 'Access-Control-Allow-Origin' header for the location of the web app.
+ *
+ * Important: SDK and WASM resources must be from the same version of a package.
+ *
+ * Default value is empty string, i.e. "". In case of empty string, value of "window.location.origin" property is
+ * going to be used.
+ */
+loadSettings.engineLocation = "";
+
+/**
+ * Optional callback function that will report the SDK loading progress.
+ *
+ * This can be useful for displaying progress bar to users with slow connections.
+ *
+ * Default value is "null".
+ *
+ * @example
+ * loadSettings.loadProgressCallback = (percentage: number) => console.log(`${ percentage }% loaded!`);
+ */
+loadSettings.loadProgressCallback = null;
+
+// After load settings are configured, proceed with the loading
+BlinkCardSDK.loadWasmModule( loadSettings ).then( ... );
+```
+
+There are some additional options which can be seen in the configuration class [WasmLoadSettings](src/MicroblinkSDK/WasmLoadSettings.ts).
+
+### <a name="deploymentGuidelines"></a> Deployment guidelines
+
+This section contains information on how to deploy a web app which uses BlinkCard In-browser SDK.
+
+#### HTTPS
+
+Make sure to serve the web app over a HTTPS connection.
+
+Otherwise, the browser will block access to a web camera and remote scripts due to security policies.
+
+#### Deployment of WASM files
+
+_Files: resources/BlinkCardWasmSDK.{data,js,wasm}_
+
+##### Server Configuration
+
+If you know how WebAssembly works, then you'll know a browser will load the `.wasm` file it needs to compile it to the native code. This is unlike JavaScript code, which is interpreted and compiled to native code only if needed ([JIT, a.k.a. Just-in-time compilation](https://en.wikipedia.org/wiki/Just-in-time_compilation)). Therefore, before BlinkCard is loaded, the browser must download and compile the provided `.wasm` file.
+
+In order to make this faster, you should configure your web server to serve `.wasm` files with `Content-Type: application/wasm`. This will instruct the browser that this is a WebAssembly file, which most modern browsers will utilize to perform streaming compilation, i.e. they will start compiling the WebAssembly code as soon as first bytes arrive from the server, instead of waiting for the entire file to download.
+
+For more information about streaming compilation, check [this article from MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WebAssembly/instantiateStreaming).
+
+If your server supports serving compressed files, you should utilize that to minimize the download size of your web app. It's easy to notice that `.wasm` file is not a small file, but it is very compressible. This is also true for all other files that you need to serve for your web app.
+
+For more information about configuring your web server to compress and optimally deliver BlinkCard SDK in your web app, see the [official Emscripten documentation](https://emscripten.org/docs/compiling/Deploying-Pages.html#optimizing-download-sizes).
+
+##### Location of WASM and related support files
+
+You can host WASM and related support files in a location different from the one where your web app is located.
+
+For example, your WASM and related support files can be located in `https://cdn.example.com`, while the web app is hosted on `https://example.com`.
+
+In that case it's important to set [CORS headers](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Access-Control-Allow-Origin) in response from `https://cdn.example.com`. i.e. set header `Access-Control-Allow-Origin` with proper value so that the web page knows it’s okay to take on the request.
+
+If WASM engine is not placed in the same folder as web app, don't forget to configure instance of `WasmSDKLoadSettings` with proper location:
+
+```typescript
+...
+const loadSettings = new BlinkCardSDK.WasmSDKLoadSettings( licenseKey );
+
+loadSettings.engineLocation = "https://cdn.example.com/wasm";
+...
+```
+
+#### Setting up multiple licenses
+
+As mentioned, the license key of BlinkCard SDK is tied to your domain name, so it's required to initialize the SDK with different license keys based on the location of your web app.
+
+A common scenario is to have different license keys for development on the local machine, staging environment and production environment. Our team will be happy to issue multiple trial licenses if needs be. See [Obtaining a license key](#obtainingalicensekey).
+
+There are two most common approaches regarding setup of your license key(s):
+
+1. Multiple apps: build different versions of your web app for different environments
+2. Single app: build a single version of your web app which has logic to determine which license key to use
+
+##### Multiple apps
+
+Common approach when working with modern frameworks/libraries.
+
+* [Using environment variables in React](https://medium.com/@trekinbami/using-environment-variables-in-react-6b0a99d83cf5#:~:text=In%20short%3A%20environment%20variables,re%20going%20to%20need%20webpack.)
+* [Building and serving Angular apps](https://angular.io/guide/build)
+* [Vue.js: Modes and Environment Variables](https://cli.vuejs.org/guide/mode-and-env.html#environment-variables)
+
+##### Single app
+
+Simple approach, where handling of license key is done inside the web app.
+
+Here is one possible solution:
+
+```typescript
+let licenseKey = "..."; // Place your development license key here
+
+if ( window.location.hostname === "staging.example.com" ) // Place your staging domain here
+{
+    licenseKey = "..."; // Place your staging license key here
+}
+
+if ( window.location.hostname === "example.com" ) // Place your production domain here
+{
+    licenseKey = "..."; // Place your production license key here
+}
+...
+```
+
+## <a name="availableRecognizers"></a> The `Recognizer` concept, `RecognizerRunner` and `VideoRecognizer`
+
+This section will first describe [what a `Recognizer`](#recognizerConcept) is and how it should be used to perform recognition of images, videos and camera stream. We'll also describe what [`RecognizerRunner`](#recognizerRunner) is and how it can be used to tweak the recognition procedure. Finally, we'll describe what [`VideoRecognizer`](#videoRecognizer) is and explain how it builds on top of `RecognizerRunner` in order to provide support for recognizing a video or a camera stream.
+
+### <a name="recognizerConcept"></a> The `Recognizer` concept
+
+The `Recognizer` is the basic unit tasked with reading identity documents within the BlinkCard SDK. Its main purpose is to process the image and extract meaningful information from it. As you will see later, BlinkCard SDK has lots of different `Recognizer` objects you can set up to recognize various documents.
+
+The `Recognizer` is the object on the WebAssembly heap, which means that it will not be automatically cleaned up by the garbage collector once it's not required anymore. Once you are done using it, you must call the `delete` method on it to release the memory on the WebAssembly heap. Failing to do so will result in memory leak on the WebAssembly heap which may result in a crash of the browser tab running your web app.
+
+Each `Recognizer` has a `Result` object, which contains the data that was extracted from the image. The `Result` for each specific `Recognizer` can be obtained by calling its `getResult` method, which will return a `Result` object placed on the JS heap, i.e. managed by the garbage collector. Therefore, you don't need to call any delete-like methods on the `Result` object.
+
+Every `Recognizer` is a stateful object that can be in two possible states: _idle state_ and _working state_.
+
+While in _idle state_, you are allowed to call method `updateSettings` which will update its properties according to the given settings object. At any time, you can call its `currentSettings` method to obtain its currently applied settings object.
+
+After you create a `RecognizerRunner` with an array containing your recognizer, the state of the `Recognizer` will change to _working state_, in which `Recognizer` object will be used for processing. While being in _working state_, it is not possible to call method `updateSettings` (calling it will crash your web app).
+
+If you need to change configuration of your recognizer while it's being used, you need to:
+
+1. Call its `currentSettings` method to obtain its current configuration
+2. Update it as you need it
+3. Create a new `Recogizer` of the same type
+4. Call `updateSettings` on it with your modified configuration
+5. Replace the original `Recognizer` within the `RecognizerRunner` by calling its `reconfigureRecognizers` method
+
+When written as a pseudocode, this would look like:
+
+```typescript
+import * as BlinkCardSDK from "@microblink/blinkcard-in-browser-sdk";
+
+// Assume myRecognizerInUse is used by the recognizerRunner
+const currentSettings = await myRecognizerInUse.currentSettings();
+
+// Modify currentSettings as you need
+const newRecognizer = await BlinkCardSDK.createRecognizer(); // use appropriate recognizer creation function
+await newRecognizer.updateSettings( currentSettings );
+
+// Reconfigure recognizerRunner
+await recognizerRunner.reconfigureRecognizers( [ newRecognizer ], true ); // use `true` or `false` depending of what you want to achieve (see below for the description)
+
+// newRecognizer is now in use and myRecognizerInUse is no longer in use -
+// you can delete it if you don't need it anymore
+await myRecognizerInUse.delete();
+```
+
+While `Recognizer` object works, it changes its internal state and its result. The `Recognizer` object's `Result` always starts in `Empty` state. When corresponding `Recognizer` object performs the recognition of a given image, its `Result` can either stay in `Empty` state (in case `Recognizer` failed to perform recognition), move to `Uncertain` state (in case `Recognizer` performed the recognition, but not all mandatory information was extracted) or move to `Valid` state (in case `Recognizer` performed recognition and all mandatory information was successfully extracted from the image).
+
+### <a name="recognizerRunner"></a> `RecognizerRunner`
+
+The `RecognizerRunner` is the object that manages the chain of individual `Recognizer` objects within the recognition process.
+
+It must be created by `createRecognizerRunner` method of the `WasmModuleProxy` interface, which is a member of `WasmSDK` interface which is resolved in a promise returned by the `loadWasmModule` function you've seen [above](#firstScan). The function requires two parameters: an array of `Recognizer` objects that will be used for processing and a `boolean` indicating whether multiple `Recognizer` objects are allowed to have their `Results` enter the `Valid` state.
+
+To explain the `boolean` parameter further, we first need to understand how `RecognizerRunner` performs image processing.
+
+When the `processImage` method is called, it processes the image with the first `Recognizer` in the chain. If `Recognizer's` `Result` object changes its state to `Valid`, and if the above `boolean` parameter is `false`, the recognition chain will be stopped and `Promise` returned by the method will be immediately resolved. If the above parameter is `true`, then the image will also be processed with other `Recognizer` objects in chain, regardless of the state of their `Result` objects.
+
+That means if after processing the image with the first `Recognizer` in the chain, its `Result` object's state is not changed to `Valid`, the `RecognizerRunner` will use the next `Recognizer` object in chain for processing the image and so on - until the end of the chain (if no results become valid or always if above parameter is `true`) or until it finds the recognizer that has successfully processed the image and changed its `Result's` state to `Valid` (if above parameter is `false`).
+
+You cannot change the order of the `Recognizer` objects within the chain - regardless of the order in which you give `Recognizer` objects to `RecognizerRunner` (either to its creation function `createRecognizerRunner` or to its `reconfigureRecognizers` method), they are internally ordered in a way that ensures the best performance and accuracy possible.
+
+Also, in order for BlinkCard SDK to be able to sort `Recognizer` objects in the recognition chain the best way, it is not allowed to have multiple instances of `Recognizer` objects of the same type within the chain. Attempting to do so will crash your application.
+
+### <a name="videoRecognizer"></a> Performing recognition of video streams using `VideoRecognizer`
+
+Using `RecognizerRunner` directly could be difficult in cases when you want to perform recognition of the video or the live camera stream. Additionally, handling camera management from the web browser can be [sometimes challenging](https://stackoverflow.com/questions/59636464/how-to-select-proper-backfacing-camera-in-javascript). In order to make this much easier, we provided a `VideoRecognizer` class.
+
+To perform live camera recognition using the `VideoRecognizer`, you will need an already configured `RecognizerRunner` object and a reference to `HTMLVideoElement` to which camera stream will be attached.
+
+To perform the recognition, you should simply write:
+
+```typescript
+const cameraFeed = <HTMLVideoElement> document.getElementById( "cameraFeed" );
+try
+{
+    const videoRecognizer = await BlinkCardSDK.VideoRecognizer.createVideoRecognizerFromCameraStream(
+        cameraFeed,
+        recognizerRunner
+    );
+    const processResult = await videoRecognizer.recognize();
+}
+catch ( error )
+{
+    // Handle camera error
+}
+```
+
+The `recognize` method of the `VideoRecognizer` will start the video capture and recognition loop from the camera and will return a `Promise` that will be resolved when either `processImage` of the given `RecognizerRunner` returns `Valid` for some frame or the timeout given to `recognize` method is reached (if no timeout is given, a default one is used).
+
+#### Recognizing a video file
+
+If, instead of performing recognition of live video stream, you want to perform recognition of a pre-recorded video, you should simply construct `VideoRecognizer` using a different function, as shown below:
+
+```typescript
+const videoRecognizer = await BlinkCardSDK.createVideoRecognizerFromVideoPath(
+    videoPath,
+    htmlVideoElement,
+    recognizerRunner
+);
+const processResult = await videoRecognizer.recognize();
+```
+
+### <a name="customUXWithVideoRecognizer"></a> Custom UX with `VideoRecognizer`
+
+The procedure for using `VideoRecognizer` described [above](#videoRecognizer) is quite simple, but has some limits. For example, you can only perform one shot scan with it. As soon as the promise returned by `recognize` method resolves, the camera feed is paused and you need to start new recognition.
+
+However, if you need to perform multiple recognitions in single camera session, without pausing the camera preview, you can use the `startRecognition` method, as described in the example below:
+
+```typescript
+videoRecognizer.startRecognition
+(
+    ( recognitionState: BlinkCardSDK.RecognizerResultState ) =>
+    {
+        // Pause recognition before performing any async operation - this will make sure that
+        // recognition will not continue while returning the control flow back from this function.
+        videoRecognizer.pauseRecognition();
+
+        // Obtain recognition results directly from recognizers associated with the RecognizerRunner
+        // that is associated with the VideoRecognizer
+
+        if ( shouldContinueScanning )
+        {
+            // Resume recognition
+            videoRecognizer.resumeRecognition( true );
+        }
+        else
+        {
+            // Pause the camera feed
+            videoRecognizer.pauseVideoFeed();
+            // After this line, the VideoRecognizer is in the same state as if promise returned from
+            // recognizer was resolved
+        }
+        // If videoRecognizer is not paused or terminated, after this line the recognition will
+        // continue and recognition state will be retained
+    }
+);
+```
+
+## <a name="metadataCallbacks"></a> Handling processing events with `MetadataCallbacks`
+
+Processing events, also known as _Metadata callbacks_ are purely intended to provide users with on-screen scanning guidance or to capture some debug information during development of your web app using BlinkCard SDK.
+
+Callbacks for all events are bundled into the [MetadataCallbacks](src/MicroblinkSDK/MetadataCallbacks.ts) object. We suggest that you have a look at the available callbacks and events which you can handle in the [source code of the `MetadataCallbacks` interface](src/MicroblinkSDK/MetadataCallbacks.ts).
+
+You can link the `MetadataCallbacks` interface with `RecognizerRunner` either during creation or by invoking its method `setMetadataCallbacks`. Please note that both those methods need to pass information about available callbacks to the native code. For efficiency reasons this happens at the time `setMetadataCallbacks` is called, **not every time** a change occurs within the `MetadataCallbacks` object.
+
+This means that if you, for example, set `onQuadDetection` to `MetadataCallbacks` after you already called `setMetadataCallbacks` method, the `onQuadDetection` will not be registered with the native code and therefore it will not be called.
+
+Similarly, if you remove the `onQuadDetection` from `MetadataCallbacks` object after you already called `setMetadataCallbacks` method, your app will crash in attempt to invoke a non-existing function when our processing code attempts to invoke it. We **deliberately** do not perform null check here because of two reasons:
+
+- It is inefficient
+- Having no callback, while still being registered to native code is illegal state of your program and it should therefore crash
+
+**Remember** that whenever you make some changes to the `MetadataCallbacks` object, you need to apply those changes to your `RecognizerRunner` by calling its `setMetadataCallbacks` method.
+
+## <a name="recognizerList"></a> List of available recognizers
+
+This section will give a list of all `Recognizer` objects that are available within BlinkCard SDK, their purpose and recommendations on how they should be used to achieve  best performance and user experience.
+### <a name="successFrameGrabber"></a> Success Frame Grabber Recognizer
+
+The [`SuccessFrameGrabberRecognizer`](src/Recognizers/SuccessFrameGrabberRecognizer.ts) is a special `Recognizer` that wraps some other `Recognizer` and impersonates it while processing the image. However, when the `Recognizer` being impersonated changes its `Result` into `Valid` state, the `SuccessFrameGrabberRecognizer` captures the image and saves it into its own `Result` object.
+
+Since `SuccessFrameGrabberRecognizer` impersonates its slave `Recognizer` object, it is not possible to have both concrete `Recognizer` object and `SuccessFrameGrabberRecognizer` that wraps it in the same `RecognizerRunner` at the same time. Doing so will have the same effect as having multiple instances of the same `Recognizer` in the same `RecognizerRunner` - it will crash your application. For more information, see [paragraph about `RecognizerRunner`](#recognizerRunner).
+
+This recognizer is best for use cases when you need to capture the exact image that was being processed by some other `Recognizer` object at the time its `Result` became `Valid`. When that happens, `SuccessFrameGrabber's` `Result` will also become `Valid` and will contain described image. That image will be available in its `successFrame` property.
+### <a name="BlinkCardRecognizer"></a> Blink Card recognizer
+
+The [`BlinkCardRecognizer`](src/Recognizers/BlinkCard/BlinkCardRecognizer.ts) is a recognizer specialized for scanning various credit or payment cards.
+## <a name="recognizerSettings"></a> Recognizer settings
+
+It's possible to enable various recognizer settings before recognition process to modify default behaviour of the recognizer.
+
+List of all recognizer options is available in the source code of each recognizer, while list of all recognizers is available in the [List of available recognizers](#recognizerList) section.
+
+Recognizer settings should be enabled right after the recognizer has been created in the following manner:
+
+```typescript
+// Create instance of recognizer
+const BlinkCardRecognizer = await BlinkCardSDK.createBlinkCardRecognizer( sdk );
+
+// Retrieve current settings
+const settings = await BlinkCardRecognizer.currentSettings();
+
+// Update desired settings
+settings[ " <recognizer_available_setting> " ] = true;
+
+// Apply settings
+await BlinkCardRecognizer.updateSettings( settings );
+
+...
+```
+<!--
+# TODO
+1. Guidelines regarding webcams
+    * Webcams on apple devices
+    * External webcams
+        * Logitech C922 Pro Stream (isprobano, radi odlično, Jurica)
+        * Logitech C920 Pro HD
+        * Logitech C270 HD (budget option)
+    * Built-in webcams, e.g. Lenovo and similar
+2. Guidelines regarding device performance
+3. Specific guidelines for Mac laptops and PCs?
+-->
+## <a name="technicalRequirements"></a> Technical requirements
+
+This document provides information about technical requirements of end-user devices to run BlinkCard.
+
+Requirements:
+
+1. The browser is [supported](#supported-browsers).
+2. The browser [has access to camera device](#camera-devices).
+3. The device has [enough computing power](#device-support) to extract data from an image.
+
+**Important**: BlinkCard may not work correctly in *WebView*/*WKWebView*/*SFSafariViewController*. See [this section](#embedded).
+
+## <a name="webassembly-support"></a> Supported browsers
+
+Minimal browser versions with support for all features required by BlinkCard.
+
+|Chrome|Safari|Edge|Firefox|Opera|iOS Safari|Android Browser|Opera Mobile|Chrome for Android|Firefox for Android|
+|------|------|----|-------|-----|----------|---------------|------------|------------------|-------------------|
+|    57|    11|  79|     52|   44|        14|             81|          59|                86|                 82|
+
+Internet Explorer is **not supported**.
+
+*Source: [caniuse](https://caniuse.com/wasm)*
+
+## <a name="camera-devices"></a> Camera devices
+
+*Keep in mind that camera device is optional, since BlinkCard can extract data from still images.*
+
+SDK cannot access camera on **iOS** when the end-user is using a web browser **other than Safari**. Apple does not allow access to camera via WebRTC specification for other browsers.
+
+**Notes & Guidelines**
+
+* For optimal data extraction use high-quality camera device in well-lit space and don't move the camera too much.
+* It's recommended to use camera devices with autofocus functionality for fastest data extraction.
+* Camera devices on MacBook laptops don't work well with low ambient light, i.e. scanning will take longer than usual.
+
+## <a name="device-support"></a> Device support
+
+It's hard to pinpoint exact hardware specifications for successful data extraction, but based on our testing mid-end and high-end smartphone devices released in 2018 and later should be able to extract data from an image in a relatively short time frame.
+
+**Notes & Guidelines**
+
+* Browsers supported by BlinkCard can run on older devices, where extraction can take much longer to execute, e.g. around 30 or even 40 seconds.
+
+## <a name="embedded"> SDK and *WebView*/*WKWebView*/*SFSafariViewController*
+
+### Android and *WebView*
+
+*WebView* is not supported for a couple of reasons:
+
+* There is no guarantee that developers of mobile apps are using *WebView* with all necessary features enabled.
+* It's up to developers of mobile apps to provide support for camera access from *WebView* (which is integral part of our experience), which requires additional work compared to classic camera permission in mobile apps.
+
+Also, it's possible for mobile app developers to use *WebView* alternatives like *GeckoView* and similar, which have their own constraints.
+
+### iOS, *WKWebView* and *SFSafariViewController*
+
+As for now, it's not possible to access the camera from *WKWebView* and *SFSafariViewController*.
+
+Camera access on iOS, i.e. WebRTC, is only supported in Safari browser. Other browsers like Chrome and Firefox won't work as expected.
+
+### Conclusion
+
+There is a general technical constraint when using BlinkCard from in-app browser - it's not possible to know for sure if the SDK has or hasn't got camera access. That is, it's not possible to notify the user if the camera is not available during the initialization.
+
+However, majority of widely used apps with in-app browsers, e.g. Facebook and Snapchat, are using standard *WebView* or embedded Safari with all the features. For example, WASM and modern JS are supported.
+
+But the major problem still remains, how to get an image from the camera? Currently, we can advise two approaches:
+
+1. Detect via UA string if in-app browser is used and prompt the user to use the native browser.
+2. Detect via UA string if in-app browser is used and enable classic image upload via `<input type="file" accept="image/*" capture="environment" />` element.
+    * Based on the operating system and software version, users will be able to select an image from the gallery, or to capture an image from the camera.
+## <a name="troubleshoot"></a> Troubleshooting
+
+### <a name="integrationProblems"></a> Integration problems
+
+In case you're having issues integrating our SDK, the first thing you should do is revisit our [integration instructions](#firstScan) and make sure to closely follow each step.
+
+If you have followed the instructions to the letter and you still have problems, please contact us at [help.microblink.com](https://help.microblink.com).
+
+When contacting us, please make sure you include the following information:
+
+* Log from the web console.
+* High resolution scan/photo of the document that you are trying to scan.
+* Information about the device and browser that you are using — we need the exact version of the browser and operating system it runs on. Also, if it runs on a mobile device, we also need the model of the device in question (camera management is specific to browser, OS and device).
+* Please stress out that you are reporting a problem related to the WebAssembly version of the BlinkCard SDK.
+
+### <a name="sdkProblems"></a> SDK problems
+
+In case of problems with using the SDK, you should do as follows:
+
+#### <a name="licensingProblems"></a> Licensing problems
+
+If you are getting an "invalid license key" error or having other license-related problems (e.g. some feature is not enabled that should be), first check the browser console. All license-related problems are logged to the web console so that it's easier to determine what went wrong.
+
+When you can't determine the license-related problem or you simply do not understand the log information, you should contact us at [help.microblink.com](http://help.microblink.com). When contacting us, please make sure you provide following information:
+
+* Exact fully qualified domain name of your app, i.e. where the app is hosted.
+* License that is causing problems.
+* Please stress out that you are reporting a problem related to the WebAssembly version of the BlinkCard SDK.
+* If unsure about the problem, you should also provide an excerpt from the web console containing the license error.
+
+#### <a name="otherProblems"></a> Other problems
+
+If you are having problems with scanning certain items, undesired behaviour on specific device(s), crashes inside BlinkCard SDK or anything unmentioned, please contact our support with the same information as listed at the start of this section.
+## <a name="faq"></a> FAQ and known issues
+
+* **After switching from trial to production license I get error `This entity is not allowed by currently active license!` when I create a specific `Recognizer` object.**
+
+Each license key contains information about which features are allowed to use and which are not. This error indicates that your production license does not allow the use of a specific `Recognizer` object. You should contact [support](http://help.microblink.com) to check if the provided license is OK and that it really contains the features you've requested.
+
+* **Document is scanned successfully when using camera feed, but fails when a still image is being recognized with `processImage` method.**
+
+The reason for this is the way the SDK operates. When scanning from an image file, all data must be extracted from a single frame. This  is not always possible due to limited computing power. On the other hand, when an image is scanned with the camera, multiple frames are processed, so the relevant data can be extracted in chunks.
+
+**This problem is going to be fixed in future versions.** Keep an eye on this repository to get notified when new versions are released, and check [CHANGELOG.md](CHANGELOG.md) file to see a list of improvements.
+
+* **Why am I getting No internet connection error if I'm on a private network?**
+
+Versions BlinkCard 2.0.0 and above require an internet connection to work under our new License Management Program.
+
+This means your web app has to be connected to the Internet in order for us to validate your trial license key. Scanning or data extraction of identity documents still happens offline, in the browser itself. 
+
+Once the validation is complete, you can continue using the SDK in an offline mode (or over a private network) until the next check.
+
+We've added error callback to Microblink SDK to inform you about the status of your license key.
+## <a name="info"></a> Additional info
+
+Complete source code of the TypeScript wrapper can be found [here](src).
+
+For any other questions, feel free to contact us at [help.microblink.com](http://help.microblink.com).
