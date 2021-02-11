@@ -131,7 +131,7 @@ async function startScan( sdk: BlinkCardSDK.WasmSDK )
 
             alert
             (
-                `Hello, ${ firstAndLastName }!\n You're payment card with card number ${ cardNumber } will expire on ${ dateOfExpiry.year }/${ dateOfExpiry.month }.`
+                `Hello, ${ firstAndLastName }!\n Your payment card with card number ${ cardNumber } will expire on ${ dateOfExpiry.year }/${ dateOfExpiry.month }.`
             );
         }
     }
