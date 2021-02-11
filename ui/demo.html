@@ -137,7 +137,7 @@
 
     <script type="text/javascript">
       window.getSafePathname = p => p[ p.length - 1 ] === '/' ? p : p.split( '/' ).slice( 0, -1 ).join( '/' ) + '/';
-      window.licenseKey = 'sRwAAAYJbG9jYWxob3N0r/lOPmg/w35CpOHWKrE6YH5ih33s/TJkODw0u0DaeG+uUSHj28ftv86lELB6BU+CiM7ZoW1Tqw1VgaEho8ywZiMgTrMdxX/f+z8my6mMI3hK/RAIws6/5x48RGEcboN4uDYr6b1yIsPfgnfXVJGBSIZdsquKvWb3yuNGztL7MoQGQxc27YBYnuwAfxWQyoTv2ka8ZzZFKlnMxhUaQxq5WSKCCVAK5+0J1ByofyQSkw==';
+      window.licenseKey = 'sRwAAAYJbG9jYWxob3N0r/lOPmg/w35CpOHWKCo4YL/KpeOpvHscDeDQC9klS88t+s6XvuLJ1in7UWQPRwJpdtaEuhUOzQ2i/skQVYj8AfzYyHulgyTqCDjPFbhDdYG/TrTkkCxcy3OOpqHJG7PjUZVF0113BftYk/gGpaJSGtK9BmraX9d83L4CkdZwGK9jOHEQ+Skn11cdf3QIyxePnpG/wKNRSKilJXGgFFz1+oDVzjcbLZmDG3/LoPqpfQ==';
 
       if (window.location.hostname === 'blinkcard.github.io') {
         window.licenseKey = 'sRwAAAYTYmxpbmtjYXJkLmdpdGh1Yi5pby+N7zvpysD9Mbe+K31x71ZYbnFQar6E8nzwX4o9Gr5AKHPKWQgoth5h+ONtiT8FGw+9h/5L9KW+MSrQc4pwnK9g0CwWF+UklQ0HE6Iz47WciKURxLDe6XyJrtFBYCWvYgxC3dmuW2Km25ELDwvIZMfEWIPbEJULDbpX6pzfh/ANXBNDEPUUsy5jTa569imyu+mgbRubPVsw+SymvIzhVR9Xr6LydUfb/fQ/JFcUTrk=';
@@ -258,7 +258,7 @@
         el.licenseKey = window.licenseKey;
         el.recognizers = ['BlinkCardRecognizer'];
         window.setTimeout(() => {
-          el.translations = { 
+          el.translations = {
             'action-message': 'Alternative CTA'
           };
         }, 3000);
@@ -308,7 +308,7 @@
         el.recognizers = ['BlinkCardRecognizer'];
 
         window.setTimeout(() => {
-          el.translations = { 
+          el.translations = {
             'action-message': 'Alternative CTA'
           };
         }, 3000);
@@ -479,7 +479,7 @@
 
         customizatorForm.addEventListener('submit', ev => {
           ev.preventDefault();
-          
+
           document.querySelector(
             '#example-customization .box'
           ).style.background = document.getElementById('customization-background').value;

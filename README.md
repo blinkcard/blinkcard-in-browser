@@ -88,7 +88,7 @@ Make sure you enter a [fully qualified domain name](https://en.wikipedia.org/wik
 
 **Keep in mind:** Versions BlinkCard 2.0.0 and above require an internet connection to work under our new License Management Program.
 
-This means your web app has to be connected to the Internet in order for us to validate your trial license key. Scanning or data extraction of identity documents still happens offline, in the browser itself. 
+This means your web app has to be connected to the Internet in order for us to validate your trial license key. Scanning or data extraction of documents still happens offline, in the browser itself. 
 
 Once the validation is complete, you can continue using the SDK in an offline mode (or over a private network) until the next check.
 
@@ -186,7 +186,7 @@ For example, in `package.json` you should have something like `"@microblink/blin
     }
     ```
 
-4. Create recognizer objects that will perform image recognition, configure them to your needs (to scan specific types of identity documents, for example) and use them to create a `RecognizerRunner` object:
+4. Create recognizer objects that will perform image recognition, configure them to your needs (to scan specific types of documents, for example) and use them to create a `RecognizerRunner` object:
 
     ```typescript
     import * as BlinkCardSDK from "@microblink/blinkcard-in-browser-sdk";
@@ -409,7 +409,7 @@ This section will first describe [what a `Recognizer`](#recognizerConcept) is an
 
 ### <a name="recognizerConcept"></a> The `Recognizer` concept
 
-The `Recognizer` is the basic unit tasked with reading identity documents within the BlinkCard SDK. Its main purpose is to process the image and extract meaningful information from it. As you will see later, BlinkCard SDK has lots of different `Recognizer` objects you can set up to recognize various documents.
+The `Recognizer` is the basic unit tasked with reading documents within the domain of BlinkCard SDK. Its main purpose is to process the image and extract meaningful information from it. As you will see later, BlinkCard SDK has lots of different `Recognizer` objects you can set up to recognize various documents.
 
 The `Recognizer` is the object on the WebAssembly heap, which means that it will not be automatically cleaned up by the garbage collector once it's not required anymore. Once you are done using it, you must call the `delete` method on it to release the memory on the WebAssembly heap. Failing to do so will result in memory leak on the WebAssembly heap which may result in a crash of the browser tab running your web app.
 
@@ -728,7 +728,7 @@ The reason for this is the way the SDK operates. When scanning from an image fil
 
 Versions BlinkCard 2.0.0 and above require an internet connection to work under our new License Management Program.
 
-This means your web app has to be connected to the Internet in order for us to validate your trial license key. Scanning or data extraction of identity documents still happens offline, in the browser itself. 
+This means your web app has to be connected to the Internet in order for us to validate your trial license key. Scanning or data extraction of documents still happens offline, in the browser itself. 
 
 Once the validation is complete, you can continue using the SDK in an offline mode (or over a private network) until the next check.
 
