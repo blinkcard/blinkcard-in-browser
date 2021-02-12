@@ -3,10 +3,10 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0">
-    <title>BlinkID UI Component</title>
+    <title>BlinkCard UI Component</title>
 
-    <script type="module" src="../dist/blinkid-in-browser/blinkid-in-browser.esm.js"></script>
-    <script nomodule src="../dist/blinkid-in-browser.js"></script>
+    <script type="module" src="../dist/blinkcard-in-browser/blinkcard-in-browser.esm.js"></script>
+    <script nomodule src="../dist/blinkcard-in-browser.js"></script>
     <style type="text/css">
       html,
       body {
@@ -34,32 +34,32 @@
     </style>
   </head>
   <body>
-    <blinkid-in-browser
+    <blinkcard-in-browser
       engine-location="http://localhost:3333/resources"
-      license-key="sRwAAAYJbG9jYWxob3N0r/lOPk4/w35CpJlWLIUTxZO6heZwZ0ieAgWPdJbjL234+8kyLov9AmMYZU27gBbCKJ44GF7LxEO0L7YeysCJvf8VXD93eduMRFMwASjo7bwKCdcLY10azKaUKGfFors3peLh8cJ3xdpMZJB4NKxahGsq+V/jGmmjGt6m0YM+HWHXuZ5H9WyTJELTZrc9DVgUzjZLam3MaIcObAaOcQaGZELchW4E78RTBiL1IeU5rBE9A5fqRzvfeVsIEbMwHoESFtfhMiTk72KXDc+qyQ494NOiiAMUJ31XpolzxPIlpm3b8eIUhQrgaeLbDeEHV4h5BIdoQKzv"
-      recognizers="BlinkIdRecognizer"
-    ></blinkid-in-browser>
+      license-key="sRwAAAYJbG9jYWxob3N0r/lOPmg/w35CpOHWKCo4YL/KpeOpvHscDeDQC9klS88t+s6XvuLJ1in7UWQPRwJpdtaEuhUOzQ2i/skQVYj8AfzYyHulgyTqCDjPFbhDdYG/TrTkkCxcy3OOpqHJG7PjUZVF0113BftYk/gGpaJSGtK9BmraX9d83L4CkdZwGK9jOHEQ+Skn11cdf3QIyxePnpG/wKNRSKilJXGgFFz1+oDVzjcbLZmDG3/LoPqpfQ=="
+      recognizers="BlinkCardRecognizer"
+    ></blinkcard-in-browser>
 
     <script type="text/javascript">
-      const blinkId = document.querySelector('blinkid-in-browser');
+      const blinkCard = document.querySelector('blinkcard-in-browser');
 
-      blinkId.addEventListener('fatalError', ev => {
+      blinkCard.addEventListener('fatalError', ev => {
         console.log('fatalError', ev.detail);
       });
 
-      blinkId.addEventListener('ready', ev => {
+      blinkCard.addEventListener('ready', ev => {
         console.log('ready', ev.detail);
       });
 
-      blinkId.addEventListener('scanError', ev => {
+      blinkCard.addEventListener('scanError', ev => {
         console.log('scanError', ev.detail);
       });
 
-      blinkId.addEventListener('scanSuccess', ev => {
+      blinkCard.addEventListener('scanSuccess', ev => {
         console.log('scanSuccess', ev.detail);
       });
 
-      blinkId.addEventListener('feedback', ev => {
+      blinkCard.addEventListener('feedback', ev => {
         console.log('feedback', ev.detail);
       });
     </script>
