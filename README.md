@@ -6,11 +6,7 @@ BlinkCard In-browser SDK enables scanning of various credit or payment cards. Th
 
 For more information on how to integrate BlinkCard SDK into your web app, read the [instructions](#integration) below. Make sure you read the latest [CHANGELOG.md](CHANGELOG.md) file to see the most recent changes and improvements.
 
-<!-- 
-Notice: Uncomment line below when demo app is created and available in public
-
-Check out the [official demo app](https://demo.microblink.com/in-browser-sdk/blinkcard) or live examples of BlinkCard SDK in action: 
--->
+Check out the [official demo app](https://demo.microblink.com/in-browser-sdk/blinkcard) or live examples of BlinkCard SDK in action:
 
 1. [BlinkCard SDK with built-in UI](https://blinkcard.github.io/blinkcard-in-browser/ui/demo.html)
     * See what the bare UI looks like at [Codepen](https://codepen.io/microblink/pen/LYbZRwE)
