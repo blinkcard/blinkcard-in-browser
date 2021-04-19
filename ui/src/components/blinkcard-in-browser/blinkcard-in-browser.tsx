@@ -65,6 +65,20 @@ export class BlinkcardInBrowser implements MicroblinkUI {
   @Prop() licenseKey: string;
 
   /**
+   * Defines the type of the WebAssembly build that will be loaded. If omitted, SDK will determine
+   * the best possible WebAssembly build which should be loaded based on the browser support.
+   *
+   * Available WebAssembly builds:
+   *
+   * - 'BASIC'
+   * - 'ADVANCED'
+   * - 'ADVANCED_WITH_THREADS'
+   *
+   * For more information about different WebAssembly builds, check out the `src/MicroblinkSDK/WasmType.ts` file.
+   */
+   @Prop() wasmType: string = '';
+
+  /**
    * List of recognizers which should be used.
    *
    * Available recognizers for BlinkID:
@@ -102,18 +116,39 @@ export class BlinkcardInBrowser implements MicroblinkUI {
   @Prop() recognizers: Array<string>;
 
   /**
-   * Specify additional recognizer options.
+   * Specify recognizer options. This option can only bet set as a JavaScript property.
    *
-   * Example: @TODO
-   */
-  @Prop({ attribute: 'recognizer-options' }) rawRecognizerOptions: string;
-
-  /**
-   * Specify additional recognizer options.
+   * Pass an object to `recognizerOptions` property where each key represents a recognizer, while
+   * the value represents desired recognizer options.
    *
-   * Example: @TODO
+   * ```
+   * blinkCard.recognizerOptions = {
+   *   'BlinkCardRecognizer': {
+   *     'extractCvv': true,
+   *
+   *     // When setting values for enums, check the source code to see possible values.
+   *     // For AnonymizationSettings we can see the list of possible values in
+   *     // `src/Recognizers/BlinkCard/BlinkCardRecognizer.ts` file.
+   *     anonymizationSettings: {
+   *       cardNumberAnonymizationSettings: {
+   *         mode: 0,
+   *         prefixDigitsVisible: 0,
+   *         suffixDigitsVisible: 0
+   *       },
+   *       cardNumberPrefixAnonymizationMode: 0,
+   *       cvvAnonymizationMode: 0,
+   *       ibanAnonymizationMode: 0,
+   *       ownerAnonymizationMode: 0
+   *     }
+   *   }
+   * }
+   * ```
+   *
+   * For a full list of available recognizer options see source code of a recognizer. For example,
+   * list of available recognizer options for BlinkCardRecognizer can be seen in the
+   * `src/Recognizers/BlinkCard/BlinkCardRecognizer.ts` file.
    */
-  @Prop() recognizerOptions: Array<string>;
+  @Prop() recognizerOptions: { [key: string]: any };
 
   /**
    * Set to 'true' if success frame should be included in final scanning results.
@@ -262,7 +297,7 @@ export class BlinkcardInBrowser implements MicroblinkUI {
    * Scan line animation option passed from root component.
    *
    * Client can choose if scan line animation will be present in UI.
-   * 
+   *
    * Default value is 'false'
    *
    */
@@ -337,9 +372,6 @@ export class BlinkcardInBrowser implements MicroblinkUI {
     const rawRecognizers = GenericHelpers.stringToArray(this.rawRecognizers);
     this.finalRecognizers = this.recognizers ? this.recognizers : rawRecognizers;
 
-    const rawRecognizerOptions = GenericHelpers.stringToArray(this.rawRecognizerOptions);
-    this.finalRecognizerOptions = this.recognizerOptions ? this.recognizerOptions : rawRecognizerOptions;
-
     const rawTranslations = GenericHelpers.stringToObject(this.rawTranslations);
     this.finalTranslations = this.translations ? this.translations : rawTranslations;
     this.translationService = new TranslationService(this.finalTranslations || {});
@@ -356,8 +388,9 @@ export class BlinkcardInBrowser implements MicroblinkUI {
                         allowHelloMessage={ this.allowHelloMessage }
                         engineLocation={ this.engineLocation }
                         licenseKey={ this.licenseKey }
+                        wasmType={ this.wasmType }
                         recognizers={ this.finalRecognizers }
-                        recognizerOptions={ this.finalRecognizerOptions }
+                        recognizerOptions={ this.recognizerOptions }
                         includeSuccessFrame={ this.includeSuccessFrame }
                         enableDrag={ this.enableDrag }
                         hideLoadingAndErrorUi={ this.hideLoadingAndErrorUi }
@@ -389,7 +422,6 @@ export class BlinkcardInBrowser implements MicroblinkUI {
   private translationService: TranslationService;
 
   private finalRecognizers: Array<string>;
-  private finalRecognizerOptions: Array<string>;
   private finalTranslations: { [key: string]: string };
 
   private feedbackEl!: HTMLMbFeedbackElement;

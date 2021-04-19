@@ -4,7 +4,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0">
     <title>BlinkCard UI: examples</title>
-    <style>
+    <!-- Copyright (c) Microblink Ltd. All rights reserved. -->
+<style>
       * {
         box-sizing: border-box;
       }
@@ -132,18 +133,17 @@
         margin-bottom: 1.5rem;
       }
     </style>
-    <script type="module" src="https://unpkg.com/@microblink/blinkcard-in-browser-sdk@2.0.0/ui/dist/blinkcard-in-browser/blinkcard-in-browser.esm.js"></script>
-    <script nomodule src="https://unpkg.com/@microblink/blinkcard-in-browser-sdk@2.0.0/ui/dist/blinkcard-in-browser.js"></script>
-
+    <script type="module" src="https://unpkg.com/@microblink/blinkcard-in-browser-sdk@2.2.0/ui/dist/blinkcard-in-browser/blinkcard-in-browser.esm.js"></script>
+    <script nomodule src="https://unpkg.com/@microblink/blinkcard-in-browser-sdk@2.2.0/ui/dist/blinkcard-in-browser.js"></script>
     <script type="text/javascript">
       window.getSafePathname = p => p[ p.length - 1 ] === '/' ? p : p.split( '/' ).slice( 0, -1 ).join( '/' ) + '/';
-      window.licenseKey = 'sRwAAAYJbG9jYWxob3N0r/lOPmg/w35CpOHWKCo4YL/KpeOpvHscDeDQC9klS88t+s6XvuLJ1in7UWQPRwJpdtaEuhUOzQ2i/skQVYj8AfzYyHulgyTqCDjPFbhDdYG/TrTkkCxcy3OOpqHJG7PjUZVF0113BftYk/gGpaJSGtK9BmraX9d83L4CkdZwGK9jOHEQ+Skn11cdf3QIyxePnpG/wKNRSKilJXGgFFz1+oDVzjcbLZmDG3/LoPqpfQ==';
+      window.licenseKey = 'sRwAAAYJbG9jYWxob3N0r/lOPmg/w35CpOHWLDI9YLXwiRy2l6Ayy4V1ZcZCsKoaN9wbtrTbapJQTRn/9EaFA40fn9ylJpvRVejCXlO0xXOGLnkGhIoZuuzpKzyGveyAPze5J9Ot+YNQdLLadBjQMwjdMflzz1v94FCLcDZQ55+B23TT/JrZ5jjUVEMwoR+tXh3puQPIEAsVPcE1sa8pSmE8UbaPyXqkQx0vRsljLEcAITPYl/ii7kEd2BKMUA==';
 
       if (window.location.hostname === 'blinkcard.github.io') {
-        window.licenseKey = 'sRwAAAYTYmxpbmtjYXJkLmdpdGh1Yi5pby+N7zvpysD9Mbe+K31x71ZYbnFQar6E8nzwX4o9Gr5AKHPKWQgoth5h+ONtiT8FGw+9h/5L9KW+MSrQc4pwnK9g0CwWF+UklQ0HE6Iz47WciKURxLDe6XyJrtFBYCWvYgxC3dmuW2Km25ELDwvIZMfEWIPbEJULDbpX6pzfh/ANXBNDEPUUsy5jTa569imyu+mgbRubPVsw+SymvIzhVR9Xr6LydUfb/fQ/JFcUTrk=';
+        window.licenseKey = 'sRwAAAYTYmxpbmtjYXJkLmdpdGh1Yi5pby+N7zvpysD9Mbe+K39p7tZKBKUXWwEi3iu2UN6k4HCoWtSyaEySyATn/hJ6gSDNTH+r65mXLUIfUxM0Qn8wUQxQuAzhqBu+qzCDyoIbgkI20m/uBa/7RL3iamlUVZw+lo26RTfhNjfBhEx0B80k7+gaGrbfVU4NcDjyj2iSu9Wvgg1UwgvsSzdJgbWgjuk6pi6+1mOFJVfrV9lN2BVFkY/ar3/XyzKyEGUilGZdZe8=';
       }
 
-      window.engineLocation = "https://unpkg.com/@microblink/blinkcard-in-browser-sdk@2.0.0/resources";
+      window.engineLocation = "https://unpkg.com/@microblink/blinkcard-in-browser-sdk@2.2.0/resources";
     </script>
   </head>
   <body>
@@ -156,7 +156,6 @@
     <section id="example-minimal">
       <h2>Minimal example</h2>
       <p>UI component with default behaviour where it's required to set valid license key, engine location and recognizer.</p>
-
       <p><em>Recognizer: <strong>BlinkCardRecognizer</strong></em></p>
       <p><em><strong>Note:</strong> since this page has multiple components, only this one has enabled drag and drop feature.</em></p>
       <blinkcard-in-browser></blinkcard-in-browser>
@@ -173,11 +172,9 @@
         el.engineLocation = window.engineLocation;
         el.licenseKey = window.licenseKey;
         el.recognizers = ['BlinkCardRecognizer'];
-        el.translations = {
-          'camera-feedback-scan-front': 'Scan the card number',
-          'camera-feedback-scan-back': '',
-          'camera-feedback-flip': 'Flip the card over'
-        };
+
+
+
         el.addEventListener('scanError', ev => {
           console.log('scanError', ev.detail);
 
@@ -186,25 +183,29 @@
 
         el.addEventListener('scanSuccess', ev => {
           console.log('scanSuccess', ev.detail);
-
         });
       })();
     </script>
+
+
+
+
     <section id="example-with-scanning-line">
-      <h2>BlinkCard scan with scanning line</h2>
-      <p>UI component with default behaviour where it's required to set valid license key and recognizer.</p>
-      <p><em>Recognizer: <strong>BlinkCardRecognizer</strong></em></p>
-      <blinkcard-in-browser fullscreen-drop="false"></blinkcard-in-browser>
+    <h2>BlinkCard scan with scanning line</h2>
+    <p>UI component with default behaviour where it's required to set valid license key and recognizer.</p>
+    <p><em>Recognizer: <strong>BlinkCardRecognizer</strong></em></p>
+    <[object Object]-in-browser fullscreen-drop="false"></[object Object]-in-browser>
 <pre>&lt;blinkcard-in-browser
-  engine-location="http://localhost/resources/"
-  license-key="LICENSE-KEY-GOES-HERE"
-  recognizers="BlinkCardRecognizer"
-  show-scanning-line="true"
+engine-location="http://localhost/resources/"
+license-key="LICENSE-KEY-GOES-HERE"
+recognizers="BlinkCardRecognizer"
+show-scanning-line="true"
 &gt;&lt;/blinkcard-in-browser&gt;</pre>
-    </section>
+</section>
+
     <script type="text/javascript">
       (function (){
-        const el = document.querySelector('#example-with-scanning-line blinkcard-in-browser');
+        const el = document.querySelector('#example-with-scanning-line -in-browser');
 
         el.engineLocation = window.engineLocation;
         el.licenseKey = window.licenseKey;
@@ -212,12 +213,6 @@
         el.recognizers = ['BlinkCardRecognizer'];
         el.showScanningLine = true;
 
-        el.translations = {
-          'camera-feedback-scan-front': 'Scan the card number',
-          'camera-feedback-scan-back': '',
-          'camera-feedback-flip': 'Flip the card over'
-        };
-
         el.addEventListener('scanError', ev => {
           console.log('scanError', ev.detail);
 
@@ -229,11 +224,13 @@
         });
       })();
     </script>
+
+
+
     <section id="example-localization">
       <h2>Custom messages</h2>
       <p>It's possible to change default text messages which are displayed to the user.</p>
       <p>Use attribute/property <code>translations</code> to change default messages.</p>
-
       <p><em>Recognizer: <strong>BlinkCardRecognizer</strong></em></p>
       <blinkcard-in-browser fullscreen-drop="false"></blinkcard-in-browser>
 <pre>&lt;blinkcard-in-browser
@@ -258,10 +255,11 @@
         el.licenseKey = window.licenseKey;
         el.recognizers = ['BlinkCardRecognizer'];
         window.setTimeout(() => {
-          el.translations = {
+          el.translations = { 
             'action-message': 'Alternative CTA'
           };
         }, 3000);
+
 
 
         el.addEventListener('scanError', ev => {
@@ -273,7 +271,6 @@
 
         el.addEventListener('scanSuccess', ev => {
           console.log('scanSuccess', ev.detail);
-
         });
       })();
     </script>
@@ -281,7 +278,6 @@
     <section id="example-localization-rtl">
       <h2>RTL support</h2>
       <p>Set HTML attribute <code>dir="rtl"</code>.</p>
-
       <p><em>Recognizer: <strong>BlinkCardRecognizer</strong></em></p>
       <blinkcard-in-browser fullscreen-drop="false" dir="rtl"></blinkcard-in-browser>
 <pre>&lt;blinkcard-in-browser
@@ -308,10 +304,11 @@
         el.recognizers = ['BlinkCardRecognizer'];
 
         window.setTimeout(() => {
-          el.translations = {
+          el.translations = { 
             'action-message': 'Alternative CTA'
           };
         }, 3000);
+
 
 
         el.addEventListener('scanError', ev => {
@@ -322,15 +319,13 @@
 
         el.addEventListener('scanSuccess', ev => {
           console.log('scanSuccess', ev.detail);
-
         });
       })();
     </script>
 
     <section id="example-customization">
       <h2>UI customization</h2>
-      <p>It's possible to customize UI of BlinkCard component by using preset CSS variables.</p>
-
+      <p>It's possible to ize UI of BlinkCardRecognizer component by using preset CSS variables.</p>
       <p><em>Recognizer: <strong>BlinkCardRecognizer</strong></em></p>
       <div class="box">
         <blinkcard-in-browser fullscreen-drop="false"></blinkcard-in-browser>
@@ -404,6 +399,7 @@
         el.recognizers = ['BlinkCardRecognizer'];
 
 
+
         el.addEventListener('scanError', ev => {
           console.log('scanError', ev.detail);
 
@@ -412,7 +408,6 @@
 
         el.addEventListener('scanSuccess', ev => {
           console.log('scanSuccess', ev.detail);
-
         });
       })();
     </script>
@@ -479,7 +474,7 @@
 
         customizatorForm.addEventListener('submit', ev => {
           ev.preventDefault();
-
+          
           document.querySelector(
             '#example-customization .box'
           ).style.background = document.getElementById('customization-background').value;

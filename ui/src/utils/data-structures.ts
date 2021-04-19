@@ -4,17 +4,17 @@
 
 import { EventEmitter } from '@stencil/core';
 
-import * as BlinkCardSDK from "../../../es/blinkcard-sdk";
+import * as BlinkCardSDK from '../../../es/blinkcard-sdk';
 
 export interface MicroblinkUI {
   // SDK settings
   allowHelloMessage:    boolean;
   engineLocation:       string;
   licenseKey:           string;
+  wasmType:             string;
   rawRecognizers:       string;
   recognizers:          Array<string>;
-  rawRecognizerOptions: string;
-  recognizerOptions:    Array<string>;
+  recognizerOptions:    { [key: string]: any };
   includeSuccessFrame?: boolean;
 
   // Functional properties
@@ -53,6 +53,7 @@ export interface MicroblinkUI {
 export interface SdkSettings {
   allowHelloMessage:  boolean;
   engineLocation:     string;
+  wasmType?:          BlinkCardSDK.WasmType;
 }
 
 /**
@@ -142,18 +143,12 @@ export enum Code {
  * Scan structures
  */
 export const AvailableRecognizers: { [key: string]: string } = {
-  BlinkCardRecognizer:                  'createBlinkCardRecognizer'
-}
-
-export const AvailableRecognizerOptions: { [key: string]: Array<string> } = {
-  BlinkCardRecognizer: [
-    'returnFullDocumentImage'
-  ]
+  BlinkCardRecognizer:                  'createBlinkCardRecognizer',
 }
 
 export interface VideoRecognitionConfiguration {
   recognizers: Array<string>,
-  recognizerOptions?: Array<string>,
+  recognizerOptions?: any,
   successFrame: boolean,
   cameraFeed: HTMLVideoElement,
   cameraId: string | null;
@@ -161,7 +156,8 @@ export interface VideoRecognitionConfiguration {
 
 export interface ImageRecognitionConfiguration {
   recognizers: Array<string>,
-  recognizerOptions?: Array<string>,
+  recognizerOptions?: any,
+  thoroughScan?: boolean,
   fileList: FileList
 }
 
@@ -240,7 +236,7 @@ export const CameraExperienceStateDuration = new Map([
   [ CameraExperienceState.Default, 500 ],
   [ CameraExperienceState.Done, 300 ],
   [ CameraExperienceState.DoneAll, 400 ],
-  [ CameraExperienceState.Flip, 3500 ],
+  [ CameraExperienceState.Flip, 4000 ],
   [ CameraExperienceState.MoveCloser, 2500 ],
   [ CameraExperienceState.MoveFarther, 2500 ]
 ]);

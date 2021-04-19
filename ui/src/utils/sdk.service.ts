@@ -6,7 +6,6 @@ import * as BlinkCardSDK from "../../../es/blinkcard-sdk";
 
 import {
   AvailableRecognizers,
-  AvailableRecognizerOptions,
   CameraExperience,
   Code,
   EventFatalError,
@@ -48,6 +47,10 @@ export class SdkService {
     loadSettings.allowHelloMessage = sdkSettings.allowHelloMessage;
     loadSettings.engineLocation = sdkSettings.engineLocation;
 
+    if (sdkSettings.wasmType) {
+      loadSettings.wasmType = sdkSettings.wasmType;
+    }
+
     return new Promise((resolve) => {
       BlinkCardSDK.loadWasmModule(loadSettings)
         .then((sdk: BlinkCardSDK.WasmSDK) => {
@@ -84,42 +87,8 @@ export class SdkService {
     }
   }
 
-  public checkRecognizerOptions(recognizers: Array<string>, recognizerOptions: Array<string>): CheckConclusion {
-    if (!recognizerOptions || !recognizerOptions.length) {
-      return {
-        status: true
-      }
-    }
-
-    for (const recognizerOption of recognizerOptions) {
-      let optionExistInProvidedRecognizers = false;
-
-      for (const recognizer of recognizers) {
-        const availableOptions = AvailableRecognizerOptions[recognizer];
-
-        if (availableOptions.indexOf(recognizerOption) > -1) {
-          optionExistInProvidedRecognizers = true;
-          break;
-        }
-      }
-
-      if (!optionExistInProvidedRecognizers) {
-        return {
-          status: false,
-          message: `Recognizer option "${ recognizerOption }" is not supported by available recognizers!`
-        }
-      }
-    }
-
-    return {
-      status: true
-    }
-  }
-
-  public getDesiredCameraExperience(recognizers: Array<string>, _recognizerOptions: Array<string> = []): CameraExperience {
-    if (recognizers.indexOf('BlinkCardRecognizer') > -1) {
-      return CameraExperience.BlinkCard;
-    }
+  public getDesiredCameraExperience(_recognizers: Array<string> = [], _recognizerOptions: any = {}): CameraExperience {
+    return CameraExperience.BlinkCard;
   }
 
   public async scanFromCamera(
@@ -294,8 +263,8 @@ export class SdkService {
     return this.videoRecognizer.cameraFlipped;
   }
 
-  public isScanFromImageAvailable(recognizers: Array<string>, _recognizerOptions: Array<string> = []): boolean {
-    return recognizers.indexOf('BlinkCardRecognizer') !== -1;
+  public isScanFromImageAvailable(_recognizers: Array<string> = [], _recognizerOptions: any = {}): boolean {
+    return true;
   }
 
   public async scanFromImage(
@@ -331,23 +300,8 @@ export class SdkService {
       return;
     }
 
-    const originalImageElement = document.createElement('img');
-    originalImageElement.src = URL.createObjectURL(file);
-    await originalImageElement.decode();
-
-    const canvas: HTMLCanvasElement = document.createElement('canvas');
-    const padding = Math.round(originalImageElement.naturalWidth * 0.075);
-
-    canvas.width = originalImageElement.naturalWidth + 2 * padding;
-    canvas.height = originalImageElement.naturalHeight + 2 * padding;
-
-    const ctx = canvas.getContext('2d');
-    ctx.fillStyle = 'black';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    ctx.drawImage(originalImageElement, padding, padding, originalImageElement.naturalWidth, originalImageElement.naturalHeight);
-
-    const imageElement = new Image(canvas.width, canvas.height);
-    imageElement.src = canvas.toDataURL();
+    const imageElement = new Image();
+    imageElement.src = URL.createObjectURL(file);
     await imageElement.decode();
 
     const imageFrame = BlinkCardSDK.captureFrame(imageElement);
@@ -374,6 +328,8 @@ export class SdkService {
           await recognizer.recognizer.delete();
         }
       }
+
+      this.eventEmitter$.dispatchEvent(new Event('terminate:done'));
     });
 
     // Get results
@@ -407,6 +363,7 @@ export class SdkService {
         }
       }
     } else {
+
       eventCallback({
         status: RecognitionStatus.EmptyResultState,
         data: {
@@ -437,7 +394,7 @@ export class SdkService {
 
   private async createRecognizers(
     recognizers: Array<string>,
-    recognizerOptions?: Array<string>,
+    recognizerOptions?: any,
     successFrame: boolean = false
   ): Promise<Array<RecognizerInstance>> {
     const pureRecognizers = [];
@@ -447,14 +404,14 @@ export class SdkService {
       pureRecognizers.push(instance);
     }
 
-    if (recognizerOptions && recognizerOptions.length) {
+    if (recognizerOptions && Object.keys(recognizerOptions).length > 0) {
       for (const recognizer of pureRecognizers) {
         let settingsUpdated = false;
         const settings = await recognizer.currentSettings();
 
-        for (const setting of recognizerOptions) {
-          if (setting in settings) {
-            settings[setting] = true;
+        for (const [key, value] of Object.entries(recognizerOptions[recognizer.recognizerName])) {
+          if (key in settings) {
+            settings[key] = value;
             settingsUpdated = true;
           }
         }
@@ -530,11 +487,13 @@ export class SdkService {
         }
       }
     }
+
     for (const el of recognizers) {
       if ( el.recognizer.recognizerName === 'BlinkCardRecognizer' ) {
         metadataCallbacks.onFirstSideResult = () => eventCallback({ status: RecognitionStatus.OnFirstSideResult });
       }
     }
+
     const recognizerRunner = await BlinkCardSDK.createRecognizerRunner(
       this.sdk,
       recognizers.map((el: RecognizerInstance) => el.successFrame || el.recognizer),

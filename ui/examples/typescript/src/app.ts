@@ -22,14 +22,9 @@ function initializeUiComponent()
         throw "Could not find UI component!";
     }
 
-    blinkCard.licenseKey = "sRwAAAYJbG9jYWxob3N0r/lOPmg/w35CpOHWKCo4YL/KpeOpvHscDeDQC9klS88t+s6XvuLJ1in7UWQPRwJpdtaEuhUOzQ2i/skQVYj8AfzYyHulgyTqCDjPFbhDdYG/TrTkkCxcy3OOpqHJG7PjUZVF0113BftYk/gGpaJSGtK9BmraX9d83L4CkdZwGK9jOHEQ+Skn11cdf3QIyxePnpG/wKNRSKilJXGgFFz1+oDVzjcbLZmDG3/LoPqpfQ==";
+    blinkCard.licenseKey = "sRwAAAYJbG9jYWxob3N0r/lOPmg/w35CpOHWLDI9YLXwiRy2l6Ayy4V1ZcZCsKoaN9wbtrTbapJQTRn/9EaFA40fn9ylJpvRVejCXlO0xXOGLnkGhIoZuuzpKzyGveyAPze5J9Ot+YNQdLLadBjQMwjdMflzz1v94FCLcDZQ55+B23TT/JrZ5jjUVEMwoR+tXh3puQPIEAsVPcE1sa8pSmE8UbaPyXqkQx0vRsljLEcAITPYl/ii7kEd2BKMUA==";
     blinkCard.engineLocation = window.location.origin;
     blinkCard.recognizers = [ "BlinkCardRecognizer" ];
-    blinkCard.translations = {
-        'camera-feedback-scan-front': 'Scan the card number',
-        'camera-feedback-scan-back': 'Scan the card number',
-        'camera-feedback-flip': 'Flip the card over'
-    };
 
     blinkCard.addEventListener( "fatalError", ( ev: CustomEventInit< EventFatalError > ) =>
     {
