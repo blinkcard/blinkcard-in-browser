@@ -6,7 +6,7 @@ BlinkCard In-browser SDK enables scanning of various credit or payment cards. Th
 
 For more information on how to integrate BlinkCard SDK into your web app, read the [instructions](#integration) below. Make sure you read the latest [CHANGELOG.md](CHANGELOG.md) file to see the most recent changes and improvements.
 
-Check out the [official demo app](https://demo.microblink.com/in-browser-sdk/blinkcard) or live examples of BlinkCard SDK in action:
+Check out the [official demo app](https://demo.microblink.com/in-browser-sdk/blinkcard) or live examples of BlinkCard SDK in action: 
 
 1. [BlinkCard SDK with built-in UI](https://blinkcard.github.io/blinkcard-in-browser/ui/demo.html)
     * See what the bare UI looks like at [Codepen](https://codepen.io/microblink/pen/LYbZRwE)
@@ -64,6 +64,7 @@ You can add it to your website or web app in two ways:
 2. For an advanced form of integration where UI has to be built from scratch, use a WASM library instead.
     * See the integration instructions [here](#integration).
     * Find the source code of example applications in the [examples](examples) directory.
+
 ## <a name="integration"></a> Integration instructions
 
 This repository contains WebAssembly files and supporting JS files which contain the core implementation of BlinkCard functionalities.
@@ -84,7 +85,7 @@ Make sure you enter a [fully qualified domain name](https://en.wikipedia.org/wik
 
 **Keep in mind:** Versions BlinkCard 2.0.0 and above require an internet connection to work under our new License Management Program.
 
-This means your web app has to be connected to the Internet in order for us to validate your trial license key. Scanning or data extraction of documents still happens offline, in the browser itself. 
+This means your web app has to be connected to the Internet in order for us to validate your trial license key. Scanning or data extraction of documents still happens offline, in the browser itself.
 
 Once the validation is complete, you can continue using the SDK in an offline mode (or over a private network) until the next check.
 
@@ -298,6 +299,12 @@ loadSettings.allowHelloMessage = true;
 loadSettings.engineLocation = "";
 
 /**
+ * Type of the WASM that will be loaded. By default, if not set, the SDK will automatically determine the best WASM
+ * to load.
+ */
+wasmType: WasmType | null = null;
+
+/**
  * Optional callback function that will report the SDK loading progress.
  *
  * This can be useful for displaying progress bar to users with slow connections.
@@ -327,7 +334,23 @@ Otherwise, the browser will block access to a web camera and remote scripts due 
 
 #### Deployment of WASM files
 
-_Files: resources/BlinkCardWasmSDK.{data,js,wasm}_
+WASM wrapper contain three different builds:
+
+* `Basic`
+
+    * The WASM that will be loaded will be most compatible with all browsers that support the WASM, but will lack features that could be used to improve performance.
+    
+* `Advanced`
+
+    * The WASM that will be loaded will be built with advanced WASM features, such as bulk memory, non-trapping floating point and sign extension. Such WASM can only be executed in browsers that support those features. Attempting to run this WASM in a non-compatible browser will crash your app.
+
+* `AdvancedWithThreads`
+
+    * The WASM that will be loaded will be build with advanced WASM features, just like above. Additionally, it will be also built with support for multi-threaded processing. This feature requires a browser with support for both advanced WASM features and `SharedArrayBuffer`.
+
+    * For multi-threaded processing there are some things that needs to be set up additionally, like COOP and COEP headers, more info about web server setup can be found [here](#wasmsetup).
+
+_Files: resources/{basic,advanced,advanced-threads}/BlinkCardWasmSDK.{data,js,wasm}_
 
 ##### Server Configuration
 
@@ -341,7 +364,7 @@ If your server supports serving compressed files, you should utilize that to min
 
 For more information about configuring your web server to compress and optimally deliver BlinkCard SDK in your web app, see the [official Emscripten documentation](https://emscripten.org/docs/compiling/Deploying-Pages.html#optimizing-download-sizes).
 
-##### Location of WASM and related support files
+#####  <a name="wasmsetup"></a> Location of WASM and related support files
 
 You can host WASM and related support files in a location different from the one where your web app is located.
 
@@ -349,13 +372,40 @@ For example, your WASM and related support files can be located in `https://cdn.
 
 In that case it's important to set [CORS headers](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Access-Control-Allow-Origin) in response from `https://cdn.example.com`. i.e. set header `Access-Control-Allow-Origin` with proper value so that the web page knows it’s okay to take on the request.
 
-If WASM engine is not placed in the same folder as web app, don't forget to configure instance of `WasmSDKLoadSettings` with proper location:
+If WASM engine folders are not placed in the same folder as web app, don't forget to configure instance of `WasmSDKLoadSettings` with proper location:
 
 ```typescript
 ...
 const loadSettings = new BlinkCardSDK.WasmSDKLoadSettings( licenseKey );
 
 loadSettings.engineLocation = "https://cdn.example.com/wasm";
+...
+```
+
+The location should point to folder containing folders `basic`, `advanced` and `advanced-threads` that contain the WebAssembly and its support files.
+
+The difference between `basic`, `advanced` and `advanced-threads` folders are in the way the WebAssembly file was built:
+
+* WebAssembly files in `basic` folder were built to be most compatible, but less performant.
+* WebAssembly files in `advanced` folder can yield better scanning performance, but requires more modern browser
+* WebAssembly files in the `advanced-threads` folder uses advanced WASM features as the WASM in the `advanced` folder but will additionally use WebWorkers for multi-threaded processing which will yield best performance.
+
+Depending on what features the browser actually supports, the correct WASM file will be loaded automatically.
+
+Note that in order to be able to use WASM from the `advanced-threads` folder, you need to configure website to be "cross-origin isolated" using COOP and COEP headers, as described [in this article](https://web.dev/coop-coep/). This is required for browser to allow using the `SharedArrayBuffer` feature which is required for multi-threaded processing to work. Without doing so, the browser will load only the single-threaded WASM binary from the `advanced` folder.
+
+```
+# NGINX web server COEP and COOP header example
+
+...
+
+server {
+    location / {
+        add_header Cross-Origin-Embedder-Policy: require-corp;
+        add_header Cross-Origin-Opener-Policy: same-origin;
+    }
+}
+
 ...
 ```
 
@@ -558,6 +608,7 @@ Similarly, if you remove the `onQuadDetection` from `MetadataCallbacks` object a
 ## <a name="recognizerList"></a> List of available recognizers
 
 This section will give a list of all `Recognizer` objects that are available within BlinkCard SDK, their purpose and recommendations on how they should be used to achieve  best performance and user experience.
+
 ### <a name="successFrameGrabber"></a> Success Frame Grabber Recognizer
 
 The [`SuccessFrameGrabberRecognizer`](src/Recognizers/SuccessFrameGrabberRecognizer.ts) is a special `Recognizer` that wraps some other `Recognizer` and impersonates it while processing the image. However, when the `Recognizer` being impersonated changes its `Result` into `Valid` state, the `SuccessFrameGrabberRecognizer` captures the image and saves it into its own `Result` object.
@@ -565,9 +616,11 @@ The [`SuccessFrameGrabberRecognizer`](src/Recognizers/SuccessFrameGrabberRecogni
 Since `SuccessFrameGrabberRecognizer` impersonates its slave `Recognizer` object, it is not possible to have both concrete `Recognizer` object and `SuccessFrameGrabberRecognizer` that wraps it in the same `RecognizerRunner` at the same time. Doing so will have the same effect as having multiple instances of the same `Recognizer` in the same `RecognizerRunner` - it will crash your application. For more information, see [paragraph about `RecognizerRunner`](#recognizerRunner).
 
 This recognizer is best for use cases when you need to capture the exact image that was being processed by some other `Recognizer` object at the time its `Result` became `Valid`. When that happens, `SuccessFrameGrabber's` `Result` will also become `Valid` and will contain described image. That image will be available in its `successFrame` property.
+
 ### <a name="BlinkCardRecognizer"></a> Blink Card recognizer
 
 The [`BlinkCardRecognizer`](src/Recognizers/BlinkCard/BlinkCardRecognizer.ts) is a recognizer specialized for scanning various credit or payment cards.
+
 ## <a name="recognizerSettings"></a> Recognizer settings
 
 It's possible to enable various recognizer settings before recognition process to modify default behaviour of the recognizer.
@@ -591,6 +644,7 @@ await BlinkCardRecognizer.updateSettings( settings );
 
 ...
 ```
+
 <!--
 # TODO
 1. Guidelines regarding webcams
@@ -631,7 +685,7 @@ Internet Explorer is **not supported**.
 
 *Keep in mind that camera device is optional, since BlinkCard can extract data from still images.*
 
-SDK cannot access camera on **iOS** when the end-user is using a web browser **other than Safari**. Apple does not allow access to camera via WebRTC specification for other browsers.
+SDK cannot access camera on **iOS 14.2** and older versions when the end-user is using a web browser **other than Safari**. Apple does not allow access to camera via WebRTC specification for other browsers.
 
 **Notes & Guidelines**
 
@@ -675,6 +729,7 @@ But the major problem still remains, how to get an image from the camera? Curren
 1. Detect via UA string if in-app browser is used and prompt the user to use the native browser.
 2. Detect via UA string if in-app browser is used and enable classic image upload via `<input type="file" accept="image/*" capture="environment" />` element.
     * Based on the operating system and software version, users will be able to select an image from the gallery, or to capture an image from the camera.
+
 ## <a name="troubleshoot"></a> Troubleshooting
 
 ### <a name="integrationProblems"></a> Integration problems
@@ -708,17 +763,12 @@ When you can't determine the license-related problem or you simply do not unders
 #### <a name="otherProblems"></a> Other problems
 
 If you are having problems with scanning certain items, undesired behaviour on specific device(s), crashes inside BlinkCard SDK or anything unmentioned, please contact our support with the same information as listed at the start of this section.
+
 ## <a name="faq"></a> FAQ and known issues
 
 * **After switching from trial to production license I get error `This entity is not allowed by currently active license!` when I create a specific `Recognizer` object.**
 
 Each license key contains information about which features are allowed to use and which are not. This error indicates that your production license does not allow the use of a specific `Recognizer` object. You should contact [support](http://help.microblink.com) to check if the provided license is OK and that it really contains the features you've requested.
-
-* **Document is scanned successfully when using camera feed, but fails when a still image is being recognized with `processImage` method.**
-
-The reason for this is the way the SDK operates. When scanning from an image file, all data must be extracted from a single frame. This  is not always possible due to limited computing power. On the other hand, when an image is scanned with the camera, multiple frames are processed, so the relevant data can be extracted in chunks.
-
-**This problem is going to be fixed in future versions.** Keep an eye on this repository to get notified when new versions are released, and check [CHANGELOG.md](CHANGELOG.md) file to see a list of improvements.
 
 * **Why am I getting No internet connection error if I'm on a private network?**
 
@@ -729,6 +779,7 @@ This means your web app has to be connected to the Internet in order for us to v
 Once the validation is complete, you can continue using the SDK in an offline mode (or over a private network) until the next check.
 
 We've added error callback to Microblink SDK to inform you about the status of your license key.
+
 ## <a name="info"></a> Additional info
 
 Complete source code of the TypeScript wrapper can be found [here](src).

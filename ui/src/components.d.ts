@@ -71,10 +71,6 @@ export namespace Components {
          */
         "licenseKey": string;
         /**
-          * Specify additional recognizer options.  Example: @TODO
-         */
-        "rawRecognizerOptions": string;
-        /**
           * List of recognizers which should be used.  Available recognizers for BlinkID:  - IdBarcodeRecognizer - BlinkIdRecognizer - BlinkIdCombinedRecognizer     - cannot be used in combination with other recognizers     - when defined, scan from image is not available  Recognizers can be defined by setting HTML attribute "recognizers", for example:  `<blinkid-in-browser recognizers="IdBarcodeRecognizer,BlinkIdRecognizer"></blinkid-in-browser>`
          */
         "rawRecognizers": string;
@@ -83,9 +79,9 @@ export namespace Components {
          */
         "rawTranslations": string;
         /**
-          * Specify additional recognizer options.  Example: @TODO
+          * Specify recognizer options. This option can only bet set as a JavaScript property.  Pass an object to `recognizerOptions` property where each key represents a recognizer, while the value represents desired recognizer options.  ``` blinkCard.recognizerOptions = {    'BlinkCardRecognizer': {      'extractCvv': true,       // When setting values for enums, check the source code to see possible values.      // For AnonymizationSettings we can see the list of possible values in      // `src/Recognizers/BlinkCard/BlinkCardRecognizer.ts` file.      anonymizationSettings: {        cardNumberAnonymizationSettings: {          mode: 0,          prefixDigitsVisible: 0,          suffixDigitsVisible: 0        },        cardNumberPrefixAnonymizationMode: 0,        cvvAnonymizationMode: 0,        ibanAnonymizationMode: 0,        ownerAnonymizationMode: 0      }    } } ```  For a full list of available recognizer options see source code of a recognizer. For example, list of available recognizer options for BlinkCardRecognizer can be seen in the `src/Recognizers/BlinkCard/BlinkCardRecognizer.ts` file.
          */
-        "recognizerOptions": Array<string>;
+        "recognizerOptions": { [key: string]: any };
         /**
           * List of recognizers which should be used.  Available recognizers for BlinkID:  - IdBarcodeRecognizer - BlinkIdRecognizer - BlinkIdCombinedRecognizer     - cannot be used in combination with other recognizers     - when defined, scan from image is not available  Recognizers can be defined by setting JS property "recognizers", for example:  ``` const blinkId = document.querySelector('blinkid-in-browser'); blinkId.recognizers = ['IdBarcodeRecognizer', 'BlinkIdRecognizer']; ```
          */
@@ -122,6 +118,10 @@ export namespace Components {
           * Set custom translations for UI component. List of available translation keys can be found in `src/utils/translation.service.ts` file.
          */
         "translations": { [key: string]: string };
+        /**
+          * Defines the type of the WebAssembly build that will be loaded. If omitted, SDK will determine the best possible WebAssembly build which should be loaded based on the browser support.  Available WebAssembly builds:  - 'BASIC' - 'ADVANCED' - 'ADVANCED_WITH_THREADS'  For more information about different WebAssembly builds, check out the `src/MicroblinkSDK/WasmType.ts` file.
+         */
+        "wasmType": string;
     }
     interface MbApiProcessStatus {
         /**
@@ -192,6 +192,10 @@ export namespace Components {
           * Set camera scanning state.
          */
         "setState": (state: CameraExperienceState, isBackSide?: boolean, force?: boolean) => Promise<void>;
+        /**
+          * Show camera feedback message on camera for Barcode scanning
+         */
+        "showCameraFeedbackBarcodeMessage": boolean;
         /**
           * Unless specifically granted by your license key, you are not allowed to modify or remove the Microblink logo displayed on the bottom of the camera overlay.
          */
@@ -269,7 +273,7 @@ export namespace Components {
         /**
           * See description in public component.
          */
-        "recognizerOptions": Array<string>;
+        "recognizerOptions": { [key: string]: any };
         /**
           * See description in public component.
          */
@@ -301,15 +305,27 @@ export namespace Components {
         /**
           * See description in public component.
          */
+        "showCameraFeedbackBarcodeMessage": boolean;
+        /**
+          * See description in public component.
+         */
         "showModalWindows": boolean;
         /**
           * See description in public component.
          */
         "showScanningLine": boolean;
         /**
+          * See description in public component.
+         */
+        "thoroughScanFromImage": boolean;
+        /**
           * Instance of TranslationService passed from root component.
          */
         "translationService": TranslationService;
+        /**
+          * See description in public component.
+         */
+        "wasmType": string | null;
     }
     interface MbContainer {
     }
@@ -540,10 +556,6 @@ declare namespace LocalJSX {
          */
         "onScanSuccess"?: (event: CustomEvent<EventScanSuccess>) => void;
         /**
-          * Specify additional recognizer options.  Example: @TODO
-         */
-        "rawRecognizerOptions"?: string;
-        /**
           * List of recognizers which should be used.  Available recognizers for BlinkID:  - IdBarcodeRecognizer - BlinkIdRecognizer - BlinkIdCombinedRecognizer     - cannot be used in combination with other recognizers     - when defined, scan from image is not available  Recognizers can be defined by setting HTML attribute "recognizers", for example:  `<blinkid-in-browser recognizers="IdBarcodeRecognizer,BlinkIdRecognizer"></blinkid-in-browser>`
          */
         "rawRecognizers"?: string;
@@ -552,9 +564,9 @@ declare namespace LocalJSX {
          */
         "rawTranslations"?: string;
         /**
-          * Specify additional recognizer options.  Example: @TODO
+          * Specify recognizer options. This option can only bet set as a JavaScript property.  Pass an object to `recognizerOptions` property where each key represents a recognizer, while the value represents desired recognizer options.  ``` blinkCard.recognizerOptions = {    'BlinkCardRecognizer': {      'extractCvv': true,       // When setting values for enums, check the source code to see possible values.      // For AnonymizationSettings we can see the list of possible values in      // `src/Recognizers/BlinkCard/BlinkCardRecognizer.ts` file.      anonymizationSettings: {        cardNumberAnonymizationSettings: {          mode: 0,          prefixDigitsVisible: 0,          suffixDigitsVisible: 0        },        cardNumberPrefixAnonymizationMode: 0,        cvvAnonymizationMode: 0,        ibanAnonymizationMode: 0,        ownerAnonymizationMode: 0      }    } } ```  For a full list of available recognizer options see source code of a recognizer. For example, list of available recognizer options for BlinkCardRecognizer can be seen in the `src/Recognizers/BlinkCard/BlinkCardRecognizer.ts` file.
          */
-        "recognizerOptions"?: Array<string>;
+        "recognizerOptions"?: { [key: string]: any };
         /**
           * List of recognizers which should be used.  Available recognizers for BlinkID:  - IdBarcodeRecognizer - BlinkIdRecognizer - BlinkIdCombinedRecognizer     - cannot be used in combination with other recognizers     - when defined, scan from image is not available  Recognizers can be defined by setting JS property "recognizers", for example:  ``` const blinkId = document.querySelector('blinkid-in-browser'); blinkId.recognizers = ['IdBarcodeRecognizer', 'BlinkIdRecognizer']; ```
          */
@@ -583,6 +595,10 @@ declare namespace LocalJSX {
           * Set custom translations for UI component. List of available translation keys can be found in `src/utils/translation.service.ts` file.
          */
         "translations"?: { [key: string]: string };
+        /**
+          * Defines the type of the WebAssembly build that will be loaded. If omitted, SDK will determine the best possible WebAssembly build which should be loaded based on the browser support.  Available WebAssembly builds:  - 'BASIC' - 'ADVANCED' - 'ADVANCED_WITH_THREADS'  For more information about different WebAssembly builds, check out the `src/MicroblinkSDK/WasmType.ts` file.
+         */
+        "wasmType"?: string;
     }
     interface MbApiProcessStatus {
         /**
@@ -665,6 +681,10 @@ declare namespace LocalJSX {
           * Emitted when user clicks on Flip button.
          */
         "onFlipCameraAction"?: (event: CustomEvent<void>) => void;
+        /**
+          * Show camera feedback message on camera for Barcode scanning
+         */
+        "showCameraFeedbackBarcodeMessage"?: boolean;
         /**
           * Unless specifically granted by your license key, you are not allowed to modify or remove the Microblink logo displayed on the bottom of the camera overlay.
          */
@@ -770,7 +790,7 @@ declare namespace LocalJSX {
         /**
           * See description in public component.
          */
-        "recognizerOptions"?: Array<string>;
+        "recognizerOptions"?: { [key: string]: any };
         /**
           * See description in public component.
          */
@@ -798,15 +818,27 @@ declare namespace LocalJSX {
         /**
           * See description in public component.
          */
+        "showCameraFeedbackBarcodeMessage"?: boolean;
+        /**
+          * See description in public component.
+         */
         "showModalWindows"?: boolean;
         /**
           * See description in public component.
          */
         "showScanningLine"?: boolean;
         /**
+          * See description in public component.
+         */
+        "thoroughScanFromImage"?: boolean;
+        /**
           * Instance of TranslationService passed from root component.
          */
         "translationService"?: TranslationService;
+        /**
+          * See description in public component.
+         */
+        "wasmType"?: string | null;
     }
     interface MbContainer {
     }

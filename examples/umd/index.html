@@ -23,7 +23,7 @@
         </div>
     </body>
     
-    <script type="text/javascript" src="https://unpkg.com/@microblink/blinkcard-in-browser-sdk@2.0.0/dist/blinkcard-sdk.js"></script>
+    <script type="text/javascript" src="https://unpkg.com/@microblink/blinkcard-in-browser-sdk@2.2.0/dist/blinkcard-sdk.js"></script>
     <script type="text/javascript">
     /**
      * BlinkCard In-browser SDK demo app which demonstrates how to:
@@ -56,11 +56,11 @@
         }
 
         // 1. It's possible to obtain a free trial license key on microblink.com
-        let licenseKey = "sRwAAAYJbG9jYWxob3N0r/lOPmg/w35CpOHWKCo4YL/KpeOpvHscDeDQC9klS88t+s6XvuLJ1in7UWQPRwJpdtaEuhUOzQ2i/skQVYj8AfzYyHulgyTqCDjPFbhDdYG/TrTkkCxcy3OOpqHJG7PjUZVF0113BftYk/gGpaJSGtK9BmraX9d83L4CkdZwGK9jOHEQ+Skn11cdf3QIyxePnpG/wKNRSKilJXGgFFz1+oDVzjcbLZmDG3/LoPqpfQ==";
+        let licenseKey = "sRwAAAYJbG9jYWxob3N0r/lOPmg/w35CpOHWLDI9YLXwiRy2l6Ayy4V1ZcZCsKoaN9wbtrTbapJQTRn/9EaFA40fn9ylJpvRVejCXlO0xXOGLnkGhIoZuuzpKzyGveyAPze5J9Ot+YNQdLLadBjQMwjdMflzz1v94FCLcDZQ55+B23TT/JrZ5jjUVEMwoR+tXh3puQPIEAsVPcE1sa8pSmE8UbaPyXqkQx0vRsljLEcAITPYl/ii7kEd2BKMUA==";
 
         if ( window.location.hostname === "blinkcard.github.io" )
         {
-            licenseKey = "sRwAAAYTYmxpbmtjYXJkLmdpdGh1Yi5pby+N7zvpysD9Mbe+K31x71ZYbnFQar6E8nzwX4o9Gr5AKHPKWQgoth5h+ONtiT8FGw+9h/5L9KW+MSrQc4pwnK9g0CwWF+UklQ0HE6Iz47WciKURxLDe6XyJrtFBYCWvYgxC3dmuW2Km25ELDwvIZMfEWIPbEJULDbpX6pzfh/ANXBNDEPUUsy5jTa569imyu+mgbRubPVsw+SymvIzhVR9Xr6LydUfb/fQ/JFcUTrk=";
+            licenseKey = "sRwAAAYTYmxpbmtjYXJkLmdpdGh1Yi5pby+N7zvpysD9Mbe+K39p7tZKBKUXWwEi3iu2UN6k4HCoWtSyaEySyATn/hJ6gSDNTH+r65mXLUIfUxM0Qn8wUQxQuAzhqBu+qzCDyoIbgkI20m/uBa/7RL3iamlUVZw+lo26RTfhNjfBhEx0B80k7+gaGrbfVU4NcDjyj2iSu9Wvgg1UwgvsSzdJgbWgjuk6pi6+1mOFJVfrV9lN2BVFkY/ar3/XyzKyEGUilGZdZe8=";
         }
 
         // 2. Create instance of SDK load settings with your license key
@@ -75,7 +75,7 @@
         loadSettings.loadProgressCallback = ( progress ) => ( progressEl.value = progress );
 
         // Set absolute location of the engine, i.e. WASM and support JS files
-        loadSettings.engineLocation = "https://unpkg.com/@microblink/blinkcard-in-browser-sdk@2.0.0/resources/";
+        loadSettings.engineLocation = "https://unpkg.com/@microblink/blinkcard-in-browser-sdk@2.2.0/resources/";
 
         // 3. Load SDK
         BlinkCardSDK.loadWasmModule( loadSettings ).then

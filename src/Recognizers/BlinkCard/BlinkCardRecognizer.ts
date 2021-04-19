@@ -22,6 +22,66 @@ import
 } from "../../MicroblinkSDK/DataStructures";
 
 /**
+ * Determines which data is anonymized in the returned recognizer result
+ */
+export enum AnonymizationMode
+{
+    /** No anonymization is performed in this mode. */
+    None = 0,
+
+    /**
+     * Sensitive data in the document image is anonymized with black boxes covering selected sensitive data. Data
+     * returned in result fields is not changed.
+     */
+    ImageOnly,
+
+    /** Document image is not changed. Data returned in result fields is redacted. */
+    ResultFieldsOnly,
+
+    /**
+     * Sensitive data in the image is anonymized with black boxes covering selected sensitive data. Data returned in
+     * result fields is redacted.
+     */
+    FullResult,
+
+    /** Number of possible anonymization modes. */
+    Count
+}
+
+/**
+ * Holds the settings which control card number anonymization.
+ */
+export class CardNumberAnonymizationSettings
+{
+    /** Defines the mode of card number anonymization. */
+    mode: AnonymizationMode = AnonymizationMode.None;
+
+    /** Defines how many digits at the beginning of the card number remain visible after anonymization. */
+    prefixDigitsVisible = 0;
+
+    /** Defines how many digits at the end of the card number remain visible after anonymization. */
+    suffixDigitsVisible = 0;
+}
+
+export class AnonymizationSettings
+{
+    /** Defines the parameters of card number anonymization. */
+    cardNumberAnonymizationSettings = new CardNumberAnonymizationSettings();
+
+    /** Defines the mode of card number prefix anonymization. */
+    cardNumberPrefixAnonymizationMode = AnonymizationMode.None;
+
+    /** Defines the mode of CVV anonymization. */
+    cvvAnonymizationMode              = AnonymizationMode.None;
+
+    /** Defines the mode of IBAN anonymization. */
+    ibanAnonymizationMode             = AnonymizationMode.None;
+
+    /** Defines the mode of owner anonymization. */
+    ownerAnonymizationMode            = AnonymizationMode.None;
+}
+
+/**
  * A settings object that is used for configuring the BlinkCardRecognizer.
  */
 export class BlinkCardRecognizerSettings implements DigitalSignatureOptions,
@@ -33,8 +93,11 @@ export class BlinkCardRecognizerSettings implements DigitalSignatureOptions,
      */
     allowBlurFilter = true;
 
+    /** Whether sensitive data should be redacted from the result */
+    anonymizationSettings = new AnonymizationSettings();
+
     /**
-     * Pading is a minimum distance from the edge of the frame and is defined
+     * Padding is a minimum distance from the edge of the frame and is defined
      * as a percentage of the frame width. Default value is 0.0f and in that case
      * padding edge and image edge are the same.
      * If padding edge is needed, recommended value is 0.02f.

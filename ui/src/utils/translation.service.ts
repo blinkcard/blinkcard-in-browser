@@ -16,12 +16,12 @@ export const defaultTranslations: { [key: string]: string|Array<string> } = {
   'camera-not-allowed': 'Cannot access camera.',
   'camera-in-use': 'Camera is already used by another application.',
   'camera-generic-error': 'Cannot access camera.',
-  'camera-feedback-scan-front': ['Place the front side', 'of a document'],
-  'camera-feedback-scan-back': ['Place the back side', 'of a document'],
+  'camera-feedback-scan-front': 'Scan the card number',
+  'camera-feedback-scan-back': '',
+  'camera-feedback-flip': 'Flip the card over',
   'camera-feedback-move-farther': 'Move farther',
   'camera-feedback-move-closer': 'Move closer',
   'camera-feedback-adjust-angle': 'Adjust the angle',
-  'camera-feedback-flip': 'Flip the document',
   'drop-info': 'Drop image here',
   'drop-error': 'Whoops, we don\'t support that image format. Please upload a JPEG or PNG file.',
   'initialization-error': 'Failed to load component. Try using another device or update your browser.',
@@ -34,7 +34,7 @@ export const defaultTranslations: { [key: string]: string|Array<string> } = {
   'check-internet-connection': 'Check internet connection.',
   'network-error': 'Network error.',
   'scanning-not-available': 'Scanning not available.',
-  'modal-window-close': 'Close'
+  'modal-window-close': 'Close',
 }
 
 export class TranslationService {
@@ -67,5 +67,5 @@ export class TranslationService {
       return notValidFound.length == 0;
     }
     return typeof value === 'string';
-  } 
+  }
 }

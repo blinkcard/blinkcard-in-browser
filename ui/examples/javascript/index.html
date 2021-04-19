@@ -37,7 +37,7 @@
     <body>
         <!-- It's possible to obtain a free trial license key on microblink.com -->
         <blinkcard-in-browser
-            license-key="sRwAAAYJbG9jYWxob3N0r/lOPmg/w35CpOHWKCo4YL/KpeOpvHscDeDQC9klS88t+s6XvuLJ1in7UWQPRwJpdtaEuhUOzQ2i/skQVYj8AfzYyHulgyTqCDjPFbhDdYG/TrTkkCxcy3OOpqHJG7PjUZVF0113BftYk/gGpaJSGtK9BmraX9d83L4CkdZwGK9jOHEQ+Skn11cdf3QIyxePnpG/wKNRSKilJXGgFFz1+oDVzjcbLZmDG3/LoPqpfQ=="
+            license-key="sRwAAAYJbG9jYWxob3N0r/lOPmg/w35CpOHWLDI9YLXwiRy2l6Ayy4V1ZcZCsKoaN9wbtrTbapJQTRn/9EaFA40fn9ylJpvRVejCXlO0xXOGLnkGhIoZuuzpKzyGveyAPze5J9Ot+YNQdLLadBjQMwjdMflzz1v94FCLcDZQ55+B23TT/JrZ5jjUVEMwoR+tXh3puQPIEAsVPcE1sa8pSmE8UbaPyXqkQx0vRsljLEcAITPYl/ii7kEd2BKMUA=="
             recognizers="BlinkCardRecognizer"
         ></blinkcard-in-browser>
 
@@ -49,16 +49,10 @@
 
                 if ( window.location.hostname === "blinkcard.github.io" )
                 {
-                    blinkCard.licenseKey = "sRwAAAYTYmxpbmtjYXJkLmdpdGh1Yi5pby+N7zvpysD9Mbe+K31x71ZYbnFQar6E8nzwX4o9Gr5AKHPKWQgoth5h+ONtiT8FGw+9h/5L9KW+MSrQc4pwnK9g0CwWF+UklQ0HE6Iz47WciKURxLDe6XyJrtFBYCWvYgxC3dmuW2Km25ELDwvIZMfEWIPbEJULDbpX6pzfh/ANXBNDEPUUsy5jTa569imyu+mgbRubPVsw+SymvIzhVR9Xr6LydUfb/fQ/JFcUTrk=";
+                    blinkCard.licenseKey = "sRwAAAYTYmxpbmtjYXJkLmdpdGh1Yi5pby+N7zvpysD9Mbe+K39p7tZKBKUXWwEi3iu2UN6k4HCoWtSyaEySyATn/hJ6gSDNTH+r65mXLUIfUxM0Qn8wUQxQuAzhqBu+qzCDyoIbgkI20m/uBa/7RL3iamlUVZw+lo26RTfhNjfBhEx0B80k7+gaGrbfVU4NcDjyj2iSu9Wvgg1UwgvsSzdJgbWgjuk6pi6+1mOFJVfrV9lN2BVFkY/ar3/XyzKyEGUilGZdZe8=";
                 }
 
                 blinkCard.engineLocation = window.location.origin + "/resources/";
-
-                blinkCard.translations = {
-                    'camera-feedback-scan-front': 'Scan the card number',
-                    'camera-feedback-scan-back': 'Scan the card number',
-                    'camera-feedback-flip': 'Flip the card over'
-                };
 
                 blinkCard.addEventListener
                 (
