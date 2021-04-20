@@ -169,11 +169,17 @@
       (function (){
         const el = document.querySelector('#example-minimal blinkcard-in-browser');
 
+        /* [TEMPORARY FIX]
+         * Use basic WebAssembly builds since most performant option requires server setup and unpkg.com, which is used
+         * for examples, doesn't support COOP and COEP headers.
+         *
+         * For more information see "Integration" section in the official documentation.
+         */
+        el.wasmType = "BASIC";
+
         el.engineLocation = window.engineLocation;
         el.licenseKey = window.licenseKey;
         el.recognizers = ['BlinkCardRecognizer'];
-
-
 
         el.addEventListener('scanError', ev => {
           console.log('scanError', ev.detail);
@@ -194,7 +200,7 @@
     <h2>BlinkCard scan with scanning line</h2>
     <p>UI component with default behaviour where it's required to set valid license key and recognizer.</p>
     <p><em>Recognizer: <strong>BlinkCardRecognizer</strong></em></p>
-    <[object Object]-in-browser fullscreen-drop="false"></[object Object]-in-browser>
+    <blinkcard-in-browser fullscreen-drop="false"></blinkcard-in-browser>
 <pre>&lt;blinkcard-in-browser
 engine-location="http://localhost/resources/"
 license-key="LICENSE-KEY-GOES-HERE"
@@ -205,7 +211,15 @@ show-scanning-line="true"
 
     <script type="text/javascript">
       (function (){
-        const el = document.querySelector('#example-with-scanning-line -in-browser');
+        const el = document.querySelector('#example-with-scanning-line blinkcard-in-browser');
+
+        /* [TEMPORARY FIX]
+         * Use basic WebAssembly builds since most performant option requires server setup and unpkg.com, which is used
+         * for examples, doesn't support COOP and COEP headers.
+         *
+         * For more information see "Integration" section in the official documentation.
+         */
+        el.wasmType = "BASIC";
 
         el.engineLocation = window.engineLocation;
         el.licenseKey = window.licenseKey;
@@ -251,23 +265,29 @@ show-scanning-line="true"
       (function (){
         const el = document.querySelector('#example-localization blinkcard-in-browser');
 
+        /* [TEMPORARY FIX]
+         * Use basic WebAssembly builds since most performant option requires server setup and unpkg.com, which is used
+         * for examples, doesn't support COOP and COEP headers.
+         *
+         * For more information see "Integration" section in the official documentation.
+         */
+        el.wasmType = "BASIC";
+
         el.engineLocation = window.engineLocation;
         el.licenseKey = window.licenseKey;
         el.recognizers = ['BlinkCardRecognizer'];
+
         window.setTimeout(() => {
-          el.translations = { 
+          el.translations = {
             'action-message': 'Alternative CTA'
           };
         }, 3000);
-
-
 
         el.addEventListener('scanError', ev => {
           console.log('scanError', ev.detail);
 
           el.setUiState('ERROR');
         });
-
 
         el.addEventListener('scanSuccess', ev => {
           console.log('scanSuccess', ev.detail);
@@ -299,17 +319,23 @@ show-scanning-line="true"
       (function (){
         const el = document.querySelector('#example-localization-rtl blinkcard-in-browser');
 
+        /* [TEMPORARY FIX]
+         * Use basic WebAssembly builds since most performant option requires server setup and unpkg.com, which is used
+         * for examples, doesn't support COOP and COEP headers.
+         *
+         * For more information see "Integration" section in the official documentation.
+         */
+        el.wasmType = "BASIC";
+
         el.engineLocation = window.engineLocation;
         el.licenseKey = window.licenseKey;
         el.recognizers = ['BlinkCardRecognizer'];
 
         window.setTimeout(() => {
-          el.translations = { 
+          el.translations = {
             'action-message': 'Alternative CTA'
           };
         }, 3000);
-
-
 
         el.addEventListener('scanError', ev => {
           console.log('scanError', ev.detail);
@@ -394,11 +420,17 @@ show-scanning-line="true"
       (function (){
         const el = document.querySelector('#example-customization blinkcard-in-browser');
 
+        /* [TEMPORARY FIX]
+         * Use basic WebAssembly builds since most performant option requires server setup and unpkg.com, which is used
+         * for examples, doesn't support COOP and COEP headers.
+         *
+         * For more information see "Integration" section in the official documentation.
+         */
+        el.wasmType = "BASIC";
+
         el.engineLocation = window.engineLocation;
         el.licenseKey = window.licenseKey;
         el.recognizers = ['BlinkCardRecognizer'];
-
-
 
         el.addEventListener('scanError', ev => {
           console.log('scanError', ev.detail);
@@ -474,7 +506,7 @@ show-scanning-line="true"
 
         customizatorForm.addEventListener('submit', ev => {
           ev.preventDefault();
-          
+
           document.querySelector(
             '#example-customization .box'
           ).style.background = document.getElementById('customization-background').value;
