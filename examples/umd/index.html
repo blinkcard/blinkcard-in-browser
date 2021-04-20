@@ -23,7 +23,7 @@
         </div>
     </body>
     
-    <script type="text/javascript" src="https://unpkg.com/@microblink/blinkcard-in-browser-sdk@2.2.0/dist/blinkcard-sdk.js"></script>
+    <script type="text/javascript" src="https://unpkg.com/@microblink/blinkcard-in-browser-sdk@2.2.1/dist/blinkcard-sdk.js"></script>
     <script type="text/javascript">
     /**
      * BlinkCard In-browser SDK demo app which demonstrates how to:
@@ -66,6 +66,14 @@
         // 2. Create instance of SDK load settings with your license key
         const loadSettings = new BlinkCardSDK.WasmSDKLoadSettings( licenseKey );
 
+        /* [TEMPORARY FIX]
+         * Use basic WebAssembly builds since most performant option requires server setup and unpkg.com, which is used
+         * for examples, doesn't support COOP and COEP headers.
+         *
+         * For more information see "Integration" section in the official documentation.
+         */
+        loadSettings.wasmType = "BASIC";
+
         // [OPTIONAL] Change default settings
 
         // Show or hide hello message in browser console when WASM is successfully loaded
@@ -75,7 +83,7 @@
         loadSettings.loadProgressCallback = ( progress ) => ( progressEl.value = progress );
 
         // Set absolute location of the engine, i.e. WASM and support JS files
-        loadSettings.engineLocation = "https://unpkg.com/@microblink/blinkcard-in-browser-sdk@2.2.0/resources/";
+        loadSettings.engineLocation = "https://unpkg.com/@microblink/blinkcard-in-browser-sdk@2.2.1/resources/";
 
         // 3. Load SDK
         BlinkCardSDK.loadWasmModule( loadSettings ).then

@@ -1,3 +1,9 @@
+# Release notes
+
+## 2.2.1
+
+* We've fixed a broken `rollup.config.js` which resulted in unusable UMD development bundle
+
 ## 2.2.0
 
 ### Breaking changes

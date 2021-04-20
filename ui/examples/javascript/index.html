@@ -52,6 +52,14 @@
                     blinkCard.licenseKey = "sRwAAAYTYmxpbmtjYXJkLmdpdGh1Yi5pby+N7zvpysD9Mbe+K39p7tZKBKUXWwEi3iu2UN6k4HCoWtSyaEySyATn/hJ6gSDNTH+r65mXLUIfUxM0Qn8wUQxQuAzhqBu+qzCDyoIbgkI20m/uBa/7RL3iamlUVZw+lo26RTfhNjfBhEx0B80k7+gaGrbfVU4NcDjyj2iSu9Wvgg1UwgvsSzdJgbWgjuk6pi6+1mOFJVfrV9lN2BVFkY/ar3/XyzKyEGUilGZdZe8=";
                 }
 
+                /* [TEMPORARY FIX]
+                 * Use basic WebAssembly builds since most performant option requires server setup and unpkg.com, which is used
+                 * for examples, doesn't support COOP and COEP headers.
+                 *
+                 * For more information see "Integration" section in the official documentation.
+                 */
+                blinkCard.wasmType = "BASIC";
+
                 blinkCard.engineLocation = window.location.origin + "/resources/";
 
                 blinkCard.addEventListener
