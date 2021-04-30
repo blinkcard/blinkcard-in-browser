@@ -19,6 +19,7 @@ export const defaultTranslations: { [key: string]: string|Array<string> } = {
   'camera-feedback-scan-front': 'Scan the card number',
   'camera-feedback-scan-back': '',
   'camera-feedback-flip': 'Flip the card over',
+  'camera-feedback-barcode-message': 'Scan the barcode',
   'camera-feedback-move-farther': 'Move farther',
   'camera-feedback-move-closer': 'Move closer',
   'camera-feedback-adjust-angle': 'Adjust the angle',

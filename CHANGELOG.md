@@ -1,5 +1,18 @@
 # Release notes
 
+## 2.2.2
+
+### SDK changes
+
+* We've exposed a couple of functions that are used by the SDK to determine which WebAssembly bundle to load and from which location
+    * Function `detectWasmType()` returns the best possible WebAssembly bundle based on the features a browser supports.
+    * Function `wasmFolder( WasmType )` returns the name of the resources subfolder of the provided WebAssembly bundle type.
+    * For more information on how to implement these functions, see [`WasmLoadUtils.ts`](src/MicroblinkSDK/WasmLoadUtils.ts) file.
+
+### Bugfixes
+
+* Container width size on UI component for action label (`Scan or choose from gallery`) and action buttons (`Device camera` and `From gallery`) are now responsive on Safari.
+
 ## 2.2.1
 
 * We've fixed a broken `rollup.config.js` which resulted in unusable UMD development bundle
