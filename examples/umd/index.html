@@ -23,7 +23,7 @@
         </div>
     </body>
     
-    <script type="text/javascript" src="https://unpkg.com/@microblink/blinkcard-in-browser-sdk@2.2.1/dist/blinkcard-sdk.js"></script>
+    <script type="text/javascript" src="https://unpkg.com/@microblink/blinkcard-in-browser-sdk@2.2.2/dist/blinkcard-sdk.js"></script>
     <script type="text/javascript">
     /**
      * BlinkCard In-browser SDK demo app which demonstrates how to:
@@ -83,7 +83,7 @@
         loadSettings.loadProgressCallback = ( progress ) => ( progressEl.value = progress );
 
         // Set absolute location of the engine, i.e. WASM and support JS files
-        loadSettings.engineLocation = "https://unpkg.com/@microblink/blinkcard-in-browser-sdk@2.2.1/resources/";
+        loadSettings.engineLocation = "https://unpkg.com/@microblink/blinkcard-in-browser-sdk@2.2.2/resources/";
 
         // 3. Load SDK
         BlinkCardSDK.loadWasmModule( loadSettings ).then
