@@ -170,6 +170,14 @@
       (function (){
         const el = document.querySelector('#example-minimal blinkcard-in-browser');
 
+        /* [TEMPORARY FIX]
+        * Use basic WebAssembly builds since most performant option requires server setup and unpkg.com, which is used
+        * for examples, doesn't support COOP and COEP headers.
+        *
+        * For more information see "Integration" section in the official documentation.
+        */
+        el.wasmType = 'BASIC';
+
         el.engineLocation = window.engineLocation;
         el.licenseKey = window.licenseKey;
         el.recognizers = ['BlinkCardRecognizer'];
@@ -259,6 +267,14 @@ show-scanning-line="true"
       (function (){
         const el = document.querySelector('#example-localization blinkcard-in-browser');
 
+        /* [TEMPORARY FIX]
+        * Use basic WebAssembly builds since most performant option requires server setup and unpkg.com, which is used
+        * for examples, doesn't support COOP and COEP headers.
+        *
+        * For more information see "Integration" section in the official documentation.
+        */
+        el.wasmType = 'BASIC';
+
         el.engineLocation = window.engineLocation;
         el.licenseKey = window.licenseKey;
         el.recognizers = ['BlinkCardRecognizer'];
@@ -306,6 +322,14 @@ show-scanning-line="true"
     <script type="text/javascript">
       (function (){
         const el = document.querySelector('#example-localization-rtl blinkcard-in-browser');
+
+        /* [TEMPORARY FIX]
+        * Use basic WebAssembly builds since most performant option requires server setup and unpkg.com, which is used
+        * for examples, doesn't support COOP and COEP headers.
+        *
+        * For more information see "Integration" section in the official documentation.
+        */
+        el.wasmType = 'BASIC';
 
         el.engineLocation = window.engineLocation;
         el.licenseKey = window.licenseKey;
@@ -401,6 +425,14 @@ show-scanning-line="true"
     <script type="text/javascript">
       (function (){
         const el = document.querySelector('#example-customization blinkcard-in-browser');
+
+        /* [TEMPORARY FIX]
+        * Use basic WebAssembly builds since most performant option requires server setup and unpkg.com, which is used
+        * for examples, doesn't support COOP and COEP headers.
+        *
+        * For more information see "Integration" section in the official documentation.
+        */
+        el.wasmType = 'BASIC';
 
         el.engineLocation = window.engineLocation;
         el.licenseKey = window.licenseKey;
