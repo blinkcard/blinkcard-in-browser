@@ -185,7 +185,7 @@ For example, in `package.json` you should have something like `"@microblink/blin
 
 4. Create recognizer objects that will perform image recognition, configure them to your needs (to scan specific types of documents, for example) and use them to create a `RecognizerRunner` object:
 
-    - _BlinkCardRecognizer_ requires both sides of a card to be scanned. There is a `onFirstSideResult` callback that fires when the first side is scanned. Please see [metadata callbacks](#metadataCallbacks).
+    - _BlinkCardRecognizer_ requires both sides of a card to be scanned. There is a `onFirstSideResult` callback that fires when the first side is scanned. Please see [metadata callbacks](#metadataCallbacks) for more callback options.
 
     ```typescript
     import * as BlinkCardSDK from "@microblink/blinkcard-in-browser-sdk";
