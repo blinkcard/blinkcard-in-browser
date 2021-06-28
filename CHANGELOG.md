@@ -1,5 +1,20 @@
 # Release notes
 
+## 2.3.0
+
+### New features
+
+* We've added support for vertical payment cards.
+* As of this release, BlinkCard supports the Visa Quick Read format (the one where the card number spans through four lines).
+* We've changed the threshold for "Camera too far" and "Camera too near" callbacks. From now on, the card needs to be closer to the camera.
+
+### SDK changes
+
+* We've added a mechanism to automatically delete an instance of worker script in case of unsuccessful SDK initialization.
+    * New method `WasmSDK.delete()` was added for this purpose and is available on every instance of the SDK.
+* We've changed improper error handling in the `VideoRecognizer` class.
+    * From now on, it's possible to catch all errors that happen during the video recognition.
+
 ## 2.2.2
 
 ### SDK changes

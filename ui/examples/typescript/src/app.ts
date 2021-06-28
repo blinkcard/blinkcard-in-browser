@@ -22,15 +22,7 @@ function initializeUiComponent()
         throw "Could not find UI component!";
     }
 
-    /* [TEMPORARY FIX]
-     * Use basic WebAssembly builds since most performant option requires server setup and unpkg.com, which is used
-     * for examples, doesn't support COOP and COEP headers.
-     *
-     * For more information see "Integration" section in the official documentation.
-     */
-    blinkCard.wasmType = "BASIC";
-
-    blinkCard.licenseKey = "sRwAAAYJbG9jYWxob3N0r/lOPmg/w35CpOHWLDI9YLXwiRy2l6Ayy4V1ZcZCsKoaN9wbtrTbapJQTRn/9EaFA40fn9ylJpvRVejCXlO0xXOGLnkGhIoZuuzpKzyGveyAPze5J9Ot+YNQdLLadBjQMwjdMflzz1v94FCLcDZQ55+B23TT/JrZ5jjUVEMwoR+tXh3puQPIEAsVPcE1sa8pSmE8UbaPyXqkQx0vRsljLEcAITPYl/ii7kEd2BKMUA==";
+    blinkCard.licenseKey = "sRwAAAYJbG9jYWxob3N0r/lOPmg/w35CpOFWK6UdzXulq6YisydKaKVq0SyX+QmUrMt5U0ioHlFOctsTlLUs59rsm1j4M3XFuTLZk8lpEFbSVjYNjj+nCYO5mUkXc3BfIUfMXsxSwFTQIvDyWWW/L2OZBNjkXF1YEw2ru2XmhP8WIU23T2x3CnES0jJGXV5AV1sB7ttGCshTqCLONcYotsCe8heZtArivnKoQQ91WO+NC1njpGJCTyT9ASR3CA==";
     blinkCard.engineLocation = window.location.origin;
     blinkCard.recognizers = [ "BlinkCardRecognizer" ];
 

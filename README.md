@@ -114,10 +114,15 @@ to use the SDK in both JavaScript and TypeScript projects.
 
 ---
 
-Alternatively, it's possible to use UMD builds, which can be loaded from [the `dist` folder on unpkg](https://unpkg.com/@microblink/blinkcard-in-browser-sdk/dist/). The UMD builds make `BlinkCardSDK` available as a `window.BlinkCardSDK` global variable:
+Alternatively, it's possible to use UMD builds which can be loaded from public CDN services.
+
+However, **we strongly advise** that you host the JavaScript bundles on your infrastructure since there is no guarantee that the public CDN service has satisfactory uptime and availability throughout the world.
+
+For example, it's possible to use UMD builds from [the `dist` folder on Unpkg CDN](https://unpkg.com/@microblink/blinkcard-in-browser-sdk/dist/). The UMD builds make `BlinkCardSDK` available as a `window.BlinkCardSDK` global variable:
 
 ```html
-<script src="https://unpkg.com/@microblink/blinkcard-in-browser-sdk/dist/blinkcard-sdk.min.js"></script>
+<!-- IMPORTANT: change "X.Y.Z" to the version number you wish to use! -->
+<script src="https://unpkg.com/@microblink/blinkcard-in-browser-sdk@X.Y.Z/dist/blinkcard-sdk.min.js"></script>
 ```
 
 Finally, it's possible to use ES builds, which can be downloaded from [the `es` folder on unpkg](https://unpkg.com/@microblink/blinkcard-in-browser-sdk/es/). ES modules are used in a similar manner as NPM package:
@@ -186,26 +191,19 @@ For example, in `package.json` you should have something like `"@microblink/blin
 4. Create recognizer objects that will perform image recognition, configure them to your needs (to scan specific types of documents, for example) and use them to create a `RecognizerRunner` object:
 
     - _BlinkCardRecognizer_ requires both sides of a card to be scanned. There is a `onFirstSideResult` callback that fires when the first side is scanned. Please see [metadata callbacks](#metadataCallbacks) for more callback options.
-
     ```typescript
     import * as BlinkCardSDK from "@microblink/blinkcard-in-browser-sdk";
 
-    const recognizer = await BlinkCardSDK.createBlinkCardRecognizer(wasmSDK);
-    const recognizerRunner = await BlinkCardSDK.createRecognizerRunner(
-        wasmSDK,
-        [recognizer],
-        true
-    );
-
     const callbacks = {
-        onFirstSideResult: () => alert("Flip the card"),
+        onFirstSideResult: () => alert( "Flip the card" ),
     };
 
+    const recognizer = await BlinkCardSDK.createBlinkCardRecognizer( wasmSDK );
     const recognizerRunner = await BlinkCardSDK.createRecognizerRunner(
         wasmSDK,
-        [recognizer],
+        [ recognizer ],
         true,
-        callbacks // Optional callbacks object
+        callbacks
     );
     ```
 
@@ -297,7 +295,7 @@ const loadSettings = new BlinkCardSDK.WasmSDKLoadSettings( "your-base64-license-
  * Hello message will contain the name and version of the SDK, which are required information for all support
  * tickets.
  *
- * Default value is true.
+ * The default value is true.
  */
 loadSettings.allowHelloMessage = true;
 
@@ -305,8 +303,8 @@ loadSettings.allowHelloMessage = true;
  * Absolute location of WASM and related JS/data files. Useful when resource files should be loaded over CDN, or
  * when web frameworks/libraries are used which store resources in specific locations, e.g. inside "assets" folder.
  *
- * Important: if the engine is hosted on another origin, CORS must be enabled between two hosts. That is, server where
- * engine is hosted must have 'Access-Control-Allow-Origin' header for the location of the web app.
+ * Important: if the engine is hosted on another origin, CORS must be enabled between two hosts. That is, server
+ * where engine is hosted must have 'Access-Control-Allow-Origin' header for the location of the web app.
  *
  * Important: SDK and WASM resources must be from the same version of a package.
  *
@@ -326,7 +324,7 @@ wasmType: WasmType | null = null;
  *
  * This can be useful for displaying progress bar to users with slow connections.
  *
- * Default value is "null".
+ * The default value is "null".
  *
  * @example
  * loadSettings.loadProgressCallback = (percentage: number) => console.log(`${ percentage }% loaded!`);
@@ -366,6 +364,8 @@ WASM wrapper contain three different builds:
     * The WASM that will be loaded will be build with advanced WASM features, just like above. Additionally, it will be also built with support for multi-threaded processing. This feature requires a browser with support for both advanced WASM features and `SharedArrayBuffer`.
 
     * For multi-threaded processing there are some things that needs to be set up additionally, like COOP and COEP headers, more info about web server setup can be found [here](#wasmsetup).
+
+    * Keep in mind that this WASM bundle requires that all resources are on the same origin. So, for example, it's not possible to load WASM files from some CDN. This limitation exists due to browser security rules.
 
 _Files: resources/{basic,advanced,advanced-threads}/BlinkCardWasmSDK.{data,js,wasm}_
 
