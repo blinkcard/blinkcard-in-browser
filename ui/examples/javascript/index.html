@@ -6,7 +6,8 @@
         <title>Example: BlinkCard UI</title>
 
         <!-- Import UI component which includes WASM library -->
-        <script type="module" src="/ui/dist/blinkcard-in-browser/blinkcard-in-browser.esm.js"></script>
+        <!-- Keep in mind that Unpkg CDN is used for demonstration, it's not intended to be used in production! -->
+        <script type="module" src="https://unpkg.com/@microblink/blinkcard-in-browser-sdk@2.3.0/ui/dist/blinkcard-in-browser/blinkcard-in-browser.esm.js"></script>
 
         <style type="text/css">
             html,
@@ -37,7 +38,7 @@
     <body>
         <!-- It's possible to obtain a free trial license key on microblink.com -->
         <blinkcard-in-browser
-            license-key="sRwAAAYJbG9jYWxob3N0r/lOPmg/w35CpOHWLDI9YLXwiRy2l6Ayy4V1ZcZCsKoaN9wbtrTbapJQTRn/9EaFA40fn9ylJpvRVejCXlO0xXOGLnkGhIoZuuzpKzyGveyAPze5J9Ot+YNQdLLadBjQMwjdMflzz1v94FCLcDZQ55+B23TT/JrZ5jjUVEMwoR+tXh3puQPIEAsVPcE1sa8pSmE8UbaPyXqkQx0vRsljLEcAITPYl/ii7kEd2BKMUA=="
+            license-key="sRwAAAYJbG9jYWxob3N0r/lOPmg/w35CpOFWK6UdzXulq6YisydKaKVq0SyX+QmUrMt5U0ioHlFOctsTlLUs59rsm1j4M3XFuTLZk8lpEFbSVjYNjj+nCYO5mUkXc3BfIUfMXsxSwFTQIvDyWWW/L2OZBNjkXF1YEw2ru2XmhP8WIU23T2x3CnES0jJGXV5AV1sB7ttGCshTqCLONcYotsCe8heZtArivnKoQQ91WO+NC1njpGJCTyT9ASR3CA=="
             recognizers="BlinkCardRecognizer"
         ></blinkcard-in-browser>
 
@@ -49,18 +50,10 @@
 
                 if ( window.location.hostname === "blinkcard.github.io" )
                 {
-                    blinkCard.licenseKey = "sRwAAAYTYmxpbmtjYXJkLmdpdGh1Yi5pby+N7zvpysD9Mbe+K39p7tZKBKUXWwEi3iu2UN6k4HCoWtSyaEySyATn/hJ6gSDNTH+r65mXLUIfUxM0Qn8wUQxQuAzhqBu+qzCDyoIbgkI20m/uBa/7RL3iamlUVZw+lo26RTfhNjfBhEx0B80k7+gaGrbfVU4NcDjyj2iSu9Wvgg1UwgvsSzdJgbWgjuk6pi6+1mOFJVfrV9lN2BVFkY/ar3/XyzKyEGUilGZdZe8=";
+                    blinkCard.licenseKey = "sRwAAAYTYmxpbmtjYXJkLmdpdGh1Yi5pby+N7zvpysD9Mbe+q3j+znt9WOJpJ2E/6JyIZ1/yczcs+Qa5nBT75IHnf/zf0AFHdchWww5v/hFudQgJL1UZNC+269xIAU0NkRM1VHuqdz5d3lhfvjttfBE1iUMdWTifDv0B/Qba1uiFU/93RmdJeBMET6OhAhb0Wc2Uz7a3sQ1n6le/E4vjSzf/QWb+62XUkh7vwzzmRthfPCTLtBmEgvNzrRsHXOdDRPbdV54GSbg=";
                 }
 
-                /* [TEMPORARY FIX]
-                 * Use basic WebAssembly builds since most performant option requires server setup and unpkg.com, which is used
-                 * for examples, doesn't support COOP and COEP headers.
-                 *
-                 * For more information see "Integration" section in the official documentation.
-                 */
-                blinkCard.wasmType = "BASIC";
-
-                blinkCard.engineLocation = window.location.origin + "/resources/";
+                blinkCard.engineLocation = "https://blinkcard.github.io/blinkcard-in-browser/resources";
 
                 blinkCard.addEventListener
                 (

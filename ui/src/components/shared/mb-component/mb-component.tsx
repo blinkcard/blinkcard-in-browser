@@ -883,7 +883,7 @@ export class MbComponent {
       fileList: files ? files : this.scanFromImageInput.files
     };
 
-    if (this.recognizerOptions && this.recognizerOptions.length) {
+    if (this.recognizerOptions && Object.keys(this.recognizerOptions).length > 0) {
       configuration.recognizerOptions = this.recognizerOptions;
     }
 
