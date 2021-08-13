@@ -190,7 +190,7 @@ For example, in `package.json` you should have something like `"@microblink/blin
 
 4. Create recognizer objects that will perform image recognition, configure them to your needs (to scan specific types of documents, for example) and use them to create a `RecognizerRunner` object:
 
-    - _BlinkCardRecognizer_ requires both sides of a card to be scanned. There is a `onFirstSideResult` callback that fires when the first side is scanned. Please see [metadata callbacks](#metadataCallbacks) for more callback options.
+    Keep in mind that _BlinkCardRecognizer_ requires both sides of a card to be scanned. There is a `onFirstSideResult` callback that fires when the first side is scanned. Please see [metadata callbacks](#metadataCallbacks) for more callback options.
     ```typescript
     import * as BlinkCardSDK from "@microblink/blinkcard-in-browser-sdk";
 
@@ -354,10 +354,10 @@ WASM wrapper contain three different builds:
 * `Basic`
 
     * The WASM that will be loaded will be most compatible with all browsers that support the WASM, but will lack features that could be used to improve performance.
-    
+
 * `Advanced`
 
-    * The WASM that will be loaded will be built with advanced WASM features, such as bulk memory, non-trapping floating point and sign extension. Such WASM can only be executed in browsers that support those features. Attempting to run this WASM in a non-compatible browser will crash your app.
+    * The WASM that will be loaded will be built with advanced WASM features, such as bulk memory, SIMD, non-trapping floating point and sign extension. Such WASM can only be executed in browsers that support those features. Attempting to run this WASM in a non-compatible browser will crash your app.
 
 * `AdvancedWithThreads`
 

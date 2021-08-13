@@ -1,5 +1,18 @@
 # Release notes
 
+## 2.4.0
+
+### New features
+
+* From now on, BlinkCard reads and extracts the expiry date in MM/YYYY format.
+
+### Platform-related SDK changes
+
+* We've improved the performance of the SDK by adding support for WebAssembly SIMD.
+    * This increases the scanning performance on compatible browsers up to 77% and up to 94% in cases when WebAssembly threads are also supported.
+    * Keep in mind that this feature requires a compatible browser. Only `advanced` and `advanced-threads` binaries are using SIMD. In case that the browser doesn't support this feature, `basic` binary will be used.
+* We've reduced the memory fragmentation during video processing, resulting in a smaller memory footprint.
+
 ## 2.3.0
 
 ### New features
