@@ -81,36 +81,28 @@ export class BlinkcardInBrowser implements MicroblinkUI {
   /**
    * List of recognizers which should be used.
    *
-   * Available recognizers for BlinkID:
+   * Available recognizers for BlinkCard:
    *
-   * - IdBarcodeRecognizer
-   * - BlinkIdRecognizer
-   * - BlinkIdCombinedRecognizer
-   *    - cannot be used in combination with other recognizers
-   *    - when defined, scan from image is not available
+   * - BlinkCardRecognizer
    *
    * Recognizers can be defined by setting HTML attribute "recognizers", for example:
    *
-   * `<blinkid-in-browser recognizers="IdBarcodeRecognizer,BlinkIdRecognizer"></blinkid-in-browser>`
+   * `<blinkcard-in-browser recognizers="BlinkCardRecognizer"></blinkcard-in-browser>`
    */
   @Prop({ attribute: 'recognizers' }) rawRecognizers: string;
 
   /**
    * List of recognizers which should be used.
    *
-   * Available recognizers for BlinkID:
+   * Available recognizers for BlinkCard:
    *
-   * - IdBarcodeRecognizer
-   * - BlinkIdRecognizer
-   * - BlinkIdCombinedRecognizer
-   *    - cannot be used in combination with other recognizers
-   *    - when defined, scan from image is not available
+   * - BlinkCardRecognizer
    *
-   * Recognizers can be defined by setting JS property "recognizers", for example:
+   * Recognizers can be defined by setting HTML attribute "recognizers", for example:
    *
    * ```
-   * const blinkId = document.querySelector('blinkid-in-browser');
-   * blinkId.recognizers = ['IdBarcodeRecognizer', 'BlinkIdRecognizer'];
+   * const blinkCard = document.querySelector('blinkcard-in-browser');
+   * blinkCard.recognizers = ['BlinkCardRecognizer'];
    * ```
    */
   @Prop() recognizers: Array<string>;
@@ -149,6 +141,18 @@ export class BlinkcardInBrowser implements MicroblinkUI {
    * `src/Recognizers/BlinkCard/BlinkCardRecognizer.ts` file.
    */
   @Prop() recognizerOptions: { [key: string]: any };
+
+  /**
+   * Amount of time in milliseconds before the recognition process is cancelled regardless of
+   * whether recognition was successful or not.
+   *
+   * This setting applies only to video recognition.
+   *
+   * Keep in mind that the timer starts after the first non-empty result. This behaviour ensures
+   * that the user has enough time to take out the document and place it in front of the camera
+   * device.
+   */
+  @Prop() recognitionTimeout: number;
 
   /**
    * Set to 'true' if success frame should be included in final scanning results.
@@ -195,9 +199,35 @@ export class BlinkcardInBrowser implements MicroblinkUI {
   /**
    * Set to 'true' if scan from image should be enabled.
    *
-   * Default value is 'true'.
+   * Default value is 'false'.
    */
-  @Prop() scanFromImage: boolean = true;
+  @Prop() scanFromImage: boolean = false;
+
+  /**
+   * Define whether to use 'FULLSCREEN' or 'INLINE' gallery overlay type.
+   *
+   * If 'FULLSCREEN' is used, when a user selects an image from which data should be extracted, an overlay will pop up
+   * and cover the whole screen.
+   *
+   * On the other hand, if 'INLINE' is used, there is no overlay but rather a 'Processing' message inside the UI
+   * component.
+   *
+   * Default value is 'INLINE'.
+   */
+  @Prop() galleryOverlayType: 'FULLSCREEN' | 'INLINE' = 'INLINE';
+
+  /**
+   * Define whether to use 'FULLSCREEN' or 'INLINE' gallery dropdown type.
+   *
+   * If 'FULLSCREEN' is used, when a user drags an image over the UI component, an overlay will pop up and cover the
+   * whole screen.
+   *
+   * If 'INLINE' is used, there is no fullscreen overlay, but rather the overlay is restricted to the size of the UI
+   * component.
+   *
+   * Default value is 'INLINE'.
+   */
+  @Prop() galleryDropType: 'FULLSCREEN' | 'INLINE' = 'INLINE';
 
   /**
    * Set to 'true' if text labels should be displayed below action buttons.
@@ -259,7 +289,7 @@ export class BlinkcardInBrowser implements MicroblinkUI {
    * Provide alternative invalid format icon which is used during drag and drop action.
    *
    * Every value that is placed here is passed as a value of `src` attribute to <img> element. This attribute can be
-   * used to provide location, base64 or any URL of alternative gallery icon.
+   * used to provide location, base64 or any URL of alternative icon.
    *
    * Image is scaled to 24x24 pixels.
    */
@@ -269,7 +299,7 @@ export class BlinkcardInBrowser implements MicroblinkUI {
    * Provide alternative loading icon. CSS rotation is applied to this icon.
    *
    * Every value that is placed here is passed as a value of `src` attribute to <img> element. This attribute can be
-   * used to provide location, base64 or any URL of alternative gallery icon.
+   * used to provide location, base64 or any URL of alternative icon.
    *
    * Image is scaled to 24x24 pixels.
    */
@@ -279,11 +309,22 @@ export class BlinkcardInBrowser implements MicroblinkUI {
    * Provide alternative loading icon. CSS rotation is applied to this icon.
    *
    * Every value that is placed here is passed as a value of `src` attribute to <img> element. This attribute can be
-   * used to provide location, base64 or any URL of alternative gallery icon.
+   * used to provide location, base64 or any URL of alternative icon.
    *
    * Image is scaled to 24x24 pixels.
    */
   @Prop() iconSpinnerFromGalleryExperience: string;
+
+  /**
+   * Provide alternative completed icon. This icon is used when gallery scanning process is done, in case that
+   * `galleryOverlayType` property is set to `INLINE`.
+   *
+   * Every value that is placed here is passed as a value of `src` attribute to <img> element. This attribute can be
+   * used to provide location, base64 or any URL of alternative icon.
+   *
+   * Image is scaled to 24x24 pixels.
+   */
+  @Prop() iconGalleryScanningCompleted: string;
 
   /**
    * Camera device ID passed from root component.
@@ -376,6 +417,7 @@ export class BlinkcardInBrowser implements MicroblinkUI {
     this.finalTranslations = this.translations ? this.translations : rawTranslations;
     this.translationService = new TranslationService(this.finalTranslations || {});
 
+    this.sdkService?.delete();
     this.sdkService = new SdkService();
   }
 
@@ -391,11 +433,14 @@ export class BlinkcardInBrowser implements MicroblinkUI {
                         wasmType={ this.wasmType }
                         recognizers={ this.finalRecognizers }
                         recognizerOptions={ this.recognizerOptions }
+                        recognitionTimeout={ this.recognitionTimeout }
                         includeSuccessFrame={ this.includeSuccessFrame }
                         enableDrag={ this.enableDrag }
                         hideLoadingAndErrorUi={ this.hideLoadingAndErrorUi }
                         scanFromCamera={ this.scanFromCamera }
                         scanFromImage={ this.scanFromImage }
+                        galleryOverlayType={ this.galleryOverlayType }
+                        galleryDropType={ this.galleryDropType }
                         showActionLabels={ this.showActionLabels }
                         showScanningLine={this.showScanningLine}
                         showModalWindows={ this.showModalWindows }
@@ -406,6 +451,7 @@ export class BlinkcardInBrowser implements MicroblinkUI {
                         iconInvalidFormat={ this.iconInvalidFormat }
                         iconSpinnerScreenLoading={ this.iconSpinnerScreenLoading }
                         iconSpinnerFromGalleryExperience={ this.iconSpinnerFromGalleryExperience }
+                        iconGalleryScanningCompleted={ this.iconGalleryScanningCompleted }
                         sdkService={ this.sdkService }
                         translationService={ this.translationService }
                         cameraId={ this.cameraId }

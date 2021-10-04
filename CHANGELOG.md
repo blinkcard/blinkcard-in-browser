@@ -1,5 +1,17 @@
 # Release notes
 
+## 2.4.1
+
+### Platform-related SDK changes
+
+* We've added a camera management UI module for the selection of connected cameras
+    * We've added `VideoRecognizer.changeCameraDevice` method that can be used to change the active camera device during the scanning session
+* We've improved accessibility of the UI component by changing background contrasts and increasing default font sizes
+
+### Bug fixes
+
+* We've optimised memory usage of the SDK by fixing a problem where every refresh of the UI component would result in a new instance of web worker
+
 ## 2.4.0
 
 ### New features

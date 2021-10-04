@@ -5,7 +5,7 @@
  * It contains typing information for all components that exist in this project.
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
-import { CameraExperience, CameraExperienceState, EventFatalError, EventReady, EventScanError, EventScanSuccess, FeedbackMessage } from "./utils/data-structures";
+import { CameraEntry, CameraExperience, CameraExperienceState, EventFatalError, EventReady, EventScanError, EventScanSuccess, FeedbackMessage } from "./utils/data-structures";
 import { TranslationService } from "./utils/translation.service";
 import { SdkService } from "./utils/sdk.service";
 export namespace Components {
@@ -26,6 +26,14 @@ export namespace Components {
           * Absolute location of WASM and related JS/data files. Useful when resource files should be loaded over CDN, or when web frameworks/libraries are used which store resources in specific locations, e.g. inside "assets" folder.  Important: if engine is hosted on another origin, CORS must be enabled between two hosts. That is, server where engine is hosted must have 'Access-Control-Allow-Origin' header for the location of the web app.  Important: SDK and WASM resources must be from the same version of package.  Default value is empty string, i.e. "". In case of empty string, value of "window.location.origin" property is going to be used.
          */
         "engineLocation": string;
+        /**
+          * Define whether to use 'FULLSCREEN' or 'INLINE' gallery dropdown type.  If 'FULLSCREEN' is used, when a user drags an image over the UI component, an overlay will pop up and cover the whole screen.  If 'INLINE' is used, there is no fullscreen overlay, but rather the overlay is restricted to the size of the UI component.  Default value is 'INLINE'.
+         */
+        "galleryDropType": 'FULLSCREEN' | 'INLINE';
+        /**
+          * Define whether to use 'FULLSCREEN' or 'INLINE' gallery overlay type.  If 'FULLSCREEN' is used, when a user selects an image from which data should be extracted, an overlay will pop up and cover the whole screen.  On the other hand, if 'INLINE' is used, there is no overlay but rather a 'Processing' message inside the UI component.  Default value is 'INLINE'.
+         */
+        "galleryOverlayType": 'FULLSCREEN' | 'INLINE';
         /**
           * If set to 'true', UI component will not display feedback, i.e. information and error messages.  Setting this attribute to 'false' won't disable 'scanError' and 'scanInfo' events.  Default value is 'false'.
          */
@@ -51,15 +59,19 @@ export namespace Components {
          */
         "iconGalleryDefault": string;
         /**
-          * Provide alternative invalid format icon which is used during drag and drop action.  Every value that is placed here is passed as a value of `src` attribute to <img> element. This attribute can be used to provide location, base64 or any URL of alternative gallery icon.  Image is scaled to 24x24 pixels.
+          * Provide alternative completed icon. This icon is used when gallery scanning process is done, in case that `galleryOverlayType` property is set to `INLINE`.  Every value that is placed here is passed as a value of `src` attribute to <img> element. This attribute can be used to provide location, base64 or any URL of alternative icon.  Image is scaled to 24x24 pixels.
+         */
+        "iconGalleryScanningCompleted": string;
+        /**
+          * Provide alternative invalid format icon which is used during drag and drop action.  Every value that is placed here is passed as a value of `src` attribute to <img> element. This attribute can be used to provide location, base64 or any URL of alternative icon.  Image is scaled to 24x24 pixels.
          */
         "iconInvalidFormat": string;
         /**
-          * Provide alternative loading icon. CSS rotation is applied to this icon.  Every value that is placed here is passed as a value of `src` attribute to <img> element. This attribute can be used to provide location, base64 or any URL of alternative gallery icon.  Image is scaled to 24x24 pixels.
+          * Provide alternative loading icon. CSS rotation is applied to this icon.  Every value that is placed here is passed as a value of `src` attribute to <img> element. This attribute can be used to provide location, base64 or any URL of alternative icon.  Image is scaled to 24x24 pixels.
          */
         "iconSpinnerFromGalleryExperience": string;
         /**
-          * Provide alternative loading icon. CSS rotation is applied to this icon.  Every value that is placed here is passed as a value of `src` attribute to <img> element. This attribute can be used to provide location, base64 or any URL of alternative gallery icon.  Image is scaled to 24x24 pixels.
+          * Provide alternative loading icon. CSS rotation is applied to this icon.  Every value that is placed here is passed as a value of `src` attribute to <img> element. This attribute can be used to provide location, base64 or any URL of alternative icon.  Image is scaled to 24x24 pixels.
          */
         "iconSpinnerScreenLoading": string;
         /**
@@ -71,7 +83,7 @@ export namespace Components {
          */
         "licenseKey": string;
         /**
-          * List of recognizers which should be used.  Available recognizers for BlinkID:  - IdBarcodeRecognizer - BlinkIdRecognizer - BlinkIdCombinedRecognizer     - cannot be used in combination with other recognizers     - when defined, scan from image is not available  Recognizers can be defined by setting HTML attribute "recognizers", for example:  `<blinkid-in-browser recognizers="IdBarcodeRecognizer,BlinkIdRecognizer"></blinkid-in-browser>`
+          * List of recognizers which should be used.  Available recognizers for BlinkCard:  - BlinkCardRecognizer  Recognizers can be defined by setting HTML attribute "recognizers", for example:  `<blinkcard-in-browser recognizers="BlinkCardRecognizer"></blinkcard-in-browser>`
          */
         "rawRecognizers": string;
         /**
@@ -79,11 +91,15 @@ export namespace Components {
          */
         "rawTranslations": string;
         /**
+          * Amount of time in milliseconds before the recognition process is cancelled regardless of whether recognition was successful or not.  This setting applies only to video recognition.  Keep in mind that the timer starts after the first non-empty result. This behaviour ensures that the user has enough time to take out the document and place it in front of the camera device.
+         */
+        "recognitionTimeout": number;
+        /**
           * Specify recognizer options. This option can only bet set as a JavaScript property.  Pass an object to `recognizerOptions` property where each key represents a recognizer, while the value represents desired recognizer options.  ``` blinkCard.recognizerOptions = {    'BlinkCardRecognizer': {      'extractCvv': true,       // When setting values for enums, check the source code to see possible values.      // For AnonymizationSettings we can see the list of possible values in      // `src/Recognizers/BlinkCard/BlinkCardRecognizer.ts` file.      anonymizationSettings: {        cardNumberAnonymizationSettings: {          mode: 0,          prefixDigitsVisible: 0,          suffixDigitsVisible: 0        },        cardNumberPrefixAnonymizationMode: 0,        cvvAnonymizationMode: 0,        ibanAnonymizationMode: 0,        ownerAnonymizationMode: 0      }    } } ```  For a full list of available recognizer options see source code of a recognizer. For example, list of available recognizer options for BlinkCardRecognizer can be seen in the `src/Recognizers/BlinkCard/BlinkCardRecognizer.ts` file.
          */
         "recognizerOptions": { [key: string]: any };
         /**
-          * List of recognizers which should be used.  Available recognizers for BlinkID:  - IdBarcodeRecognizer - BlinkIdRecognizer - BlinkIdCombinedRecognizer     - cannot be used in combination with other recognizers     - when defined, scan from image is not available  Recognizers can be defined by setting JS property "recognizers", for example:  ``` const blinkId = document.querySelector('blinkid-in-browser'); blinkId.recognizers = ['IdBarcodeRecognizer', 'BlinkIdRecognizer']; ```
+          * List of recognizers which should be used.  Available recognizers for BlinkCard:  - BlinkCardRecognizer  Recognizers can be defined by setting HTML attribute "recognizers", for example:  ``` const blinkCard = document.querySelector('blinkcard-in-browser'); blinkCard.recognizers = ['BlinkCardRecognizer']; ```
          */
         "recognizers": Array<string>;
         /**
@@ -91,7 +107,7 @@ export namespace Components {
          */
         "scanFromCamera": boolean;
         /**
-          * Set to 'true' if scan from image should be enabled.  Default value is 'true'.
+          * Set to 'true' if scan from image should be enabled.  Default value is 'false'.
          */
         "scanFromImage": boolean;
         /**
@@ -167,6 +183,10 @@ export namespace Components {
          */
         "preventDefault": boolean;
         /**
+          * Set to 'true' if button should enter 'selected' state.
+         */
+        "selected": boolean;
+        /**
           * Instance of TranslationService passed from root component.
          */
         "translationService": TranslationService;
@@ -174,6 +194,16 @@ export namespace Components {
           * Set to 'true' if button should be visible.
          */
         "visible": boolean;
+    }
+    interface MbButtonClassic {
+        /**
+          * Set to 'true' if button should be disabled, and if click events should not be triggered.
+         */
+        "disabled": boolean;
+        /**
+          * Set to 'true' if default event should be prevented.
+         */
+        "preventDefault": boolean;
     }
     interface MbCameraExperience {
         /**
@@ -185,12 +215,18 @@ export namespace Components {
          */
         "cameraFlipped": boolean;
         /**
+          * Populate list of camera devices.
+         */
+        "populateCameraDevices": () => Promise<void>;
+        "resetState": () => Promise<void>;
+        /**
+          * Change active camera.
+         */
+        "setActiveCamera": (cameraId: string) => Promise<void>;
+        /**
           * Method is exposed outside which allow us to control Camera Flip state from parent component.
          */
         "setCameraFlipState": (isFlipped: boolean) => Promise<void>;
-        /**
-          * Set camera scanning state.
-         */
         "setState": (state: CameraExperienceState, isBackSide?: boolean, force?: boolean) => Promise<void>;
         /**
           * Show camera feedback message on camera for Barcode scanning
@@ -213,6 +249,44 @@ export namespace Components {
          */
         "type": CameraExperience;
     }
+    interface MbCameraSelection {
+        /**
+          * Populate list of camera devices.
+         */
+        "populateCameraDevices": () => Promise<void>;
+        /**
+          * Change active camera.
+         */
+        "setActiveCamera": (cameraId: string) => Promise<void>;
+    }
+    interface MbCameraToolbar {
+        /**
+          * Whether the camera is flipped, this property will be flip the relevant icon.
+         */
+        "cameraFlipped": boolean;
+        /**
+          * Whether to show 'Camera flip' button.
+         */
+        "enableCameraFlip": boolean;
+        /**
+          * Populate list of camera devices.
+         */
+        "populateCameraDevices": () => Promise<void>;
+        /**
+          * Change active camera.
+         */
+        "setActiveCamera": (cameraId: string) => Promise<void>;
+        /**
+          * Set to `true` if close button should be displayed.
+         */
+        "showClose": boolean;
+    }
+    interface MbCompleted {
+        /**
+          * Value of `src` attribute for <img> element.
+         */
+        "icon": string;
+    }
     interface MbComponent {
         /**
           * See description in public component.
@@ -230,6 +304,14 @@ export namespace Components {
           * See description in public component.
          */
         "engineLocation": string;
+        /**
+          * See description in public component.
+         */
+        "galleryDropType": 'FULLSCREEN' | 'INLINE';
+        /**
+          * See description in public component.
+         */
+        "galleryOverlayType": 'FULLSCREEN' | 'INLINE';
         /**
           * See description in public component.
          */
@@ -253,6 +335,10 @@ export namespace Components {
         /**
           * See description in public component.
          */
+        "iconGalleryScanningCompleted": string;
+        /**
+          * See description in public component.
+         */
         "iconInvalidFormat": string;
         /**
           * See description in public component.
@@ -270,6 +356,10 @@ export namespace Components {
           * See description in public component.
          */
         "licenseKey": string;
+        /**
+          * See description in public component.
+         */
+        "recognitionTimeout": number;
         /**
           * See description in public component.
          */
@@ -315,10 +405,6 @@ export namespace Components {
          */
         "showScanningLine": boolean;
         /**
-          * See description in public component.
-         */
-        "thoroughScanFromImage": boolean;
-        /**
           * Instance of TranslationService passed from root component.
          */
         "translationService": TranslationService;
@@ -338,6 +424,20 @@ export namespace Components {
           * Set to 'true' if component should be visible.
          */
         "visible": boolean;
+    }
+    interface MbImageBox {
+        /**
+          * Text which should be displayed inside 'Add image' anchor element when file is not selected.
+         */
+        "anchorText": string;
+        /**
+          * Text which represents name of the image.
+         */
+        "boxTitle": string;
+        /**
+          * Clear input image.
+         */
+        "clear": () => Promise<void>;
     }
     interface MbModal {
         /**
@@ -403,11 +503,35 @@ declare global {
         prototype: HTMLMbButtonElement;
         new (): HTMLMbButtonElement;
     };
+    interface HTMLMbButtonClassicElement extends Components.MbButtonClassic, HTMLStencilElement {
+    }
+    var HTMLMbButtonClassicElement: {
+        prototype: HTMLMbButtonClassicElement;
+        new (): HTMLMbButtonClassicElement;
+    };
     interface HTMLMbCameraExperienceElement extends Components.MbCameraExperience, HTMLStencilElement {
     }
     var HTMLMbCameraExperienceElement: {
         prototype: HTMLMbCameraExperienceElement;
         new (): HTMLMbCameraExperienceElement;
+    };
+    interface HTMLMbCameraSelectionElement extends Components.MbCameraSelection, HTMLStencilElement {
+    }
+    var HTMLMbCameraSelectionElement: {
+        prototype: HTMLMbCameraSelectionElement;
+        new (): HTMLMbCameraSelectionElement;
+    };
+    interface HTMLMbCameraToolbarElement extends Components.MbCameraToolbar, HTMLStencilElement {
+    }
+    var HTMLMbCameraToolbarElement: {
+        prototype: HTMLMbCameraToolbarElement;
+        new (): HTMLMbCameraToolbarElement;
+    };
+    interface HTMLMbCompletedElement extends Components.MbCompleted, HTMLStencilElement {
+    }
+    var HTMLMbCompletedElement: {
+        prototype: HTMLMbCompletedElement;
+        new (): HTMLMbCompletedElement;
     };
     interface HTMLMbComponentElement extends Components.MbComponent, HTMLStencilElement {
     }
@@ -426,6 +550,12 @@ declare global {
     var HTMLMbFeedbackElement: {
         prototype: HTMLMbFeedbackElement;
         new (): HTMLMbFeedbackElement;
+    };
+    interface HTMLMbImageBoxElement extends Components.MbImageBox, HTMLStencilElement {
+    }
+    var HTMLMbImageBoxElement: {
+        prototype: HTMLMbImageBoxElement;
+        new (): HTMLMbImageBoxElement;
     };
     interface HTMLMbModalElement extends Components.MbModal, HTMLStencilElement {
     }
@@ -455,10 +585,15 @@ declare global {
         "blinkcard-in-browser": HTMLBlinkcardInBrowserElement;
         "mb-api-process-status": HTMLMbApiProcessStatusElement;
         "mb-button": HTMLMbButtonElement;
+        "mb-button-classic": HTMLMbButtonClassicElement;
         "mb-camera-experience": HTMLMbCameraExperienceElement;
+        "mb-camera-selection": HTMLMbCameraSelectionElement;
+        "mb-camera-toolbar": HTMLMbCameraToolbarElement;
+        "mb-completed": HTMLMbCompletedElement;
         "mb-component": HTMLMbComponentElement;
         "mb-container": HTMLMbContainerElement;
         "mb-feedback": HTMLMbFeedbackElement;
+        "mb-image-box": HTMLMbImageBoxElement;
         "mb-modal": HTMLMbModalElement;
         "mb-overlay": HTMLMbOverlayElement;
         "mb-screen": HTMLMbScreenElement;
@@ -484,6 +619,14 @@ declare namespace LocalJSX {
          */
         "engineLocation"?: string;
         /**
+          * Define whether to use 'FULLSCREEN' or 'INLINE' gallery dropdown type.  If 'FULLSCREEN' is used, when a user drags an image over the UI component, an overlay will pop up and cover the whole screen.  If 'INLINE' is used, there is no fullscreen overlay, but rather the overlay is restricted to the size of the UI component.  Default value is 'INLINE'.
+         */
+        "galleryDropType"?: 'FULLSCREEN' | 'INLINE';
+        /**
+          * Define whether to use 'FULLSCREEN' or 'INLINE' gallery overlay type.  If 'FULLSCREEN' is used, when a user selects an image from which data should be extracted, an overlay will pop up and cover the whole screen.  On the other hand, if 'INLINE' is used, there is no overlay but rather a 'Processing' message inside the UI component.  Default value is 'INLINE'.
+         */
+        "galleryOverlayType"?: 'FULLSCREEN' | 'INLINE';
+        /**
           * If set to 'true', UI component will not display feedback, i.e. information and error messages.  Setting this attribute to 'false' won't disable 'scanError' and 'scanInfo' events.  Default value is 'false'.
          */
         "hideFeedback"?: boolean;
@@ -508,15 +651,19 @@ declare namespace LocalJSX {
          */
         "iconGalleryDefault"?: string;
         /**
-          * Provide alternative invalid format icon which is used during drag and drop action.  Every value that is placed here is passed as a value of `src` attribute to <img> element. This attribute can be used to provide location, base64 or any URL of alternative gallery icon.  Image is scaled to 24x24 pixels.
+          * Provide alternative completed icon. This icon is used when gallery scanning process is done, in case that `galleryOverlayType` property is set to `INLINE`.  Every value that is placed here is passed as a value of `src` attribute to <img> element. This attribute can be used to provide location, base64 or any URL of alternative icon.  Image is scaled to 24x24 pixels.
+         */
+        "iconGalleryScanningCompleted"?: string;
+        /**
+          * Provide alternative invalid format icon which is used during drag and drop action.  Every value that is placed here is passed as a value of `src` attribute to <img> element. This attribute can be used to provide location, base64 or any URL of alternative icon.  Image is scaled to 24x24 pixels.
          */
         "iconInvalidFormat"?: string;
         /**
-          * Provide alternative loading icon. CSS rotation is applied to this icon.  Every value that is placed here is passed as a value of `src` attribute to <img> element. This attribute can be used to provide location, base64 or any URL of alternative gallery icon.  Image is scaled to 24x24 pixels.
+          * Provide alternative loading icon. CSS rotation is applied to this icon.  Every value that is placed here is passed as a value of `src` attribute to <img> element. This attribute can be used to provide location, base64 or any URL of alternative icon.  Image is scaled to 24x24 pixels.
          */
         "iconSpinnerFromGalleryExperience"?: string;
         /**
-          * Provide alternative loading icon. CSS rotation is applied to this icon.  Every value that is placed here is passed as a value of `src` attribute to <img> element. This attribute can be used to provide location, base64 or any URL of alternative gallery icon.  Image is scaled to 24x24 pixels.
+          * Provide alternative loading icon. CSS rotation is applied to this icon.  Every value that is placed here is passed as a value of `src` attribute to <img> element. This attribute can be used to provide location, base64 or any URL of alternative icon.  Image is scaled to 24x24 pixels.
          */
         "iconSpinnerScreenLoading"?: string;
         /**
@@ -556,7 +703,7 @@ declare namespace LocalJSX {
          */
         "onScanSuccess"?: (event: CustomEvent<EventScanSuccess>) => void;
         /**
-          * List of recognizers which should be used.  Available recognizers for BlinkID:  - IdBarcodeRecognizer - BlinkIdRecognizer - BlinkIdCombinedRecognizer     - cannot be used in combination with other recognizers     - when defined, scan from image is not available  Recognizers can be defined by setting HTML attribute "recognizers", for example:  `<blinkid-in-browser recognizers="IdBarcodeRecognizer,BlinkIdRecognizer"></blinkid-in-browser>`
+          * List of recognizers which should be used.  Available recognizers for BlinkCard:  - BlinkCardRecognizer  Recognizers can be defined by setting HTML attribute "recognizers", for example:  `<blinkcard-in-browser recognizers="BlinkCardRecognizer"></blinkcard-in-browser>`
          */
         "rawRecognizers"?: string;
         /**
@@ -564,11 +711,15 @@ declare namespace LocalJSX {
          */
         "rawTranslations"?: string;
         /**
+          * Amount of time in milliseconds before the recognition process is cancelled regardless of whether recognition was successful or not.  This setting applies only to video recognition.  Keep in mind that the timer starts after the first non-empty result. This behaviour ensures that the user has enough time to take out the document and place it in front of the camera device.
+         */
+        "recognitionTimeout"?: number;
+        /**
           * Specify recognizer options. This option can only bet set as a JavaScript property.  Pass an object to `recognizerOptions` property where each key represents a recognizer, while the value represents desired recognizer options.  ``` blinkCard.recognizerOptions = {    'BlinkCardRecognizer': {      'extractCvv': true,       // When setting values for enums, check the source code to see possible values.      // For AnonymizationSettings we can see the list of possible values in      // `src/Recognizers/BlinkCard/BlinkCardRecognizer.ts` file.      anonymizationSettings: {        cardNumberAnonymizationSettings: {          mode: 0,          prefixDigitsVisible: 0,          suffixDigitsVisible: 0        },        cardNumberPrefixAnonymizationMode: 0,        cvvAnonymizationMode: 0,        ibanAnonymizationMode: 0,        ownerAnonymizationMode: 0      }    } } ```  For a full list of available recognizer options see source code of a recognizer. For example, list of available recognizer options for BlinkCardRecognizer can be seen in the `src/Recognizers/BlinkCard/BlinkCardRecognizer.ts` file.
          */
         "recognizerOptions"?: { [key: string]: any };
         /**
-          * List of recognizers which should be used.  Available recognizers for BlinkID:  - IdBarcodeRecognizer - BlinkIdRecognizer - BlinkIdCombinedRecognizer     - cannot be used in combination with other recognizers     - when defined, scan from image is not available  Recognizers can be defined by setting JS property "recognizers", for example:  ``` const blinkId = document.querySelector('blinkid-in-browser'); blinkId.recognizers = ['IdBarcodeRecognizer', 'BlinkIdRecognizer']; ```
+          * List of recognizers which should be used.  Available recognizers for BlinkCard:  - BlinkCardRecognizer  Recognizers can be defined by setting HTML attribute "recognizers", for example:  ``` const blinkCard = document.querySelector('blinkcard-in-browser'); blinkCard.recognizers = ['BlinkCardRecognizer']; ```
          */
         "recognizers"?: Array<string>;
         /**
@@ -576,7 +727,7 @@ declare namespace LocalJSX {
          */
         "scanFromCamera"?: boolean;
         /**
-          * Set to 'true' if scan from image should be enabled.  Default value is 'true'.
+          * Set to 'true' if scan from image should be enabled.  Default value is 'false'.
          */
         "scanFromImage"?: boolean;
         /**
@@ -656,6 +807,10 @@ declare namespace LocalJSX {
          */
         "preventDefault"?: boolean;
         /**
+          * Set to 'true' if button should enter 'selected' state.
+         */
+        "selected"?: boolean;
+        /**
           * Instance of TranslationService passed from root component.
          */
         "translationService"?: TranslationService;
@@ -663,6 +818,20 @@ declare namespace LocalJSX {
           * Set to 'true' if button should be visible.
          */
         "visible"?: boolean;
+    }
+    interface MbButtonClassic {
+        /**
+          * Set to 'true' if button should be disabled, and if click events should not be triggered.
+         */
+        "disabled"?: boolean;
+        /**
+          * Event which is triggered when user clicks on button element. This event is not triggered when the button is disabled.
+         */
+        "onButtonClick"?: (event: CustomEvent<UIEvent>) => void;
+        /**
+          * Set to 'true' if default event should be prevented.
+         */
+        "preventDefault"?: boolean;
     }
     interface MbCameraExperience {
         /**
@@ -673,6 +842,10 @@ declare namespace LocalJSX {
           * Camera horizontal state passed from root component.  Horizontal camera image can be mirrored
          */
         "cameraFlipped"?: boolean;
+        /**
+          * Emitted when user selects a different camera device.
+         */
+        "onChangeCameraDevice"?: (event: CustomEvent<CameraEntry>) => void;
         /**
           * Emitted when user clicks on 'X' button.
          */
@@ -702,6 +875,44 @@ declare namespace LocalJSX {
          */
         "type"?: CameraExperience;
     }
+    interface MbCameraSelection {
+        /**
+          * Emitted when user selects a different camera device.
+         */
+        "onChangeCameraDevice"?: (event: CustomEvent<CameraEntry>) => void;
+    }
+    interface MbCameraToolbar {
+        /**
+          * Whether the camera is flipped, this property will be flip the relevant icon.
+         */
+        "cameraFlipped"?: boolean;
+        /**
+          * Whether to show 'Camera flip' button.
+         */
+        "enableCameraFlip"?: boolean;
+        /**
+          * Emitted when user selects a different camera device.
+         */
+        "onChangeCameraDevice"?: (event: CustomEvent<CameraEntry>) => void;
+        /**
+          * Event which is triggered when close button is clicked.
+         */
+        "onCloseEvent"?: (event: CustomEvent<void>) => void;
+        /**
+          * Event which is triggered when flip camera button is clicked.
+         */
+        "onFlipEvent"?: (event: CustomEvent<void>) => void;
+        /**
+          * Set to `true` if close button should be displayed.
+         */
+        "showClose"?: boolean;
+    }
+    interface MbCompleted {
+        /**
+          * Value of `src` attribute for <img> element.
+         */
+        "icon"?: string;
+    }
     interface MbComponent {
         /**
           * See description in public component.
@@ -722,6 +933,14 @@ declare namespace LocalJSX {
         /**
           * See description in public component.
          */
+        "galleryDropType"?: 'FULLSCREEN' | 'INLINE';
+        /**
+          * See description in public component.
+         */
+        "galleryOverlayType"?: 'FULLSCREEN' | 'INLINE';
+        /**
+          * See description in public component.
+         */
         "hideLoadingAndErrorUi"?: boolean;
         /**
           * See description in public component.
@@ -739,6 +958,10 @@ declare namespace LocalJSX {
           * See description in public component.
          */
         "iconGalleryDefault"?: string;
+        /**
+          * See description in public component.
+         */
+        "iconGalleryScanningCompleted"?: string;
         /**
           * See description in public component.
          */
@@ -790,6 +1013,10 @@ declare namespace LocalJSX {
         /**
           * See description in public component.
          */
+        "recognitionTimeout"?: number;
+        /**
+          * See description in public component.
+         */
         "recognizerOptions"?: { [key: string]: any };
         /**
           * See description in public component.
@@ -828,10 +1055,6 @@ declare namespace LocalJSX {
          */
         "showScanningLine"?: boolean;
         /**
-          * See description in public component.
-         */
-        "thoroughScanFromImage"?: boolean;
-        /**
           * Instance of TranslationService passed from root component.
          */
         "translationService"?: TranslationService;
@@ -847,6 +1070,20 @@ declare namespace LocalJSX {
           * Set to 'true' if component should be visible.
          */
         "visible"?: boolean;
+    }
+    interface MbImageBox {
+        /**
+          * Text which should be displayed inside 'Add image' anchor element when file is not selected.
+         */
+        "anchorText"?: string;
+        /**
+          * Text which represents name of the image.
+         */
+        "boxTitle"?: string;
+        /**
+          * Event which is triggered when selected image file is changed.
+         */
+        "onImageChange"?: (event: CustomEvent<FileList>) => void;
     }
     interface MbModal {
         /**
@@ -900,10 +1137,15 @@ declare namespace LocalJSX {
         "blinkcard-in-browser": BlinkcardInBrowser;
         "mb-api-process-status": MbApiProcessStatus;
         "mb-button": MbButton;
+        "mb-button-classic": MbButtonClassic;
         "mb-camera-experience": MbCameraExperience;
+        "mb-camera-selection": MbCameraSelection;
+        "mb-camera-toolbar": MbCameraToolbar;
+        "mb-completed": MbCompleted;
         "mb-component": MbComponent;
         "mb-container": MbContainer;
         "mb-feedback": MbFeedback;
+        "mb-image-box": MbImageBox;
         "mb-modal": MbModal;
         "mb-overlay": MbOverlay;
         "mb-screen": MbScreen;
@@ -917,10 +1159,15 @@ declare module "@stencil/core" {
             "blinkcard-in-browser": LocalJSX.BlinkcardInBrowser & JSXBase.HTMLAttributes<HTMLBlinkcardInBrowserElement>;
             "mb-api-process-status": LocalJSX.MbApiProcessStatus & JSXBase.HTMLAttributes<HTMLMbApiProcessStatusElement>;
             "mb-button": LocalJSX.MbButton & JSXBase.HTMLAttributes<HTMLMbButtonElement>;
+            "mb-button-classic": LocalJSX.MbButtonClassic & JSXBase.HTMLAttributes<HTMLMbButtonClassicElement>;
             "mb-camera-experience": LocalJSX.MbCameraExperience & JSXBase.HTMLAttributes<HTMLMbCameraExperienceElement>;
+            "mb-camera-selection": LocalJSX.MbCameraSelection & JSXBase.HTMLAttributes<HTMLMbCameraSelectionElement>;
+            "mb-camera-toolbar": LocalJSX.MbCameraToolbar & JSXBase.HTMLAttributes<HTMLMbCameraToolbarElement>;
+            "mb-completed": LocalJSX.MbCompleted & JSXBase.HTMLAttributes<HTMLMbCompletedElement>;
             "mb-component": LocalJSX.MbComponent & JSXBase.HTMLAttributes<HTMLMbComponentElement>;
             "mb-container": LocalJSX.MbContainer & JSXBase.HTMLAttributes<HTMLMbContainerElement>;
             "mb-feedback": LocalJSX.MbFeedback & JSXBase.HTMLAttributes<HTMLMbFeedbackElement>;
+            "mb-image-box": LocalJSX.MbImageBox & JSXBase.HTMLAttributes<HTMLMbImageBoxElement>;
             "mb-modal": LocalJSX.MbModal & JSXBase.HTMLAttributes<HTMLMbModalElement>;
             "mb-overlay": LocalJSX.MbOverlay & JSXBase.HTMLAttributes<HTMLMbOverlayElement>;
             "mb-screen": LocalJSX.MbScreen & JSXBase.HTMLAttributes<HTMLMbScreenElement>;

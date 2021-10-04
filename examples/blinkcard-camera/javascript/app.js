@@ -1,15 +1,12 @@
 /**
  * Copyright (c) Microblink Ltd. All rights reserved.
- */
-
-/**
+ *
  * BlinkCard In-browser SDK demo app which demonstrates how to:
  *
  * - Change default SDK settings
- * - Scan Payment cards
+ * - Scan payment cards
  * - Provide visual feedback to the end-user during the scan
  */
-import * as BlinkCardSDK from "./../../es/blinkcard-sdk.js";
 
 // General UI helpers
 const initialMessageEl = document.getElementById( "msg" );
@@ -34,7 +31,12 @@ function main()
     }
 
     // 1. It's possible to obtain a free trial license key on microblink.com
-    const licenseKey = "sRwAAAYJbG9jYWxob3N0r/lOPmg/w35CpOHWKwIXzajXdIY8LZ3Xy3hpLADHpkhWoRQfYyVnGMcsmLJnWHQElSsn+Gu7LKMfxAir0jKn9o0iOqm5V5GeWzaUpo01ebA8gEcsxAV93tUmMUQo8jJc3NVdcrvJCSeMV6Ucqp8UqJus8sXr6hkj0hrp7PYFQjspwV3RVIePsOw0ms14Q+E8J+VSqnETgtJ9kNnT8F0cLnwV27AAYJAkbfDkMPtJEw==";
+    let licenseKey = "sRwAAAYJbG9jYWxob3N0r/lOPmg/w35CpOHWK8ITzSJode107sU8QzfehfgDxrn8zaRzWBsRj6rk/uRBZlJy3EWcmCBsGLG64S1Kc+LRculU66EKw3yOnUSBamM0ebmdDbvG/oiMduFmGVOXrIZxmRX81GWCCyvMhWDBEcHC7HnSegivjcP3KqGn3KBPwx6HJZ45yi52NSoTPk390ooyJ44wlSvMejujmyseaXXvIV4NavKo7TIg+nclTEhspQ==";
+
+    if ( window.location.hostname === "blinkcard.github.io" )
+    {
+        licenseKey = "sRwAAAYTYmxpbmtjYXJkLmdpdGh1Yi5pby+N7zvpysD9Mbe+K3iZwHtU+adDvfFBgVVIYdUVG97qqgcBp2aMc0qv4zqPb8oXGVVwh0z8GM4wbP6AC9LTm/vGNmmXxKP2W2lvcKGgaiinWHSwW5BLIbX0wvJ8ySKlXjpfMWm9XHNeprLzZKh3E+/Gq5sfEXAnOAhQ8pBPWcwcVJF9zU21QCVaXCn/cPE0qlbpZqTrxYeFQMTqY4OM5nU3nzS1UYMmW5lordD73vI=";
+    }
 
     // 2. Create instance of SDK load settings with your license key
     const loadSettings = new BlinkCardSDK.WasmSDKLoadSettings( licenseKey );
@@ -48,6 +50,7 @@ function main()
     loadSettings.loadProgressCallback = ( progress ) => ( progressEl.value = progress );
 
     // Set absolute location of the engine, i.e. WASM and support JS files
+    // IMPORTANT: wasm.microblink.com is available for local development, it is not intended for usage in production!
     loadSettings.engineLocation = window.location.origin + "/resources/";
 
     // 3. Load SDK

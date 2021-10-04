@@ -1,12 +1,10 @@
 /**
  * Copyright (c) Microblink Ltd. All rights reserved.
- */
-
-/**
+ *
  * BlinkCard In-browser SDK demo app which demonstrates how to:
  *
  * - Change default SDK settings
- * - Scan Payment cards
+ * - Scan payment cards
  * - Provide visual feedback to the end-user during the scan
  */
 import * as BlinkCardSDK from "@microblink/blinkcard-in-browser-sdk";
@@ -33,7 +31,7 @@ function main()
     }
 
     // 1. It's possible to obtain a free trial license key on microblink.com
-    const licenseKey = "sRwAAAYJbG9jYWxob3N0r/lOPmg/w35CpOHWKwIXzajXdIY8LZ3Xy3hpLADHpkhWoRQfYyVnGMcsmLJnWHQElSsn+Gu7LKMfxAir0jKn9o0iOqm5V5GeWzaUpo01ebA8gEcsxAV93tUmMUQo8jJc3NVdcrvJCSeMV6Ucqp8UqJus8sXr6hkj0hrp7PYFQjspwV3RVIePsOw0ms14Q+E8J+VSqnETgtJ9kNnT8F0cLnwV27AAYJAkbfDkMPtJEw==";
+    const licenseKey = "sRwAAAYJbG9jYWxob3N0r/lOPmg/w35CpOHWK8ITzSJode107sU8QzfehfgDxrn8zaRzWBsRj6rk/uRBZlJy3EWcmCBsGLG64S1Kc+LRculU66EKw3yOnUSBamM0ebmdDbvG/oiMduFmGVOXrIZxmRX81GWCCyvMhWDBEcHC7HnSegivjcP3KqGn3KBPwx6HJZ45yi52NSoTPk390ooyJ44wlSvMejujmyseaXXvIV4NavKo7TIg+nclTEhspQ==";
 
     // 2. Create instance of SDK load settings with your license key
     const loadSettings = new BlinkCardSDK.WasmSDKLoadSettings( licenseKey );
