@@ -10,8 +10,10 @@ Check out the [official demo app](https://demo.microblink.com/in-browser-sdk/bli
 
 1. [BlinkCard SDK with built-in UI](https://blinkcard.github.io/blinkcard-in-browser/ui/demo.html)
     * See what the bare UI looks like at [Codepen](https://codepen.io/microblink/pen/LYbZRwE)
-2. [Scan the payment card with a web camera](https://blinkcard.github.io/blinkcard-in-browser/examples/umd/index.html)
+2. [Scan the payment card with a web camera](https://blinkcard.github.io/blinkcard-in-browser/examples/blinkcard-camera/javascript/index.html)
     * See example at [Codepen](https://codepen.io/microblink/pen/YzpWGMw)
+3. [Scan the payment card by uploading its image](https://blinkcard.github.io/blinkcard-in-browser/examples/blinkcard-file/javascript/index.html)
+    * See example at [Codepen](https://codepen.io/microblink/pen/ZELZMgj)
 
 To see the source code of the above examples, check out the [examples directory](examples). If you'd like to run examples of the UI component, either through the browser or locally, see the [ui/examples](ui/examples) directory.
 
@@ -217,7 +219,23 @@ For example, in `package.json` you should have something like `"@microblink/blin
             cameraFeed,
             recognizerRunner
         );
+
+        // There is more than one way to handle recognition
+
+        // Using the recognize() method will provide you with the default behavior,
+        // such as built-in error handling, timeout and video feed pausing.
         const processResult = await videoRecognizer.recognize();
+
+        // Using the startRecognition() method allows you to pass your own onScanningDone callback, 
+        // giving you the option to create custom behavior.
+        const processResult = await videoRecognizer.startRecognition(
+            async ( recognitionState ) => 
+            {
+                videoRecognizer.pauseRecognition();
+                return recognitionState;
+            }
+        );
+
         // To obtain recognition results see next step
     }
     catch ( error )
@@ -232,7 +250,7 @@ For example, in `package.json` you should have something like `"@microblink/blin
     }
     ```
 
-6. If `processResult` returned from `VideoRecognizer's` method `recognize` is not `BlinkCardSDK.RecognizerResultState.Empty`, then at least one recognizer given to the `RecognizerRunner` above contains a recognition result. You can extract the result from each recognizer using its `getResult` method:
+6. If `processResult` returned from `VideoRecognizer's` method `recognize` or `startRecognition` is not `BlinkCardSDK.RecognizerResultState.Empty`, then at least one recognizer given to the `RecognizerRunner` above contains a recognition result. You can extract the result from each recognizer using its `getResult` method:
 
     ```typescript
     if ( processResult !== BlinkCardSDK.RecognizerResultState.Empty )

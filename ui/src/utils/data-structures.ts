@@ -8,14 +8,15 @@ import * as BlinkCardSDK from '../../../es/blinkcard-sdk';
 
 export interface MicroblinkUI {
   // SDK settings
-  allowHelloMessage:    boolean;
-  engineLocation:       string;
-  licenseKey:           string;
-  wasmType:             string;
-  rawRecognizers:       string;
-  recognizers:          Array<string>;
-  recognizerOptions:    { [key: string]: any };
-  includeSuccessFrame?: boolean;
+  allowHelloMessage:     boolean;
+  engineLocation:        string;
+  licenseKey:            string;
+  wasmType:              string;
+  rawRecognizers:        string;
+  recognizers:           Array<string>;
+  recognizerOptions:     { [key: string]: any };
+  recognitionTimeout?:   number;
+  includeSuccessFrame?:  boolean;
 
   // Functional properties
   enableDrag:            boolean;
@@ -24,18 +25,27 @@ export interface MicroblinkUI {
   scanFromCamera:        boolean;
   scanFromImage:         boolean;
 
+  // Localization
+  translations:          { [key: string]: string };
+  rawTranslations:       string;
+
   // UI customization
-  translations:         { [key: string]: string };
-  rawTranslations:      string;
-  showActionLabels:     boolean;
-  showModalWindows:     boolean;
-  iconCameraDefault:    string;
-  iconCameraActive:     string;
-  iconGalleryDefault:   string;
-  iconGalleryActive:    string;
-  iconInvalidFormat:    string;
-  iconSpinnerScreenLoading: string;
+  galleryOverlayType:                'FULLSCREEN' | 'INLINE';
+  galleryDropType:                   'FULLSCREEN' | 'INLINE';
+  showActionLabels:                  boolean;
+  showModalWindows:                  boolean;
+  showScanningLine?:                 boolean;
+  showCameraFeedbackBarcodeMessage?: boolean;
+
+  // Icons
+  iconCameraDefault:                string;
+  iconCameraActive:                 string;
+  iconGalleryDefault:               string;
+  iconGalleryActive:                string;
+  iconInvalidFormat:                string;
+  iconSpinnerScreenLoading:         string;
   iconSpinnerFromGalleryExperience: string;
+  iconGalleryScanningCompleted:     string;
 
   // Events
   fatalError:         EventEmitter<EventFatalError>;
@@ -130,6 +140,8 @@ export enum Code {
   InvalidRecognizerOptions  = 'INVALID_RECOGNIZER_OPTIONS',
   MissingLicenseKey         = 'MISSING_LICENSE_KEY',
   NoImageFileFound          = 'NO_IMAGE_FILE_FOUND',
+  NoFirstImageFileFound     = 'NO_FIRST_IMAGE_FILE_FOUND',
+  NoSecondImageFileFound    = 'NO_SECOND_IMAGE_FILE_FOUND',
   SdkLoadFailed             = 'SDK_LOAD_FAILED',
   GenericScanError          = 'GENERIC_SCAN_ERROR',
   CameraNotAllowed          = 'CAMERA_NOT_ALLOWED',
@@ -149,6 +161,7 @@ export const AvailableRecognizers: { [key: string]: string } = {
 export interface VideoRecognitionConfiguration {
   recognizers: Array<string>,
   recognizerOptions?: any,
+  recognitionTimeout?: number,
   successFrame: boolean,
   cameraFeed: HTMLVideoElement,
   cameraId: string | null;
@@ -158,7 +171,25 @@ export interface ImageRecognitionConfiguration {
   recognizers: Array<string>,
   recognizerOptions?: any,
   thoroughScan?: boolean,
-  fileList: FileList
+  file: File
+}
+
+export interface CombinedImageRecognitionConfiguration {
+  recognizers: Array<string>,
+  recognizerOptions?: any,
+  thoroughScan?: boolean,
+  firstFile: File,
+  secondFile: File
+}
+
+export enum ImageRecognitionType {
+  Single   = 'Single',
+  Combined = 'Combined'
+}
+
+export enum CombinedImageType {
+  First  = 'First',
+  Second = 'Second'
 }
 
 export interface RecognizerInstance {
@@ -169,7 +200,10 @@ export interface RecognizerInstance {
 
 export enum RecognitionStatus {
   NoImageFileFound          = 'NoImageFileFound',
+  NoFirstImageFileFound     = 'NoFirstImageFileFound',
+  NoSecondImageFileFound    = 'NoSecondImageFileFound',
   Preparing                 = 'Preparing',
+  Ready                     = 'Ready',
   Processing                = 'Processing',
   DetectionFailed           = 'DetectionFailed',
   EmptyResultState          = 'EmptyResultState',
@@ -216,7 +250,7 @@ export enum CameraExperience {
   Barcode         = 'BARCODE',
   CardCombined    = 'CARD_COMBINED',
   CardSingleSide  = 'CARD_SINGLE_SIDE',
-  BlinkCard       = 'BLINKCARD'
+  PaymentCard     = 'PAYMENT_CARD'
 }
 
 export enum CameraExperienceState {
@@ -256,6 +290,7 @@ export enum FeedbackCode {
   CameraInUse         = 'CAMERA_IN_USE',
   CameraNotAllowed    = 'CAMERA_NOT_ALLOWED',
   GenericScanError    = 'GENERIC_SCAN_ERROR',
+  ScanStarted         = 'SCAN_STARTED',
   ScanUnsuccessful    = 'SCAN_UNSUCCESSFUL',
   ScanSuccessful      = 'SCAN_SUCCESSFUL'
 }
@@ -264,4 +299,12 @@ export interface FeedbackMessage {
   code?   : FeedbackCode;
   state   : 'FEEDBACK_ERROR' | 'FEEDBACK_INFO' | 'FEEDBACK_OK';
   message : string;
+}
+
+/**
+ * Camera selection
+ */
+export interface CameraEntry {
+  prettyName: string;
+  details: BlinkCardSDK.SelectedCamera;
 }
