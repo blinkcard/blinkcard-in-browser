@@ -48,8 +48,7 @@ function main()
     loadSettings.loadProgressCallback = ( progress ) => ( progressEl.value = progress );
 
     // Set absolute location of the engine, i.e. WASM and support JS files
-    // IMPORTANT: wasm.microblink.com is available for local development, it is not intended for usage in production!
-    loadSettings.engineLocation = window.location.origin + "/resources/";
+    loadSettings.engineLocation = "https://blinkcard.github.io/blinkcard-in-browser/resources";
 
     // 3. Load SDK
     BlinkCardSDK.loadWasmModule( loadSettings ).then
