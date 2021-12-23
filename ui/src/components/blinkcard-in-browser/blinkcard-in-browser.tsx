@@ -14,12 +14,12 @@ import {
 } from '@stencil/core';
 
 import {
-  EventFatalError,
   EventReady,
   EventScanError,
   EventScanSuccess,
   FeedbackMessage,
-  MicroblinkUI
+  MicroblinkUI,
+  SDKError
 } from '../../utils/data-structures';
 
 import { SdkService } from '../../utils/sdk.service';
@@ -32,6 +32,7 @@ import * as GenericHelpers from '../../utils/generic.helpers';
   shadow: true,
 })
 export class BlinkcardInBrowser implements MicroblinkUI {
+  private blocked: boolean = false;
 
   /**
    * Write a hello message to the browser console when license check is successfully performed.
@@ -349,7 +350,7 @@ export class BlinkcardInBrowser implements MicroblinkUI {
    *
    * Each event contains `code` property which has deatils about fatal errror.
    */
-  @Event() fatalError: EventEmitter<EventFatalError>;
+  @Event() fatalError: EventEmitter<SDKError>;
 
   /**
    * Event which is emitted when UI component is successfully initialized and ready for use.
@@ -385,6 +386,12 @@ export class BlinkcardInBrowser implements MicroblinkUI {
   @Event() imageScanStarted: EventEmitter<null>;
 
   /**
+   * Event which is emitted when scan is aborted, i.e. when user clicks on
+   * close from the gallery toolbar, or presses escape key.
+   */
+  @Event() scanAborted: EventEmitter<null>;
+
+  /**
    * Control UI state of camera overlay.
    *
    * Possible values are 'ERROR' | 'LOADING' | 'NONE' | 'SUCCESS'.
@@ -395,6 +402,35 @@ export class BlinkcardInBrowser implements MicroblinkUI {
   @Method()
   async setUiState(state: 'ERROR' | 'LOADING' | 'NONE' | 'SUCCESS') {
     this.mbComponentEl.setUiState(state);
+  }
+
+  /**
+   * Starts camera scan using camera overlay with usage instructions.
+   */
+  @Method()
+  async startCameraScan() {
+    this.mbComponentEl.startCameraScan();
+  }
+
+  /**
+   * Starts image scan, emits results from provided file.
+   *
+   * @param file File to scan
+   */
+  @Method()
+  async startImageScan(file: File) {
+    this.mbComponentEl.startImageScan(file);
+  }
+
+  /**
+   * Starts combined image scan, emits results from provided files.
+   *
+   * @param firstFile File to scan as first image
+   * @param secondFile File to scan as second image
+   */
+  @Method()
+  async startCombinedImageScan(firstFile: File, secondFile: File) {
+    this.mbComponentEl.startCombinedImageScan(firstFile, secondFile);
   }
 
   /**
@@ -409,7 +445,24 @@ export class BlinkcardInBrowser implements MicroblinkUI {
 
   @Element() hostEl: HTMLElement;
 
-  async componentWillRender() {
+  componentWillLoad() {
+    this.init();
+  }
+
+  componentWillUpdate() {
+    if (this.blocked) {
+      return;
+    }
+
+    this.sdkService?.delete();
+    this.init();
+  }
+
+  disconnectedCallback() {
+    this.sdkService?.delete();
+  }
+
+  private init() {
     const rawRecognizers = GenericHelpers.stringToArray(this.rawRecognizers);
     this.finalRecognizers = this.recognizers ? this.recognizers : rawRecognizers;
 
@@ -417,7 +470,6 @@ export class BlinkcardInBrowser implements MicroblinkUI {
     this.finalTranslations = this.translations ? this.translations : rawTranslations;
     this.translationService = new TranslationService(this.finalTranslations || {});
 
-    this.sdkService?.delete();
     this.sdkService = new SdkService();
   }
 
@@ -455,6 +507,7 @@ export class BlinkcardInBrowser implements MicroblinkUI {
                         sdkService={ this.sdkService }
                         translationService={ this.translationService }
                         cameraId={ this.cameraId }
+                        onBlock={ (ev: CustomEvent<boolean>) => { this.blocked = ev.detail } }
                         onFeedback={ (ev: CustomEvent<FeedbackMessage>) => this.feedbackEl.show(ev.detail) }></mb-component>
           <mb-feedback dir={ this.hostEl.getAttribute('dir') }
                        visible={ !this.hideFeedback }

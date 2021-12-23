@@ -8,10 +8,17 @@ import { MetadataCallbacks } from "./MetadataCallbacks";
 import { WasmSDKLoadSettings } from "./WasmLoadSettings";
 
 
+import { SDKError } from "./SDKError";
+import * as ErrorTypes from "./ErrorTypes";
+
 export * from "./CameraUtils";
 export * from "./DataStructures";
-export * from "./MetadataCallbacks";
+export * from "./DeviceUtils";
+export * from "./ErrorTypes";
 export * from "./FrameCapture";
+export * from "./License";
+export * from "./MetadataCallbacks";
+export * from "./SDKError";
 export * from "./VideoRecognizer";
 export * from "./WasmLoadSettings";
 export * from "./WasmLoadUtils";
@@ -45,56 +52,6 @@ function getUserID(): string
     }
 }
 
-/**
- * Check if browser supports ES6, which is prerequisite for this SDK to execute.
- *
- * IMPORTANT: it's not possible to run this function from MicroblinkSDK if browser doesn't support
- * ES6 since this file won't be able to load.
- *
- * This function is here as a placeholder so it can be copied to standalone JS file or directly into 'index.html'.
- */
-// export function isES6Supported(): boolean
-// {
-//     if ( typeof Symbol === "undefined" )
-//     {
-//         return false;
-//     }
-//     try
-//     {
-//         eval( "class Foo {}" );
-//         eval( "var bar = (x) => x+1" );
-//     }
-//     catch ( e )
-//     {
-//         return false;
-//     }
-//     return true;
-// }
-
-/**
- * Checks if browser is supported by the SDK. The minimum requirements for the browser is
- * the support for WebAssembly. If your browser does not support executing WebAssembly,
- * this function will return `false`.
- */
-export function isBrowserSupported(): boolean
-{
-    // based on https://stackoverflow.com/a/47880734
-    try
-    {
-        if ( typeof WebAssembly === "object" && typeof WebAssembly.instantiate === "function" )
-        {
-            const module = new WebAssembly.Module( Uint8Array.of( 0x0, 0x61, 0x73, 0x6d, 0x01, 0x00, 0x00, 0x00 ) );
-            if ( module instanceof WebAssembly.Module )
-                return new WebAssembly.Instance( module ) instanceof WebAssembly.Instance;
-        }
-    }
-    catch ( ignored )
-    {
-        return false;
-    }
-    return false;
-}
-
 
 /**
  * Asynchronously loads and compiles the WebAssembly module.
@@ -113,22 +70,22 @@ export async function loadWasmModule( loadSettings: WasmSDKLoadSettings ): Promi
         {
             if ( !loadSettings || typeof loadSettings !== "object" )
             {
-                reject( "Missing WASM load settings!" );
+                reject( new SDKError( ErrorTypes.sdkErrors.wasmSettingsMissing ) );
                 return;
             }
             if ( typeof loadSettings.licenseKey !== "string" )
             {
-                reject( "Missing license key!" );
+                reject( new SDKError( ErrorTypes.sdkErrors.licenseKeyMissing ) );
                 return;
             }
             if ( !loadSettings.wasmModuleName )
             {
-                reject( "Missing WASM module name!" );
+                reject( new SDKError( ErrorTypes.sdkErrors.wasmModuleNameMissing ) );
                 return;
             }
             if ( typeof loadSettings.engineLocation !== "string" )
             {
-                reject( "Setting property 'engineLocation' must be a string!" );
+                reject( new SDKError( ErrorTypes.sdkErrors.engineLocationInvalid ) );
                 return;
             }
             // obtain user ID from local storage
@@ -182,11 +139,11 @@ export async function createRecognizerRunner
 {
     if ( typeof wasmSDK !== "object" )
     {
-        throw new Error( "SDK is not provided!" );
+        throw new SDKError( ErrorTypes.sdkErrors.missing );
     }
     if ( typeof recognizers !== "object" || recognizers.length < 1 )
     {
-        throw new Error( "To create RecognizerRunner at least 1 recognizer is required." );
+        throw new SDKError( ErrorTypes.sdkErrors.recognizersMissing );
     }
     return wasmSDK.mbWasmModule.createRecognizerRunner( recognizers, allowMultipleResults, metadataCallbacks );
 }

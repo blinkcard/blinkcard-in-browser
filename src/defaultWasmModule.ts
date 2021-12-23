@@ -3,3 +3,4 @@
  */
 
 export const defaultWasmModuleName = "BlinkCardWasmSDK";
+export const nativeJsonizationEnabled = false;

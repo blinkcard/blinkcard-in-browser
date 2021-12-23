@@ -1,6 +1,6 @@
 {
     "name": "@microblink/blinkcard-in-browser-sdk",
-    "version": "2.4.1",
+    "version": "2.4.2",
     "description": "BlinkCard SDK is credit or payment cards scanning library for WebAssembly-enabled browsers.",
     "homepage": "https://github.com/BlinkCard/blinkcard-in-browser",
     "repository": "github:BlinkCard/blinkcard-in-browser",
@@ -32,10 +32,13 @@
         "types"
     ],
     "scripts": {
-        "build": "rollup -c",
+        "build": "npm run build:api && npm run build:ui",
+        "build:api": "rollup -c",
         "build:ui": "cd ui && npm install && npm run build",
         "check-types": "tsc --noEmit",
-        "clean": "rimraf dist es lib types",
+        "clean": "npm run clean:api && npm run clean:ui",
+        "clean:api": "rimraf dist es lib types",
+        "clean:ui": "cd ui && npm run clean",
         "lint": "eslint --ext ts -c .eslintrc.json src",
         "pretest": "npm run build",
         "prepublishOnly": "npm run clean && npm run check-types && npm run lint && npm test",
