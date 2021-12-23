@@ -2,7 +2,15 @@
  * Copyright (c) Microblink Ltd. All rights reserved.
  */
 
-import { Component, Host, h, Prop } from '@stencil/core';
+import {
+  Component,
+  Element,
+  Host,
+  h,
+  Prop
+} from '@stencil/core';
+
+import { setWebComponentParts } from '../../../utils/generic.helpers';
 
 @Component({
   tag: 'mb-spinner',
@@ -21,6 +29,15 @@ export class MbSpinner {
    */
   @Prop() size: string = 'default';
 
+  /**
+   * Host element as variable for manipulation
+   */
+  @Element() hostEl: HTMLElement;
+
+  connectedCallback() {
+    setWebComponentParts(this.hostEl);
+  }
+
   render() {
     return (
       <Host className={ this.size }>
@@ -28,5 +45,4 @@ export class MbSpinner {
       </Host>
     );
   }
-
 }

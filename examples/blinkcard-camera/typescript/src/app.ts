@@ -10,31 +10,30 @@
 import * as BlinkCardSDK from "@microblink/blinkcard-in-browser-sdk";
 
 // General UI helpers
-const initialMessageEl = document.getElementById( "msg" ) as HTMLHeadingElement;
-const progressEl = document.getElementById( "load-progress" ) as HTMLProgressElement;
+const initialMessageEl = document.getElementById("msg") as HTMLHeadingElement;
+const progressEl = document.getElementById("load-progress") as HTMLProgressElement;
 
 // UI elements for scanning feedback
-const cameraFeed = document.getElementById( "camera-feed" ) as HTMLVideoElement;
-const cameraFeedback = document.getElementById( "camera-feedback" ) as HTMLCanvasElement;
-const drawContext = cameraFeedback.getContext( "2d" ) as CanvasRenderingContext2D;
+const cameraFeed = document.getElementById("camera-feed") as HTMLVideoElement;
+const cameraFeedback = document.getElementById("camera-feedback") as HTMLCanvasElement;
+const drawContext = cameraFeedback.getContext("2d") as CanvasRenderingContext2D;
 
 /**
  * Initialize and load WASM SDK.
  */
-function main()
-{
+function main() {
+
     // Check if browser has proper support for WebAssembly
-    if ( !BlinkCardSDK.isBrowserSupported() )
-    {
+    if (!BlinkCardSDK.isBrowserSupported()) {
         initialMessageEl.innerText = "This browser is not supported!";
         return;
     }
 
     // 1. It's possible to obtain a free trial license key on microblink.com
-    const licenseKey = "sRwAAAYJbG9jYWxob3N0r/lOPmg/w35CpOHWK8ITzSJode107sU8QzfehfgDxrn8zaRzWBsRj6rk/uRBZlJy3EWcmCBsGLG64S1Kc+LRculU66EKw3yOnUSBamM0ebmdDbvG/oiMduFmGVOXrIZxmRX81GWCCyvMhWDBEcHC7HnSegivjcP3KqGn3KBPwx6HJZ45yi52NSoTPk390ooyJ44wlSvMejujmyseaXXvIV4NavKo7TIg+nclTEhspQ==";
+    const licenseKey = "sRwAAAYJbG9jYWxob3N0r/lOPmg/w35CpOHWK8o9ZoQqwZxpZ2l8yL/MBwegj90LGAySakup7aGkscz1Pv6Un7nJtCTjDxxSo5XMCLroSDkCDpvpfv4HO+pCwcFypc1P4DP0tSHaSDUV2Y0TVJMYtJZ/1rMfpRA+fYXHH1KoUvwpqspsHU32i1MoWy/OnXTDZ2+MCD54RT3ys4v9FC/aeNo4gr7i+fO24V3vPbDMzblBpfeVjJAm/Yvc9xnk6g==";
 
     // 2. Create instance of SDK load settings with your license key
-    const loadSettings = new BlinkCardSDK.WasmSDKLoadSettings( licenseKey );
+    const loadSettings = new BlinkCardSDK.WasmSDKLoadSettings(licenseKey);
 
     // [OPTIONAL] Change default settings
 
@@ -42,100 +41,85 @@ function main()
     loadSettings.allowHelloMessage = true;
 
     // In order to provide better UX, display progress bar while loading the SDK
-    loadSettings.loadProgressCallback = ( progress: number ) => progressEl!.value = progress;
+    loadSettings.loadProgressCallback = (progress: number) => progressEl!.value = progress;
 
     // Set absolute location of the engine, i.e. WASM and support JS files
     loadSettings.engineLocation = window.location.origin;
 
     // 3. Load SDK
-    BlinkCardSDK.loadWasmModule( loadSettings ).then
-    (
-        ( sdk: BlinkCardSDK.WasmSDK ) =>
-        {
-            document.getElementById( "screen-initial" )?.classList.add( "hidden" );
-            document.getElementById( "screen-start" )?.classList.remove( "hidden" );
-            document.getElementById( "start-scan" )?.addEventListener( "click", ( ev: any ) =>
-            {
-                ev.preventDefault();
-                startScan( sdk );
-            });
-        },
-        ( error: any ) =>
-        {
-            initialMessageEl.innerText = "Failed to load SDK!";
-            console.error( "Failed to load SDK!", error );
-        }
-    );
+    BlinkCardSDK.loadWasmModule(loadSettings).then((sdk: BlinkCardSDK.WasmSDK) => {
+        document.getElementById("screen-initial")?.classList.add("hidden");
+        document.getElementById("screen-start")?.classList.remove("hidden");
+        document.getElementById("start-scan")?.addEventListener("click", (ev: any) => {
+            ev.preventDefault();
+            startScan(sdk);
+        });
+    }, (error: any) => {
+        initialMessageEl.innerText = "Failed to load SDK!";
+        console.error("Failed to load SDK!", error);
+    });
 }
 
 /**
  * Scan payment card.
  */
-async function startScan( sdk: BlinkCardSDK.WasmSDK )
-{
-    document.getElementById( "screen-start" )?.classList.add( "hidden" );
-    document.getElementById( "screen-scanning" )?.classList.remove( "hidden" );
+async function startScan(sdk: BlinkCardSDK.WasmSDK) {
+    document.getElementById("screen-start")?.classList.add("hidden");
+    document.getElementById("screen-scanning")?.classList.remove("hidden");
 
     // 1. Create a recognizer objects which will be used to recognize single image or stream of images.
     //
+
     // In this example, we create a BlinkCardRecognizer, which knows how to scan Payment cards
+
     // and extract payment information from them.
-    const blinkCardRecognizer = await BlinkCardSDK.createBlinkCardRecognizer( sdk );
+    const blinkCardRecognizer = await BlinkCardSDK.createBlinkCardRecognizer(sdk);
 
     // [OPTIONAL] Create a callbacks object that will receive recognition events, such as detected object location etc.
     const callbacks = {
-        onQuadDetection: ( quad: BlinkCardSDK.DisplayableQuad ) => drawQuad( quad ),
-        onFirstSideResult: () => alert( "Flip the document" )
-    }
+        onQuadDetection: (quad: BlinkCardSDK.DisplayableQuad) => drawQuad(quad),
+        onFirstSideResult: () => alert("Flip the document")
+    };
 
     // 2. Create a RecognizerRunner object which orchestrates the recognition with one or more
+
     //    recognizer objects.
-    const recognizerRunner = await BlinkCardSDK.createRecognizerRunner
-    (
-        // SDK instance to use
-        sdk,
-        // List of recognizer objects that will be associated with created RecognizerRunner object
-        [ blinkCardRecognizer ],
-        // [OPTIONAL] Should recognition pipeline stop as soon as first recognizer in chain finished recognition
-        false,
-        // [OPTIONAL] Callbacks object that will receive recognition events
-        callbacks
-    );
+    const recognizerRunner = await BlinkCardSDK.createRecognizerRunner(
+
+    // SDK instance to use
+    sdk, 
+
+    // List of recognizer objects that will be associated with created RecognizerRunner object
+    [blinkCardRecognizer], 
+
+    // [OPTIONAL] Should recognition pipeline stop as soon as first recognizer in chain finished recognition
+    false, 
+
+    // [OPTIONAL] Callbacks object that will receive recognition events
+    callbacks);
 
     // 3. Create a VideoRecognizer object and attach it to HTMLVideoElement that will be used for displaying the camera feed
-    const videoRecognizer = await BlinkCardSDK.VideoRecognizer.createVideoRecognizerFromCameraStream
-    (
-        cameraFeed,
-        recognizerRunner
-    );
+    const videoRecognizer = await BlinkCardSDK.VideoRecognizer.createVideoRecognizerFromCameraStream(cameraFeed, recognizerRunner);
 
     // 4. Start the recognition and await for the results
     const processResult = await videoRecognizer.recognize();
 
     // 5. If recognition was successful, obtain the result and display it
-    if ( processResult !== BlinkCardSDK.RecognizerResultState.Empty )
-    {
+    if (processResult !== BlinkCardSDK.RecognizerResultState.Empty) {
         const blinkCardResult = await blinkCardRecognizer.getResult();
-        if ( blinkCardResult.state !== BlinkCardSDK.RecognizerResultState.Empty )
-        {
-            console.log( "BlinkCard results", blinkCardResult );
-
+        if (blinkCardResult.state !== BlinkCardSDK.RecognizerResultState.Empty) {
+            console.log("BlinkCard results", blinkCardResult);
             const firstAndLastName = blinkCardResult.owner;
             const cardNumber = blinkCardResult.cardNumber;
             const dateOfExpiry = {
                 year: blinkCardResult.expiryDate.year,
                 month: blinkCardResult.expiryDate.month
-            }
-
-            alert
-            (
-                `Hello, ${ firstAndLastName }!\n Your payment card with card number ${ cardNumber } will expire on ${ dateOfExpiry.year }/${ dateOfExpiry.month }.`
-            );
+            };
+            alert(`Hello, ${firstAndLastName}!\n Your payment card with card number ${cardNumber} will expire on ${dateOfExpiry.year}/${dateOfExpiry.month}.`);
         }
     }
-    else
-    {
-        alert( "Could not extract information!" );
+    else {
+        alert("Could not extract information!");
     }
 
     // 7. Release all resources allocated on the WebAssembly heap and associated with camera stream
@@ -153,26 +137,24 @@ async function startScan( sdk: BlinkCardSDK.WasmSDK )
     clearDrawCanvas();
 
     // Hide scanning screen and show scan button again
-    document.getElementById( "screen-start" )?.classList.remove( "hidden" );
-    document.getElementById( "screen-scanning" )?.classList.add( "hidden" );
+    document.getElementById("screen-start")?.classList.remove("hidden");
+    document.getElementById("screen-scanning")?.classList.add("hidden");
 }
 
 /**
  * Utility functions for drawing detected quadrilateral onto canvas.
  */
-function drawQuad( quad: BlinkCardSDK.DisplayableQuad )
-{
+function drawQuad(quad: BlinkCardSDK.DisplayableQuad) {
     clearDrawCanvas();
 
     // Based on detection status, show appropriate color and message
-    setupColor( quad );
-
-    applyTransform( quad.transformMatrix );
+    setupColor(quad);
+    applyTransform(quad.transformMatrix);
     drawContext.beginPath();
-    drawContext.moveTo( quad.topLeft    .x, quad.topLeft    .y );
-    drawContext.lineTo( quad.topRight   .x, quad.topRight   .y );
-    drawContext.lineTo( quad.bottomRight.x, quad.bottomRight.y );
-    drawContext.lineTo( quad.bottomLeft .x, quad.bottomLeft .y );
+    drawContext.moveTo(quad.topLeft.x, quad.topLeft.y);
+    drawContext.lineTo(quad.topRight.x, quad.topRight.y);
+    drawContext.lineTo(quad.bottomRight.x, quad.bottomRight.y);
+    drawContext.lineTo(quad.bottomLeft.x, quad.bottomLeft.y);
     drawContext.closePath();
     drawContext.stroke();
 }
@@ -181,80 +163,54 @@ function drawQuad( quad: BlinkCardSDK.DisplayableQuad )
  * This function will make sure that coordinate system associated with detectionResult
  * canvas will match the coordinate system of the image being recognized.
  */
-function applyTransform( transformMatrix: Float32Array )
-{
+function applyTransform(transformMatrix: Float32Array) {
     const canvasAR = cameraFeedback.width / cameraFeedback.height;
     const videoAR = cameraFeed.videoWidth / cameraFeed.videoHeight;
-
     let xOffset = 0;
     let yOffset = 0;
-    let scaledVideoHeight = 0
-    let scaledVideoWidth = 0
+    let scaledVideoHeight = 0;
+    let scaledVideoWidth = 0;
+    if (canvasAR > videoAR) {
 
-    if ( canvasAR > videoAR )
-    {
         // pillarboxing: https://en.wikipedia.org/wiki/Pillarbox
         scaledVideoHeight = cameraFeedback.height;
         scaledVideoWidth = videoAR * scaledVideoHeight;
-        xOffset = ( cameraFeedback.width - scaledVideoWidth ) / 2.0;
+        xOffset = (cameraFeedback.width - scaledVideoWidth) / 2;
     }
-    else
-    {
+    else {
+
         // letterboxing: https://en.wikipedia.org/wiki/Letterboxing_(filming)
         scaledVideoWidth = cameraFeedback.width;
         scaledVideoHeight = scaledVideoWidth / videoAR;
-        yOffset = ( cameraFeedback.height - scaledVideoHeight ) / 2.0;
+        yOffset = (cameraFeedback.height - scaledVideoHeight) / 2;
     }
 
     // first transform canvas for offset of video preview within the HTML video element (i.e. correct letterboxing or pillarboxing)
-    drawContext.translate( xOffset, yOffset );
+    drawContext.translate(xOffset, yOffset);
+
     // second, scale the canvas to fit the scaled video
-    drawContext.scale
-    (
-        scaledVideoWidth / cameraFeed.videoWidth,
-        scaledVideoHeight / cameraFeed.videoHeight
-    );
+    drawContext.scale(scaledVideoWidth / cameraFeed.videoWidth, scaledVideoHeight / cameraFeed.videoHeight);
 
     // finally, apply transformation from image coordinate system to
+
     // https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/setTransform
-    drawContext.transform
-    (
-        transformMatrix[0],
-        transformMatrix[3],
-        transformMatrix[1],
-        transformMatrix[4],
-        transformMatrix[2],
-        transformMatrix[5]
-    );
+    drawContext.transform(transformMatrix[0], transformMatrix[3], transformMatrix[1], transformMatrix[4], transformMatrix[2], transformMatrix[5]);
 }
 
-function clearDrawCanvas()
-{
+function clearDrawCanvas() {
     cameraFeedback.width = cameraFeedback.clientWidth;
     cameraFeedback.height = cameraFeedback.clientHeight;
-
-    drawContext.clearRect
-    (
-        0,
-        0,
-        cameraFeedback.width,
-        cameraFeedback.height
-    );
+    drawContext.clearRect(0, 0, cameraFeedback.width, cameraFeedback.height);
 }
 
-function setupColor( displayable: BlinkCardSDK.Displayable )
-{
+function setupColor(displayable: BlinkCardSDK.Displayable) {
     let color = "#FFFF00FF";
-
-    if ( displayable.detectionStatus === 0 )
-    {
+    if (displayable.detectionStatus === 0) {
         color = "#FF0000FF";
     }
-    else if ( displayable.detectionStatus === 1 )
-    {
+    else if (displayable.detectionStatus === 1) {
         color = "#00FF00FF";
     }
-
     drawContext.fillStyle = color;
     drawContext.strokeStyle = color;
     drawContext.lineWidth = 5;

@@ -4,13 +4,15 @@
 
 import {
   Component,
+  Element,
+  Event,
+  EventEmitter,
   Host,
   h,
-  Prop,
-  EventEmitter,
-  Event
+  Prop
 } from '@stencil/core';
 
+import { setWebComponentParts, classNames } from '../../../utils/generic.helpers';
 
 @Component({
   tag: 'mb-modal',
@@ -44,13 +46,20 @@ export class MbModal {
    */
   @Event() close: EventEmitter<void>;
 
+  /**
+   * Host element as variable for manipulation
+   */
+  @Element() hostEl: HTMLElement;
+
+  connectedCallback() {
+    setWebComponentParts(this.hostEl);
+  }
 
   render() {
     return (
-      <Host className={ this.getHostClassName() }>
+      <Host className={ classNames({ visible: this.visible }) }>
 
         <div class="mb-modal">
-
           <div class="close-wrapper">
               <div class="close-icon" onClick={ () => this.close.emit() }>
                 <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -61,42 +70,14 @@ export class MbModal {
           </div>
 
           <div class="title">{ this.modalTitle }</div>
-
-          <div class={ this.getContentClassName() }>
-
-            { this.content }
-
-          </div>
+          <div class={ this.contentCentered ? 'centered' : '' }>{ this.content }</div>
 
           <div class="actions">
-
             <slot name="actionButtons"></slot>
-
           </div>
-
         </div>
 
       </Host>
     );
-  }
-
-  getHostClassName(): string {
-    const classNames = [];
-
-    if (this.visible) {
-      classNames.push('visible');
-    }
-
-    return classNames.join(' ');
-  }
-
-  getContentClassName(): string {
-    const classNames = ['content'];
-
-    if (this.contentCentered) {
-      classNames.push('centered');
-    }
-
-    return classNames.join(' ');
   }
 }

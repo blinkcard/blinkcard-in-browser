@@ -49,3 +49,44 @@ export function getImageFile(fileList: FileList): File|null {
 
   return image;
 }
+
+/**
+ * Inspired by https://github.com/JedWatson/classnames.
+ * @param classes Class names and their conditions.
+ * @returns Joined string of class names.
+ */
+export function classNames(classes: Record<string, boolean>) {
+  const result = [];
+  const keys = Object.keys(classes);
+
+  keys.forEach((key) => {
+    if (classes[key]) {
+      result.push(key);
+    }
+  });
+
+  return result.join(' ');
+}
+
+export function getWebComponentParts(root: ShadowRoot): Array<Element> {
+  const partsChildren = root.querySelectorAll('[part]');
+  const parts = [];
+
+  partsChildren.forEach((el: Element) => {
+    const elementParts = el.getAttribute('part').split(' ');
+
+    while (elementParts && elementParts.length) {
+      parts.push(elementParts.pop());
+    }
+  });
+
+  return parts;
+}
+
+export function setWebComponentParts(hostEl: Element): void {
+  const partParts = [
+    hostEl.tagName.toLowerCase(),
+    hostEl.getAttribute('id')
+  ];
+  hostEl.setAttribute('part', partParts.join(' ').trim() );
+}

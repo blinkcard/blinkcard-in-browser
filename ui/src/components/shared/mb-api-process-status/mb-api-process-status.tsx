@@ -4,14 +4,16 @@
 
 import {
   Component,
-  Host,
-  h,
-  Prop,
+  Element,
   Event,
   EventEmitter,
+  Host,
+  h,
+  Prop
 } from '@stencil/core';
 
 import { TranslationService } from '../../../utils/translation.service';
+import { setWebComponentParts, classNames } from '../../../utils/generic.helpers';
 
 @Component({
   tag: 'mb-api-process-status',
@@ -19,6 +21,7 @@ import { TranslationService } from '../../../utils/translation.service';
   shadow: true,
 })
 export class MbApiProcessStatus {
+
   /**
    * Element visibility, default is 'false'.
    */
@@ -44,9 +47,18 @@ export class MbApiProcessStatus {
    */
   @Event() closeFromStart: EventEmitter<void>;
 
+  /**
+   * Host element as variable for manipulation
+   */
+  @Element() hostEl: HTMLElement;
+
+  connectedCallback() {
+    setWebComponentParts(this.hostEl);
+  }
+
   render() {
     return (
-      <Host className={ this.getClassName() }>
+      <Host className={ classNames({ visible: this.visible }) }>
 
         { this.state === 'LOADING' &&
           <div class="reticle-container">
@@ -59,7 +71,7 @@ export class MbApiProcessStatus {
               </div>
             </div>
 
-            <p class="message">{this.translationService.i('process-api-message').toString()}</p>
+            <p class="message">{ this.translationService.i('process-api-message').toString() }</p>
           </div>
         }
 
@@ -80,31 +92,21 @@ export class MbApiProcessStatus {
 
         { this.state === 'ERROR' &&
           <mb-modal
-            visible={true}
-            modalTitle={this.translationService.i('feedback-scan-unsuccessful-title').toString()}
-            content={this.translationService.i('feedback-scan-unsuccessful').toString()}
-            onClose={() => this.closeFromStart.emit()}
+            visible={ true }
+            modalTitle={ this.translationService.i('feedback-scan-unsuccessful-title').toString() }
+            content={ this.translationService.i('feedback-scan-unsuccessful').toString() }
+            onClose={ () => this.closeFromStart.emit() }
           >
             <div slot="actionButtons">
               <button
                 class="primary modal-action-button"
-                onClick={() => this.closeTryAgain.emit()}
-              >{this.translationService.i('process-api-retry').toString()}</button>
+                onClick={ () => this.closeTryAgain.emit() }
+              >{ this.translationService.i('process-api-retry').toString() }</button>
             </div>
           </mb-modal>
         }
 
       </Host>
     );
-  }
-
-  getClassName(): string {
-    const classNames = [];
-
-    if (this.visible) {
-      classNames.push('visible');
-    }
-
-    return classNames.join(' ');
   }
 }

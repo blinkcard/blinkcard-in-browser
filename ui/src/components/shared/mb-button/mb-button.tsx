@@ -4,14 +4,17 @@
 
 import {
   Component,
+  Element,
   Event,
   EventEmitter,
   Host,
   h,
-  Prop
+  Prop,
+  State
 } from '@stencil/core';
 
 import { TranslationService } from '../../../utils/translation.service';
+import { setWebComponentParts, classNames } from '../../../utils/generic.helpers';
 
 @Component({
   tag: 'mb-button',
@@ -72,67 +75,18 @@ export class MbButton {
    */
   @Prop() translationService: TranslationService;
 
+  @State() imageSrc: string = this.imageSrcDefault;
+
   /**
    * Event which is triggered when user clicks on button element. This event is not triggered
    * when the button is disabled.
    */
   @Event() buttonClick: EventEmitter<UIEvent>;
 
-  render() {
-    return (
-      <Host
-        className={ this.getClassNames() }
-        onClick={ (ev: UIEvent) => this.handleClick(ev) }
-        ref={el => this.buttonElement = el as HTMLDivElement}>
-        <a ref={el => this.anchorElement = el as HTMLAnchorElement} href="javascript:void(0)">
-          {
-            this.imageSrcDefault && this.imageAlt === 'action-alt-camera' &&
-            <img src={ this.imageSrcDefault } alt={ this.translationService.i(this.imageAlt).toString() } ref={ el => this.iconElem = el as HTMLOrSVGImageElement } />
-          }
-
-          {
-            this.imageSrcDefault && this.imageAlt === 'action-alt-gallery' &&
-            <label htmlFor="scan-from-image-input">
-              <img src={ this.imageSrcDefault } alt={ this.translationService.i(this.imageAlt).toString() } ref={ el => this.iconElem = el as HTMLOrSVGImageElement } />
-            </label>
-          }
-        </a>
-        {
-          this.label !== '' &&
-          <span>{ this.label }</span>
-        }
-      </Host>
-    );
-  }
-
-  componentDidRender() {
-    this.iconElem.setAttribute('src', this.imageSrcDefault);
-    
-    this.anchorElement.addEventListener('mouseover', () => this.handleMouseOver());
-    this.anchorElement.addEventListener('mouseout', () => this.handleMouseOut());
-  }
-
-  private getClassNames(): string {
-    const classNames = [];
-
-    if (this.disabled) {
-      classNames.push('disabled');
-    }
-
-    if (this.icon) {
-      classNames.push('icon');
-    }
-
-    if (this.visible) {
-      classNames.push('visible');
-    }
-
-    if (this.selected) {
-      classNames.push('selected');
-    }
-
-    return classNames.join(' ');
-  }
+  /**
+   * Host element as variable for manipulation
+   */
+  @Element() hostEl: HTMLElement;
 
   private handleClick(ev: UIEvent) {
     if (this.preventDefault) {
@@ -148,18 +102,44 @@ export class MbButton {
   }
 
   private handleMouseOver() {
-    if (!this.buttonElement.classList.contains('disabled')) {
-      this.iconElem.setAttribute('src', this.imageSrcActive);
+    if (!this.disabled) {
+      this.imageSrc = this.imageSrcActive;
     }
   }
 
   private handleMouseOut() {
-    if (!this.buttonElement.classList.contains('disabled')) {
-      this.iconElem.setAttribute('src', this.imageSrcDefault);
+    if (!this.disabled) {
+      this.imageSrc = this.imageSrcDefault;
     }
   }
 
-  private iconElem: HTMLOrSVGImageElement;
-  private buttonElement: HTMLDivElement;
-  private anchorElement: HTMLAnchorElement;
+  connectedCallback() {
+    setWebComponentParts(this.hostEl);
+  }
+
+  render() {
+    return (
+      <Host
+        className={ classNames({ visible: this.visible, disabled: this.disabled, icon: this.icon, selected: this.selected }) }
+        onClick={ (ev: UIEvent) => this.handleClick(ev) }>
+        <a onMouseOver={ this.handleMouseOver.bind(this) } onMouseOut={ this.handleMouseOut.bind(this) } href="javascript:void(0)">
+          {
+            this.imageSrcDefault && this.imageAlt === 'action-alt-camera' &&
+            <img src={ this.imageSrc } alt={ this.translationService.i(this.imageAlt).toString() } />
+          }
+
+          {
+            this.imageSrcDefault && this.imageAlt === 'action-alt-gallery' &&
+            <label htmlFor="scan-from-image-input">
+              <img src={ this.imageSrc } alt={ this.translationService.i(this.imageAlt).toString() } />
+            </label>
+          }
+        </a>
+        {
+          this.label !== '' &&
+          <span>{ this.label }</span>
+        }
+      </Host>
+    );
+  }
 }

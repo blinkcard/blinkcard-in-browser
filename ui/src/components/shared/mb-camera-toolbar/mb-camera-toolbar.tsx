@@ -4,6 +4,7 @@
 
 import {
   Component,
+  Element,
   Event,
   EventEmitter,
   Host,
@@ -15,6 +16,7 @@ import {
 
 import { CameraEntry } from '../../../utils/data-structures';
 import * as DeviceHelpers from '../../../utils/device.helpers';
+import { setWebComponentParts, classNames } from '../../../utils/generic.helpers';
 
 @Component({
   tag: 'mb-camera-toolbar',
@@ -22,6 +24,10 @@ import * as DeviceHelpers from '../../../utils/device.helpers';
   shadow: true
 })
 export class MbCameraToolbar {
+
+  private cameraSelection!: HTMLMbCameraSelectionElement;
+
+  @State() isDesktop: boolean = DeviceHelpers.isDesktop();
 
   /**
    * Set to `true` if close button should be displayed.
@@ -54,6 +60,24 @@ export class MbCameraToolbar {
   @Event() changeCameraDevice: EventEmitter<CameraEntry>;
 
   /**
+   * Host element as variable for manipulation
+   */
+  @Element() hostEl: HTMLElement;
+
+  connectedCallback() {
+    window.addEventListener('resize', this.handleResize.bind(this), false);
+    setWebComponentParts(this.hostEl);
+  }
+
+  componentDidRender() {
+    this.handleResize();
+  }
+
+  disconnectedCallback() {
+    window.removeEventListener('resize', this.handleResize.bind(this), false);
+  }
+
+  /**
    * Change active camera.
    */
   @Method()
@@ -69,16 +93,24 @@ export class MbCameraToolbar {
     await this.cameraSelection.populateCameraDevices();
   }
 
-  async connectedCallback() {
-    window.addEventListener('resize', this.handleResize.bind(this), false);
+  private handleClose(ev: UIEvent) {
+    ev.preventDefault();
+    ev.stopPropagation();
+    this.closeEvent.emit();
   }
 
-  async componentDidRender() {
-    this.handleResize();
+  private handleFlip(ev: UIEvent) {
+    ev.preventDefault();
+    ev.stopPropagation();
+    this.flipEvent.emit();
   }
 
-  async disconnectedCallback() {
-    window.removeEventListener('resize', this.handleResize.bind(this), false);
+  private handleResize() {
+    this.isDesktop = DeviceHelpers.isDesktop();
+  }
+
+  private handleChangeCameraDevice(camera: CameraEntry) {
+    this.changeCameraDevice.emit(camera);
   }
 
   render() {
@@ -123,7 +155,7 @@ export class MbCameraToolbar {
           <section class="camera-selection-wrapper">
             <mb-camera-selection
               onChangeCameraDevice={(ev: CustomEvent<CameraEntry>) => this.handleChangeCameraDevice(ev.detail)}
-              class={ this.isDesktop ? 'visible' : '' }
+              class={ classNames({ visible: this.isDesktop }) }
               ref={ el => this.cameraSelection = el as HTMLMbCameraSelectionElement }
             ></mb-camera-selection>
           </section>
@@ -131,29 +163,5 @@ export class MbCameraToolbar {
         </header>
       </Host>
     );
-  }
-
-  @State() isDesktop: boolean = DeviceHelpers.isDesktop();
-
-  private cameraSelection!: HTMLMbCameraSelectionElement;
-
-  private handleClose(ev: UIEvent) {
-    ev.preventDefault();
-    ev.stopPropagation();
-    this.closeEvent.emit();
-  }
-
-  private handleFlip(ev: UIEvent) {
-    ev.preventDefault();
-    ev.stopPropagation();
-    this.flipEvent.emit();
-  }
-
-  private handleResize() {
-    this.isDesktop = DeviceHelpers.isDesktop();
-  }
-
-  private handleChangeCameraDevice(camera: CameraEntry) {
-    this.changeCameraDevice.emit(camera);
   }
 }

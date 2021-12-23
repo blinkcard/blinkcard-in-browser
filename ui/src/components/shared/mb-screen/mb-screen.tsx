@@ -2,7 +2,15 @@
  * Copyright (c) Microblink Ltd. All rights reserved.
  */
 
-import { Component, Host, h, Prop } from '@stencil/core';
+import {
+  Component,
+  Element,
+  Host,
+  h,
+  Prop
+} from '@stencil/core';
+
+import { setWebComponentParts, classNames } from '../../../utils/generic.helpers';
 
 @Component({
   tag: 'mb-screen',
@@ -16,12 +24,20 @@ export class MbScreen {
    */
   @Prop() visible: boolean = false;
 
+  /**
+   * Host element as variable for manipulation
+   */
+  @Element() hostEl: HTMLElement;
+
+  connectedCallback() {
+    setWebComponentParts(this.hostEl);
+  }
+
   render() {
     return (
-      <Host className={ this.visible ? 'visible' : '' }>
+      <Host className={ classNames({ visible: this.visible }) }>
         <slot></slot>
       </Host>
     );
   }
-
 }
