@@ -19,10 +19,11 @@ import {
   CameraEntry,
   CameraExperience,
   CameraExperienceState,
-  CameraExperienceStateDuration
+  CameraExperienceStateDuration,
+  CameraExperienceTimeoutDurations
 } from '../../../utils/data-structures';
 
-import { setWebComponentParts, classNames } from '../../../utils/generic.helpers';
+import { setWebComponentParts, classNames, getWebComponentParts } from '../../../utils/generic.helpers';
 
 import { TranslationService } from '../../../utils/translation.service';
 
@@ -66,6 +67,11 @@ export class MbCameraExperience {
   @Prop() type: CameraExperience;
 
   /**
+   * Configure camera experience state timeout durations
+   */
+  @Prop() cameraExperienceStateDurations: CameraExperienceTimeoutDurations = null;
+
+  /**
    * Unless specifically granted by your license key, you are not allowed to
    * modify or remove the Microblink logo displayed on the bottom of the camera
    * overlay.
@@ -87,7 +93,7 @@ export class MbCameraExperience {
    *
    * Horizontal camera image can be mirrored
    */
-  @Prop() cameraFlipped: boolean = false;
+  @Prop({ mutable: true }) cameraFlipped: boolean = false;
 
   /**
    * Show scanning line on camera
@@ -151,6 +157,9 @@ export class MbCameraExperience {
     this.cameraFlipped = isFlipped;
   }
 
+  /**
+   * Set camera state which includes animation and message.
+   */
   @Method()
   setState(state: CameraExperienceState, isBackSide: boolean = false, force: boolean = false): Promise<void> {
     return new Promise((resolve) => {
@@ -194,10 +203,26 @@ export class MbCameraExperience {
           this.cameraStateInProgress = false;
         }
         resolve();
-      }, CameraExperienceStateDuration.get(state));
+      }, this.getCameraExperienceStateDuration(state));
     });
   }
 
+  private getCameraExperienceStateDuration(state: CameraExperienceState): number {
+    return this.cameraExperienceStateDurations ? this.getStateDurationFromUserInput(state) : CameraExperienceStateDuration.get(state);
+  }
+
+  private getStateDurationFromUserInput(state: CameraExperienceState): number {
+    const cameraExperienceStateDurationMap = new Map(Object.entries(this.cameraExperienceStateDurations));
+    const stateAdjusted = state[0].toLocaleLowerCase() + state.slice(1);
+    
+    const duration = cameraExperienceStateDurationMap.get(stateAdjusted);
+
+    return duration || CameraExperienceStateDuration.get(state);
+  }
+
+  /**
+   * Set camera state to initial method.
+   */
   @Method()
   resetState(): Promise<void> {
     return new Promise((resolve) => {
@@ -336,8 +361,10 @@ export class MbCameraExperience {
     this.changeCameraDevice.emit(camera);
   }
 
-  connectedCallback() {
+  componentDidLoad() {
     setWebComponentParts(this.hostEl);
+    const parts = getWebComponentParts(this.hostEl.shadowRoot);
+    this.hostEl.setAttribute('exportparts', parts.join(', '));
   }
 
   render() {

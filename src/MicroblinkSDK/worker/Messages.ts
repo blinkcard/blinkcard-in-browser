@@ -6,6 +6,7 @@ import { CapturedFrame } from "../FrameCapture";
 import { WasmSDKLoadSettings } from "../WasmLoadSettings";
 import { WasmType } from "../WasmType";
 import { SDKError } from "../SDKError";
+import { ProductIntegrationInfo } from "../DataStructures";
 
 let nextMessageID = 0;
 
@@ -297,6 +298,19 @@ export class SetCameraPreviewMirrored extends BaseRequestMessage
     }
 }
 
+export class GetProductIntegrationInfo extends BaseRequestMessage
+{
+    static readonly action: string = "getProductIntegrationInfo";
+
+    readonly userId: string;
+
+    constructor( userId: string )
+    {
+        super( GetProductIntegrationInfo.action );
+        this.userId = userId;
+    }
+}
+
 // ===================================== /
 // Response messages
 // ===================================== /
@@ -377,6 +391,17 @@ export class ImageProcessResultMessage extends StatusMessage
     {
         super( msgID, true, null );
         this.recognitionState = recognitionState;
+    }
+}
+
+export class ProductIntegrationResultMessage extends StatusMessage
+{
+    readonly result: ProductIntegrationInfo;
+
+    constructor( msgID: number, result: ProductIntegrationInfo )
+    {
+        super( msgID, true, null );
+        this.result = result;
     }
 }
 

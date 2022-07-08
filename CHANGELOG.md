@@ -1,5 +1,26 @@
 # Release notes
 
+## 2.6.0
+
+### Improvements
+
+* We've added support for 1000+ new credit card types.
+* We've decreased wrong PAN field processing by 30% for horizontal credit cards, and by 60% for vertical credit cards.
+* We've improved the Anonymization functionality for Quick Read formats on VISA credit cards, as well as general improvements for all other credit card types.
+
+### Platform-related SDK changes
+
+* **[BREAKING CHANGE]** Due to security reasons, we've added a mechanism to load worker script from an external location.
+    * New property `WasmSDKLoadSettings.workerLocation` was added for this purpose and represents a path to the external worker script file.
+    * If omitted, SDK will look for the worker script in the `resources` directory.
+
+### UI Improvements
+
+* We've added property `recognitionPauseTimeout` to the UI component that defines scanning pause after the first side of a document has been scanned.
+    * The purpose of this property is to give the end-user enough time to flip the document before scanning is resumed.
+    * Default value is `3800` and represents time in milliseconds.
+* We've exposed property `cameraExperienceStateDurations` on the UI component that can be used to change the default durations of UI animations.
+  
 ## 2.4.3
 
 * We've updated Microblink logo and colors

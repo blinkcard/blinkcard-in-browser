@@ -6,18 +6,23 @@ import { EventEmitter } from '@stencil/core';
 
 import * as BlinkCardSDK from '@microblink/blinkcard-in-browser-sdk';
 
-export { SDKError } from '@microblink/blinkcard-in-browser-sdk';
+export {
+  ProductIntegrationInfo,
+  SDKError
+} from '@microblink/blinkcard-in-browser-sdk';
 
 export interface MicroblinkUI {
   // SDK settings
   allowHelloMessage:     boolean;
   engineLocation:        string;
+  workerLocation:        string;
   licenseKey:            string;
   wasmType:              string;
   rawRecognizers:        string;
   recognizers:           Array<string>;
   recognizerOptions:     { [key: string]: any };
   recognitionTimeout?:   number;
+  recognitionPauseTimeout?: number;
   includeSuccessFrame?:  boolean;
 
   // Functional properties
@@ -58,13 +63,15 @@ export interface MicroblinkUI {
   imageScanStarted:   EventEmitter<null>;
 
   // Methods
-  setUiState:         (state: 'ERROR' | 'LOADING' | 'NONE' | 'SUCCESS') => Promise<any>;
-  setUiMessage:       (state: 'FEEDBACK_ERROR' | 'FEEDBACK_INFO' | 'FEEDBACK_OK', message: string) => Promise<any>;
+  setUiState:                (state: 'ERROR' | 'LOADING' | 'NONE' | 'SUCCESS') => Promise<any>;
+  setUiMessage:              (state: 'FEEDBACK_ERROR' | 'FEEDBACK_INFO' | 'FEEDBACK_OK', message: string) => Promise<any>;
+  getProductIntegrationInfo: () => Promise<BlinkCardSDK.ProductIntegrationInfo>;
 }
 
 export interface SdkSettings {
   allowHelloMessage:  boolean;
   engineLocation:     string;
+  workerLocation:     string;
   wasmType?:          BlinkCardSDK.WasmType;
 }
 
@@ -226,11 +233,11 @@ export interface RecognitionEvent {
 }
 
 export interface RecognitionResults {
-  recognizer:     BlinkCardSDK.RecognizerResult,
-  recognizerName: string,
-  successFrame?:  BlinkCardSDK.SuccessFrameGrabberRecognizerResult,
-  imageCapture?:  boolean,
-  resultJSON?:    any
+  recognizer:        BlinkCardSDK.RecognizerResult,
+  recognizerName:    string,
+  successFrame?:     BlinkCardSDK.SuccessFrameGrabberRecognizerResult,
+  imageCapture?:     boolean,
+  resultSignedJSON?: BlinkCardSDK.SignedPayload
 }
 
 export enum CameraExperience {
@@ -252,6 +259,16 @@ export enum CameraExperienceState {
   MoveFarther     = 'MoveFarther'
 }
 
+export interface CameraExperienceTimeoutDurations {
+  adjustAngle: number,
+  default: number,
+  done: number,
+  doneAll: number,
+  flip: number,
+  moveCloser: number,
+  moveFarther: number
+}
+
 export const CameraExperienceStateDuration = new Map([
   [ CameraExperienceState.AdjustAngle, 2500 ],
   [ CameraExperienceState.Default, 500 ],
@@ -261,12 +278,6 @@ export const CameraExperienceStateDuration = new Map([
   [ CameraExperienceState.MoveCloser, 2500 ],
   [ CameraExperienceState.MoveFarther, 2500 ]
 ]);
-
-export enum CameraExperienceReticleAnimation {
-  Default,
-  Detection,
-  Classification
-}
 
 /**
  * User feedback structures
