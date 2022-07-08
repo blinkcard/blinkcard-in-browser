@@ -145,13 +145,14 @@ if (window.location.hostname === 'blinkcard.github.io') {
   window.licenseKey = "sRwAAAYTYmxpbmtjYXJkLmdpdGh1Yi5pby+N7zvpysD9Mbe+K3px69Q1cYMcdlD+h6nw+SbTBnO6HPR52g4H8MBMSs31bOPAT5VZi009OBCq5l5Bte0QeOxbTUsEMNCQnPEdKgOL7C5UEN//APIAuYK0RattIyt6lxr7Rwv2XsuLSUSGR5oSegv5JMe6NbF7tyTB6LrjKegdEXjUFIU3oPC1pDKq5WoVy9fIDytQ6Z549rH2YFK4VrZj5HHv3RomqU4HPgVgwkU=";
 }
 window.engineLocation = "https://blinkcard.github.io/blinkcard-in-browser/resources";
+window.workerLocation = "https://blinkcard.github.io/blinkcard-in-browser/resources/BlinkCardWasmSDK.worker.min.js";
 </script>
   </head>
   <body>
     <header>
       <h1>BlinkCard UI: examples</h1>
       <p>The goal of this page is to display minimal example and features of BlinkCard UI component.</p>
-      <p><em><strong>Important:</strong> to use BlinkCard UI component it&apos;s required to have a valid license key. It&apos;s possible to obtain a free trial license key by registering to <a href="https://microblink.com/login" target="_blank">Microblink dashboard.</a></em></p>
+      <p><em><strong>Important:</strong> to use BlinkCard UI component it&apos;s required to have a valid license key. It&apos;s possible to request a free trial license key, after you register, at <a href="https://account.microblink.com/signin" target="_blank">Microblink Developer Hub</a>.</em></p>
     </header>
 
     <section id="example-minimal">
@@ -172,6 +173,7 @@ window.engineLocation = "https://blinkcard.github.io/blinkcard-in-browser/resour
   const el = document.querySelector('#example-minimal blinkcard-in-browser');
 
   el.engineLocation = window.engineLocation;
+  el.workerLocation = window.workerLocation;
   el.licenseKey = window.licenseKey;
   el.recognizers = ['BlinkCardRecognizer'];
 
@@ -210,6 +212,7 @@ show-scanning-line=&quot;true&quot;
   const el = document.querySelector('#example-with-scanning-line blinkcard-in-browser');
 
   el.engineLocation = window.engineLocation;
+  el.workerLocation = window.workerLocation;
   el.licenseKey = window.licenseKey;
 
   el.recognizers = ['BlinkCardRecognizer'];
@@ -255,6 +258,7 @@ show-scanning-line=&quot;true&quot;
   const el = document.querySelector('#example-localization blinkcard-in-browser');
 
   el.engineLocation = window.engineLocation;
+  el.workerLocation = window.workerLocation;
   el.licenseKey = window.licenseKey;
   el.recognizers = ['BlinkCardRecognizer'];
   window.setTimeout(() => {
@@ -304,6 +308,7 @@ show-scanning-line=&quot;true&quot;
   const el = document.querySelector('#example-localization-rtl blinkcard-in-browser');
 
   el.engineLocation = window.engineLocation;
+  el.workerLocation = window.workerLocation;
   el.licenseKey = window.licenseKey;
   el.recognizers = ['BlinkCardRecognizer'];
 
@@ -400,6 +405,7 @@ show-scanning-line=&quot;true&quot;
   const el = document.querySelector('#example-customization blinkcard-in-browser');
 
   el.engineLocation = window.engineLocation;
+  el.workerLocation = window.workerLocation;
   el.licenseKey = window.licenseKey;
   el.recognizers = ['BlinkCardRecognizer'];
 
