@@ -30,7 +30,7 @@ function main() {
     }
 
     // 1. It's possible to obtain a free trial license key on microblink.com
-    const licenseKey = "sRwAAAYJbG9jYWxob3N0r/lOPmg/w35CpOHWK5I/ZmNvlMUyyUmo2d1RoHAAnoKVGH6o6lyUx5q+xmBg+M55en/IFgmE8Qxsg8oULXai3O5cbasbN1ZIUvLVl3uh2HMkihwLZHdCRqZI1U6FygswKqjeQu6wygXzy6v0k9mN6cR0LUUarOb38HU36tCFVKffGZveUcH0tefGpXasv8AwbnRhCdBwlkRo1hkUTNpSnBHR/Q7fSCngxHS1EOepvQ==";
+    const licenseKey = "sRwAAAYJbG9jYWxob3N0r/lOPmg/w35CpOHWKSo4YlQgzYCIECeIrSdxcJLuA8jpTvUST4/SV+dW3n+HDWNgOjqAwp3Pvb8bU0fhn6ygoFvhmt89t0Ex/dSheKH8xCsRj3ldUck5K+F1VQB0hS2Ul6T+fEDm5IL46Q/f1FMzdU4X1buzNWuW/VM/QKG7OEFGnm/jmSZ4UNalcba2Y/56PjVh2rnyxLfzsNHhTyK+y6TEp+zp7lRqkDKOLMkolw==";
 
     // 2. Create instance of SDK load settings with your license key
     const loadSettings = new BlinkCardSDK.WasmSDKLoadSettings(licenseKey);
@@ -45,6 +45,9 @@ function main() {
 
     // Set absolute location of the engine, i.e. WASM and support JS files
     loadSettings.engineLocation = window.location.origin;
+
+    // Set absolute location of the worker file
+    loadSettings.workerLocation = window.location.origin + "/BlinkCardWasmSDK.worker.min.js";
 
     // 3. Load SDK
     BlinkCardSDK.loadWasmModule(loadSettings).then((sdk: BlinkCardSDK.WasmSDK) => {

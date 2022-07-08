@@ -13,7 +13,9 @@ import
     WasmSDK,
     Recognizer,
     RecognizerSettings,
-    RecognizerResult
+    RecognizerResult,
+    SignedPayload,
+    ProductIntegrationInfo
 } from "../DataStructures.js";
 
 import { ClearTimeoutCallback } from "../ClearTimeoutCallback";
@@ -150,11 +152,11 @@ export class RemoteRecognizer implements Recognizer
         );
     }
 
-    toJSON(): Promise< string | null >
+    toSignedJSON(): Promise< SignedPayload | null >
     {
         if ( nativeJsonizationEnabled )
         {
-            return new Promise< string | null >
+            return new Promise< SignedPayload | null >
             (
                 ( resolve, reject ) =>
                 {
@@ -167,7 +169,7 @@ export class RemoteRecognizer implements Recognizer
                     const msg = new Messages.InvokeObjectMethod
                     (
                         this.objectHandle,
-                        "toJSON",
+                        "toSignedJSON",
                         []
                     );
                     const handler = defaultResultEventHandler
@@ -184,7 +186,7 @@ export class RemoteRecognizer implements Recognizer
         }
         else
         {
-            // native module does not support toJSON method
+            // native module does not support toSignedJSON method
             return Promise.resolve( null );
         }
     }
@@ -602,6 +604,7 @@ export class WasmSDKWorker implements WasmSDK
     private          loadCallback            : OptionalLoadProgressCallback;
     private          clearTimeoutCallback    : ClearTimeoutCallback | null = null;
     private          recognizersWithCallbacks: Map< number, RemoteRecognizer >;
+    private          userId                  : string;
     public           showOverlay             : boolean;
     public           loadedWasmType          : WasmType = WasmType.Basic; // will be updated after WASM gets loaded
     /* eslint-enable lines-between-class-members */
@@ -610,6 +613,7 @@ export class WasmSDKWorker implements WasmSDK
     (
         worker: Worker,
         loadProgressCallback: OptionalLoadProgressCallback,
+        userId: string,
         rejectHandler: ( message: string ) => void
     )
     {
@@ -623,6 +627,7 @@ export class WasmSDKWorker implements WasmSDK
         this.mbWasmModule = new WasmModuleWorkerProxy( this );
         this.loadCallback = loadProgressCallback;
         this.recognizersWithCallbacks = new Map< number, RemoteRecognizer >();
+        this.userId = userId;
         this.showOverlay = false;
     }
 
@@ -677,6 +682,26 @@ export class WasmSDKWorker implements WasmSDK
     delete(): void
     {
         this.mbWasmWorker.terminate();
+    }
+
+    getProductIntegrationInfo(): Promise< ProductIntegrationInfo >
+    {
+        return new Promise< ProductIntegrationInfo >
+        (
+            ( resolve, reject ) =>
+            {
+                const msg = new Messages.GetProductIntegrationInfo( this.userId );
+                const handler = defaultResultEventHandler
+                (
+                    ( msg: Messages.ResponseMessage ) =>
+                    {
+                        resolve( ( msg as Messages.ProductIntegrationResultMessage ).result );
+                    },
+                    reject
+                );
+                this.postMessage( msg, handler );
+            }
+        );
     }
 
     private handleWorkerEvent( event: MessageEvent )
@@ -780,7 +805,13 @@ export class WasmSDKWorker implements WasmSDK
         (
             ( resolve, reject ) =>
             {
-                const wasmWorker = new WasmSDKWorker( worker, wasmLoadSettings.loadProgressCallback, reject );
+                const wasmWorker = new WasmSDKWorker
+                (
+                    worker,
+                    wasmLoadSettings.loadProgressCallback,
+                    userId,
+                    reject
+                );
                 const initMessage = new Messages.InitMessage( wasmLoadSettings, userId );
                 const initEventHandler = defaultResultEventHandler
                 (

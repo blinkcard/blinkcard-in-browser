@@ -25,6 +25,7 @@ export enum ErrorCodes {
     WORKER_HANDLE_UNDEFINED                     = "WORKER_HANDLE_UNDEFINED",
     WORKER_MESSAGE_ACTION_UNKNOWN               = "WORKER_MESSAGE_ACTION_UNKNOWN",
     WORKER_LICENSE_UNLOCK_ERROR                 = "WORKER_LICENSE_UNLOCK_ERROR",
+    WORKER_INTEGRATION_INFO_FAILURE             = "WORKER_INTEGRATION_INFO_FAILURE",
 
     LOCAL_SDK_RUNNER_MISSING                    = "LOCAL_SDK_RUNNER_MISSING",
     LOCAL_SDK_RUNNER_EMPTY                      = "LOCAL_SDK_RUNNER_EMPTY",
@@ -38,6 +39,7 @@ export enum ErrorCodes {
     SDK_LICENSE_KEY_MISSING                     = "SDK_LICENSE_KEY_MISSING",
     SDK_WASM_MODULE_NAME_MISSING                = "SDK_WASM_MODULE_NAME_MISSING",
     SDK_ENGINE_LOCATION_INVALID                 = "SDK_ENGINE_LOCATION_INVALID",
+    SDK_WORKER_LOCATION_INVALID                 = "SDK_WORKER_LOCATION_INVALID",
     SDK_MISSING                                 = "SDK_MISSING",
     SDK_RECOGNIZERS_MISSING                     = "SDK_RECOGNIZERS_MISSING",
 
@@ -69,6 +71,7 @@ export enum ErrorMessages {
     WORKER_RUNNER_DELETE_FAILURE               = "Failed to delete recognizer runner!",
     WORKER_OBJECT_INVOKE_FAILURE               = "Failed to invoke object!",
     WORKER_IMAGE_PROCESS_FAILURE               = "Recognizer runner is not initialized! Cannot process image!",
+    WORKER_INTEGRATION_INFO_FAILURE            = "Failed to get product integration info!",
 
     LOCAL_SDK_RUNNER_MISSING                   = "Property nativeRecognizerRunner is not available!",
     LOCAL_SDK_RUNNER_EMPTY                     = "Native RecognizerRunner cannot be empty!",
@@ -86,6 +89,7 @@ export enum ErrorMessages {
     SDK_LICENSE_KEY_MISSING                    = "Missing license key!",
     SDK_WASM_MODULE_NAME_MISSING               = "Missing WASM module name!",
     SDK_ENGINE_LOCATION_INVALID                = "Setting property 'engineLocation' must be a string!",
+    SDK_WORKER_LOCATION_INVALID                = "Setting property 'workerLocation' must be a string!",
     SDK_MISSING                                = "SDK is not provided!",
     SDK_RECOGNIZERS_MISSING                    = "To create RecognizerRunner at least 1 recognizer is required.",
 
@@ -158,6 +162,10 @@ export const sdkErrors = {
     engineLocationInvalid: {
         message: ErrorMessages.SDK_ENGINE_LOCATION_INVALID,
         code: ErrorCodes.SDK_ENGINE_LOCATION_INVALID,
+    },
+    workerLocationInvalid: {
+        message: ErrorMessages.SDK_WORKER_LOCATION_INVALID,
+        code: ErrorCodes.SDK_WORKER_LOCATION_INVALID,
     },
     missing: {
         message: ErrorMessages.SDK_MISSING,
@@ -273,4 +281,8 @@ export const workerErrors = {
         message: ErrorMessages.WORKER_HANDLE_UNDEFINED,
         code: ErrorCodes.WORKER_HANDLE_UNDEFINED,
     },
+    integrationInfoFailure: {
+        message: ErrorMessages.WORKER_INTEGRATION_INFO_FAILURE,
+        code: ErrorCodes.WORKER_INTEGRATION_INFO_FAILURE
+    }
 };

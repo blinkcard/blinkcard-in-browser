@@ -12,8 +12,6 @@ import
 
 import
 {
-    DigitalSignature,
-    DigitalSignatureOptions,
     MBDate,
     Recognizer,
     RecognizerResult,
@@ -84,8 +82,7 @@ export class AnonymizationSettings
 /**
  * A settings object that is used for configuring the BlinkCardRecognizer.
  */
-export class BlinkCardRecognizerSettings implements DigitalSignatureOptions,
-                                                    FullDocumentImageOptions,
+export class BlinkCardRecognizerSettings implements FullDocumentImageOptions,
                                                     RecognizerSettings
 {
     /**
@@ -103,9 +100,6 @@ export class BlinkCardRecognizerSettings implements DigitalSignatureOptions,
      * If padding edge is needed, recommended value is 0.02f.
      */
     paddingEdge = 0.0;
-
-    // implementation od the DigitalSignatureOptions interface
-    allowSignature = false;
 
     // Whether to return CVV in recognizer results
     extractCvv = true;
@@ -161,11 +155,6 @@ export interface BlinkCardRecognizerResult extends RecognizerResult
      *  Payment card's security code/value.
      */
     readonly cvv: string;
-
-    /**
-     *  Digital signature of the result.
-     */
-    readonly digitalSignature: DigitalSignature;
 
     /**
      *  The payment card's expiry date.

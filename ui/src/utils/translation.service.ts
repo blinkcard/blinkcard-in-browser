@@ -3,6 +3,8 @@
  */
 
 export const defaultTranslations: { [key: string]: string|Array<string> } = {
+
+
   'action-alt-camera': 'Device camera',
   'action-alt-gallery': 'From gallery',
   'action-message': 'Scan or choose from gallery',
@@ -18,7 +20,7 @@ export const defaultTranslations: { [key: string]: string|Array<string> } = {
   'camera-generic-error': 'Cannot access camera.',
   'camera-feedback-scan-front': 'Scan the card number',
   'camera-feedback-scan-back': '',
-  'camera-feedback-flip': 'Flip the card over',
+  'camera-feedback-flip': 'Flip to the back side',
   'camera-feedback-barcode-message': 'Scan the barcode',
   'camera-feedback-move-farther': 'Move farther',
   'camera-feedback-move-closer': 'Move closer',
