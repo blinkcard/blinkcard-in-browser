@@ -1,5 +1,9 @@
 # Release notes
 
+## 2.6.1
+
+* We've fixed a problem that has caused the enormous size of WebAssembly bundles.
+
 ## 2.6.0
 
 ### Improvements
