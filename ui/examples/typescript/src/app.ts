@@ -12,7 +12,7 @@ function initializeUiComponent() {
     if (!blinkCard) {
         throw "Could not find UI component!";
     }
-    blinkCard.licenseKey = "sRwAAAYJbG9jYWxob3N0r/lOPmg/w35CpOHWK8ITzSJode107sU8QzfehfgDxrn8zaRzWBsRj6rk/uRBZlJy3EWcmCBsGLG64S1Kc+LRculU66EKw3yOnUSBamM0ebmdDbvG/oiMduFmGVOXrIZxmRX81GWCCyvMhWDBEcHC7HnSegivjcP3KqGn3KBPwx6HJZ45yi52NSoTPk390ooyJ44wlSvMejujmyseaXXvIV4NavKo7TIg+nclTEhspQ==";
+    blinkCard.licenseKey = "sRwAAAYJbG9jYWxob3N0r/lOPmg/w35CpOHWKeIcyUSz8fDN+kpZwh39JTAYyAQ+7adUFfgptY2QPtEII9rfosGVKtbC/pMs5g8QQIzFmx0voaH4qjuMs7p/Pdnoi7kqPYB6QL9cRIsBMfqJOJmf9jTsUQtHdubYz8Sv3PEoul18uBorUMM86Bw7tFLEcDjfp8xOXM1fuNfgDVG2BvK/UwpVc4k8a3SiQLXgDUU0ItaNXo7yY9au8ZX/R6yDOfbXRw==";
     blinkCard.engineLocation = window.location.origin;
     blinkCard.workerLocation = window.location.origin + "/BlinkCardWasmSDK.worker.min.js";
     blinkCard.recognizers = ["BlinkCardRecognizer"];
