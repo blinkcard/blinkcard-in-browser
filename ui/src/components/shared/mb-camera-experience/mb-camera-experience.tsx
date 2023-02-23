@@ -105,9 +105,11 @@ export class MbCameraExperience {
    */
   @Prop() showCameraFeedbackBarcodeMessage: boolean = false;
 
+  @Prop() clearIsCameraActive: boolean = false;
+
   @Watch('apiState')
   apiStateHandler(apiState: string, _oldValue: string) {
-    if (apiState === '' && (this.type === CameraExperience.CardSingleSide || this.type === CameraExperience.CardCombined))
+    if (apiState === '' && (this.type === CameraExperience.CardSingleSide || this.type === CameraExperience.CardMultiSide))
       this.cardIdentityElement.classList.add('visible');
     else
       this.cardIdentityElement.classList.remove('visible');
@@ -117,6 +119,11 @@ export class MbCameraExperience {
    * Emitted when user clicks on 'X' button.
    */
   @Event() close: EventEmitter<void>;
+
+  /**
+   * Emitted when camera stream becomes active.
+   */
+  @Event() setIsCameraActive: EventEmitter<boolean>;
 
   /**
    * Emitted when user selects a different camera device.
@@ -180,7 +187,7 @@ export class MbCameraExperience {
 
       switch (this.type) {
         case CameraExperience.CardSingleSide:
-        case CameraExperience.CardCombined:
+        case CameraExperience.CardMultiSide:
           this.cameraCursorIdentityCardClassName = `reticle ${stateClass}`;
           break;
         case CameraExperience.Barcode:
@@ -262,7 +269,7 @@ export class MbCameraExperience {
 
     switch (type) {
       case CameraExperience.CardSingleSide:
-      case CameraExperience.CardCombined:
+      case CameraExperience.CardMultiSide:
         while (this.cameraMessageIdentityCard.firstChild) {
           this.cameraMessageIdentityCard.removeChild(this.cameraMessageIdentityCard.firstChild);
         }
@@ -388,7 +395,7 @@ export class MbCameraExperience {
         </div>
 
         {/* Identity card camera experience */}
-        <div id="card-identity" ref={(el) => this.cardIdentityElement = el as HTMLDivElement} class={ classNames({ visible: this.type === CameraExperience.CardSingleSide || this.type === CameraExperience.CardCombined }) }>
+        <div id="card-identity" ref={(el) => this.cardIdentityElement = el as HTMLDivElement} class={ classNames({ visible: this.type === CameraExperience.CardSingleSide || this.type === CameraExperience.CardMultiSide }) }>
           <div class="reticle-container">
             <div class={ this.cameraCursorIdentityCardClassName }>
               <div class="reticle__cursor">
@@ -429,6 +436,7 @@ export class MbCameraExperience {
         <div class="gradient-overlay bottom"></div>
 
         <mb-camera-toolbar
+          clear-is-camera-active={this.clearIsCameraActive}
           show-close={ this.apiState !== "error" }
           camera-flipped={ this.cameraFlipped }
           onCloseEvent={() => this.handleStop()}

@@ -14,7 +14,9 @@ const progressEl = document.getElementById("load-progress");
 
 // UI elements for scanning feedback
 const scanImageElement = document.getElementById("target-image");
-const inputImageFileFrontSide = document.getElementById("image-file-front-side");
+const inputImageFileFrontSide = document.getElementById(
+"image-file-front-side");
+
 const inputImageFileBackSide = document.getElementById("image-file-back-side");
 
 /**
@@ -30,11 +32,13 @@ function main()
   }
 
   // 1. It's possible to obtain a free trial license key on microblink.com
-  let licenseKey = "sRwAAAYJbG9jYWxob3N0r/lOPmg/w35CpOHWKeIcyUSz8fDN+kpZwh39JTAYyAQ+7adUFfgptY2QPtEII9rfosGVKtbC/pMs5g8QQIzFmx0voaH4qjuMs7p/Pdnoi7kqPYB6QL9cRIsBMfqJOJmf9jTsUQtHdubYz8Sv3PEoul18uBorUMM86Bw7tFLEcDjfp8xOXM1fuNfgDVG2BvK/UwpVc4k8a3SiQLXgDUU0ItaNXo7yY9au8ZX/R6yDOfbXRw==";
+  let licenseKey =
+  "sRwAAAYJbG9jYWxob3N0r/lOPmg/w35CpOHWLcIXyZqx58jBjDQEgc9g8PbxdaaDM+jedRKGXjqKQKz7ocX5/uQ6wvwfkHd4iovo1UDxWg4K+dstSEarVzTkBgKXX7iqpHoOjlU1pXPWbWBGasvjaoC2sKOnT7RozIdO8ljPeJVQO0owX3JzguXvoYK3p2ZtlcV/ndSC43hDJjKy4ACGg4Cul5jogfwPEdtJ7bk0XmtamIvtCVSnqQMfF1EwxCXOHw==";
 
   if (window.location.hostname === "blinkcard.github.io")
   {
-    licenseKey = "sRwAAAYTYmxpbmtjYXJkLmdpdGh1Yi5pby+N7zvpysD9Mbe+K3q5z39+KlTgPQi5ktCkjm2XjBep8tLiy+adpNQombp6cm0Lz64cc8k1XM6Egns2x1pkf1Vp03t+Gd47pfZ17KUzir2xhwcdAsGOA0mQsII3LmuwTBsSCxBkgojShS5dq1tk5Iz4NU2XyvZNj5Tqm6sQkmySVbDi8kGnEEyvu39FxrD3Yq0VqKD2Yxgz+BH4vtzk1HYoF+63++xeEOYaXF0LoD8MNOI=";
+    licenseKey =
+    "sRwAAAYTYmxpbmtjYXJkLmdpdGh1Yi5pby+N7zvpysD9Mbe+K36ZxH84iPO5UizTDjd3UMrotMVNG4OWJpwSC8vh+SYmFWkS5v+Biodkzoa6iMHgneLnPJxo1p3rcRal8VYRJuJoo98xSeGaZX90jyjXMsDBoBm3tor+67zWr3fO3Dgl7u921IwGGRmaLiEpdYQXgpZUZRHy3VQDP0khXQ9EaBy48GXsV2xBHuHcnneW/MWmtr/+jp15d/uHRQfsMitmnTYP69uX0iw=";
   }
 
   // 2. Create instance of SDK load settings with your license key
@@ -46,22 +50,25 @@ function main()
   loadSettings.allowHelloMessage = true;
 
   // In order to provide better UX, display progress bar while loading the SDK
-  loadSettings.loadProgressCallback = (progress) => progressEl.value = progress;
+  loadSettings.loadProgressCallback = (progress) =>
+  progressEl.value = progress;
 
   // Set absolute location of the engine, i.e. WASM and support JS files
   loadSettings.engineLocation = "https://blinkcard.github.io/blinkcard-in-browser/resources";
 
   // Set absolute location of the worker file
-  loadSettings.workerLocation = "https://blinkcard.github.io/blinkcard-in-browser/resources/BlinkCardWasmSDK.worker.min.js";
+  loadSettings.workerLocation =
+  "https://blinkcard.github.io/blinkcard-in-browser/resources/BlinkCardWasmSDK.worker.min.js";
 
   // 3. Load SDK
   BlinkCardSDK.loadWasmModule(loadSettings).then(
-
   (sdk) =>
   {
     document.getElementById("screen-initial")?.classList.add("hidden");
     document.getElementById("screen-start")?.classList.remove("hidden");
-    document.getElementById("start-button")?.addEventListener("click", (ev) =>
+    document.
+    getElementById("start-button")?.
+    addEventListener("click", (ev) =>
     {
       ev.preventDefault();
       startScan(sdk);
@@ -87,12 +94,13 @@ async function startScan(sdk)
   //
   // In this example, we create a BlinkCardRecognizer, which knows how to scan Payment cards
   // and extract payment information from them.
-  const blinkCardRecognizer = await BlinkCardSDK.createBlinkCardRecognizer(sdk);
+  const blinkCardRecognizer = await BlinkCardSDK.createBlinkCardRecognizer(
+  sdk);
+
 
   // 2. Create a RecognizerRunner object which orchestrates the recognition with one or more
   //    recognizer objects.
   const recognizerRunner = await BlinkCardSDK.createRecognizerRunner(
-
   // SDK instance to use
   sdk,
   // List of recognizer objects that will be associated with created RecognizerRunner object
@@ -122,7 +130,9 @@ async function startScan(sdk)
   const imageFrame = await getImageFrame(fileFrontSide);
 
   // 4. Start the recognition and await for the results
-  const processResultFrontSide = await recognizerRunner.processImage(imageFrame);
+  const processResultFrontSide = await recognizerRunner.processImage(
+  imageFrame);
+
 
   // 5. If recognition of the first side was successful, process the back side
   if (processResultFrontSide !== BlinkCardSDK.RecognizerResultState.Empty)
@@ -145,9 +155,13 @@ async function startScan(sdk)
     const imageFrame = await getImageFrame(fileBackSide);
 
     // 7. Start the recognition and await for the results
-    const processResultBackSide = await recognizerRunner.processImage(imageFrame);
+    const processResultBackSide = await recognizerRunner.processImage(
+    imageFrame);
 
-    if (processResultBackSide !== BlinkCardSDK.RecognizerResultState.Empty)
+
+    if (
+    processResultBackSide !== BlinkCardSDK.RecognizerResultState.Empty)
+
     {
       // 8. If recognition of the back side was successful, obtain the result and display it
       const results = await blinkCardRecognizer.getResult();
@@ -160,24 +174,26 @@ async function startScan(sdk)
         const cardNumber = results.cardNumber;
         const dateOfExpiry = {
           year: results.expiryDate.year,
-          month: results.expiryDate.month };
-
+          month: results.expiryDate.month
+        };
 
         alert(
-
         `Hello, ${firstAndLastName}!\n Your payment card with card number ${cardNumber} will expire on ${dateOfExpiry.year}/${dateOfExpiry.month}.`);
-
 
       }
     } else
 
     {
-      alert("Could not extract information from the back side of a document!");
+      alert(
+      "Could not extract information from the back side of a document!");
+
     }
   } else
 
   {
-    alert("Could not extract information from the front side of a document!");
+    alert(
+    "Could not extract information from the front side of a document!");
+
   }
 
   // 7. Release all resources allocated on the WebAssembly heap and associated with camera stream
@@ -195,7 +211,8 @@ async function startScan(sdk)
   document.getElementById("screen-scanning")?.classList.add("hidden");
 }
 
-function getImageFromInput(fileList) {
+function getImageFromInput(fileList)
+{
   let image = null;
   const imageRegex = RegExp(/^image\//);
   for (let i = 0; i < fileList.length; ++i)
@@ -208,7 +225,8 @@ function getImageFromInput(fileList) {
   return image;
 }
 
-async function getImageFrame(file) {
+async function getImageFrame(file)
+{
   scanImageElement.src = URL.createObjectURL(file);
   await scanImageElement.decode();
   return BlinkCardSDK.captureFrame(scanImageElement);

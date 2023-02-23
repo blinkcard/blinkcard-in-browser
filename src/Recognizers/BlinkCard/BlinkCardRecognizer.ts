@@ -52,13 +52,13 @@ export enum AnonymizationMode
 export class CardNumberAnonymizationSettings
 {
     /** Defines the mode of card number anonymization. */
-    mode: AnonymizationMode = AnonymizationMode.None;
+    mode: AnonymizationMode = AnonymizationMode.ImageOnly;
 
     /** Defines how many digits at the beginning of the card number remain visible after anonymization. */
     prefixDigitsVisible = 0;
 
     /** Defines how many digits at the end of the card number remain visible after anonymization. */
-    suffixDigitsVisible = 0;
+    suffixDigitsVisible = 4;
 }
 
 export class AnonymizationSettings
@@ -73,10 +73,15 @@ export class AnonymizationSettings
     cvvAnonymizationMode              = AnonymizationMode.None;
 
     /** Defines the mode of IBAN anonymization. */
-    ibanAnonymizationMode             = AnonymizationMode.None;
+    ibanAnonymizationMode             = AnonymizationMode.ImageOnly;
 
     /** Defines the mode of owner anonymization. */
     ownerAnonymizationMode            = AnonymizationMode.None;
+
+    /** If true, anonymization is applied on all fields of the image if extraction is uncertain. */
+    fallbackAnonymization             = false;
+
+
 }
 
 /**
@@ -114,7 +119,7 @@ export class BlinkCardRecognizerSettings implements FullDocumentImageOptions,
     extractOwner = true;
 
     // implementation of the FullDocumentImageOptions interface
-    returnFullDocumentImage        = false;
+    returnFullDocumentImage        = true;
 
     returnEncodedFullDocumentImage = false;
 

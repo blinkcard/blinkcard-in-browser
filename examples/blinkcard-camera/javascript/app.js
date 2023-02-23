@@ -32,11 +32,13 @@ function main()
   }
 
   // 1. It's possible to obtain a free trial license key on microblink.com
-  let licenseKey = "sRwAAAYJbG9jYWxob3N0r/lOPmg/w35CpOHWKeIcyUSz8fDN+kpZwh39JTAYyAQ+7adUFfgptY2QPtEII9rfosGVKtbC/pMs5g8QQIzFmx0voaH4qjuMs7p/Pdnoi7kqPYB6QL9cRIsBMfqJOJmf9jTsUQtHdubYz8Sv3PEoul18uBorUMM86Bw7tFLEcDjfp8xOXM1fuNfgDVG2BvK/UwpVc4k8a3SiQLXgDUU0ItaNXo7yY9au8ZX/R6yDOfbXRw==";
+  let licenseKey =
+  "sRwAAAYJbG9jYWxob3N0r/lOPmg/w35CpOHWLcIXyZqx58jBjDQEgc9g8PbxdaaDM+jedRKGXjqKQKz7ocX5/uQ6wvwfkHd4iovo1UDxWg4K+dstSEarVzTkBgKXX7iqpHoOjlU1pXPWbWBGasvjaoC2sKOnT7RozIdO8ljPeJVQO0owX3JzguXvoYK3p2ZtlcV/ndSC43hDJjKy4ACGg4Cul5jogfwPEdtJ7bk0XmtamIvtCVSnqQMfF1EwxCXOHw==";
 
   if (window.location.hostname === "blinkcard.github.io")
   {
-    licenseKey = "sRwAAAYTYmxpbmtjYXJkLmdpdGh1Yi5pby+N7zvpysD9Mbe+K3q5z39+KlTgPQi5ktCkjm2XjBep8tLiy+adpNQombp6cm0Lz64cc8k1XM6Egns2x1pkf1Vp03t+Gd47pfZ17KUzir2xhwcdAsGOA0mQsII3LmuwTBsSCxBkgojShS5dq1tk5Iz4NU2XyvZNj5Tqm6sQkmySVbDi8kGnEEyvu39FxrD3Yq0VqKD2Yxgz+BH4vtzk1HYoF+63++xeEOYaXF0LoD8MNOI=";
+    licenseKey =
+    "sRwAAAYTYmxpbmtjYXJkLmdpdGh1Yi5pby+N7zvpysD9Mbe+K36ZxH84iPO5UizTDjd3UMrotMVNG4OWJpwSC8vh+SYmFWkS5v+Biodkzoa6iMHgneLnPJxo1p3rcRal8VYRJuJoo98xSeGaZX90jyjXMsDBoBm3tor+67zWr3fO3Dgl7u921IwGGRmaLiEpdYQXgpZUZRHy3VQDP0khXQ9EaBy48GXsV2xBHuHcnneW/MWmtr/+jp15d/uHRQfsMitmnTYP69uX0iw=";
   }
 
   // 2. Create instance of SDK load settings with your license key
@@ -48,22 +50,25 @@ function main()
   loadSettings.allowHelloMessage = true;
 
   // In order to provide better UX, display progress bar while loading the SDK
-  loadSettings.loadProgressCallback = (progress) => progressEl.value = progress;
+  loadSettings.loadProgressCallback = (progress) =>
+  progressEl.value = progress;
 
   // Set absolute location of the engine, i.e. WASM and support JS files
   loadSettings.engineLocation = "https://blinkcard.github.io/blinkcard-in-browser/resources";
 
   // Set absolute location of the worker file
-  loadSettings.workerLocation = "https://blinkcard.github.io/blinkcard-in-browser/resources/BlinkCardWasmSDK.worker.min.js";
+  loadSettings.workerLocation =
+  "https://blinkcard.github.io/blinkcard-in-browser/resources/BlinkCardWasmSDK.worker.min.js";
 
   // 3. Load SDK
   BlinkCardSDK.loadWasmModule(loadSettings).then(
-
   (sdk) =>
   {
     document.getElementById("screen-initial")?.classList.add("hidden");
     document.getElementById("screen-start")?.classList.remove("hidden");
-    document.getElementById("start-scan")?.addEventListener("click", (ev) =>
+    document.
+    getElementById("start-scan")?.
+    addEventListener("click", (ev) =>
     {
       ev.preventDefault();
       startScan(sdk);
@@ -89,18 +94,19 @@ async function startScan(sdk)
   //
   // In this example, we create a BlinkCardRecognizer, which knows how to scan Payment cards
   // and extract payment information from them.
-  const blinkCardRecognizer = await BlinkCardSDK.createBlinkCardRecognizer(sdk);
+  const blinkCardRecognizer = await BlinkCardSDK.createBlinkCardRecognizer(
+  sdk);
+
 
   // [OPTIONAL] Create a callbacks object that will receive recognition events, such as detected object location etc.
   const callbacks = {
     onQuadDetection: (quad) => drawQuad(quad),
-    onFirstSideResult: () => alert("Flip the document") };
-
+    onFirstSideResult: () => alert("Flip the document")
+  };
 
   // 2. Create a RecognizerRunner object which orchestrates the recognition with one or more
   //    recognizer objects.
   const recognizerRunner = await BlinkCardSDK.createRecognizerRunner(
-
   // SDK instance to use
   sdk,
   // List of recognizer objects that will be associated with created RecognizerRunner object
@@ -112,8 +118,8 @@ async function startScan(sdk)
 
 
   // 3. Create a VideoRecognizer object and attach it to HTMLVideoElement that will be used for displaying the camera feed
-  const videoRecognizer = await BlinkCardSDK.VideoRecognizer.createVideoRecognizerFromCameraStream(
-
+  const videoRecognizer =
+  await BlinkCardSDK.VideoRecognizer.createVideoRecognizerFromCameraStream(
   cameraFeed,
   recognizerRunner);
 
@@ -125,7 +131,9 @@ async function startScan(sdk)
   if (processResult !== BlinkCardSDK.RecognizerResultState.Empty)
   {
     const blinkCardResult = await blinkCardRecognizer.getResult();
-    if (blinkCardResult.state !== BlinkCardSDK.RecognizerResultState.Empty)
+    if (
+    blinkCardResult.state !== BlinkCardSDK.RecognizerResultState.Empty)
+
     {
       console.log("BlinkCard results", blinkCardResult);
 
@@ -133,11 +141,10 @@ async function startScan(sdk)
       const cardNumber = blinkCardResult.cardNumber;
       const dateOfExpiry = {
         year: blinkCardResult.expiryDate.year,
-        month: blinkCardResult.expiryDate.month };
-
+        month: blinkCardResult.expiryDate.month
+      };
 
       alert(
-
       `Hello, ${firstAndLastName}!\n Your payment card with card number ${cardNumber} will expire on ${dateOfExpiry.year}/${dateOfExpiry.month}.`);
 
     }
@@ -219,7 +226,6 @@ function applyTransform(transformMatrix)
   drawContext.translate(xOffset, yOffset);
   // second, scale the canvas to fit the scaled video
   drawContext.scale(
-
   scaledVideoWidth / cameraFeed.videoWidth,
   scaledVideoHeight / cameraFeed.videoHeight);
 
@@ -227,7 +233,6 @@ function applyTransform(transformMatrix)
   // finally, apply transformation from image coordinate system to
   // https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/setTransform
   drawContext.transform(
-
   transformMatrix[0],
   transformMatrix[3],
   transformMatrix[1],
@@ -242,13 +247,7 @@ function clearDrawCanvas()
   cameraFeedback.width = cameraFeedback.clientWidth;
   cameraFeedback.height = cameraFeedback.clientHeight;
 
-  drawContext.clearRect(
-
-  0,
-  0,
-  cameraFeedback.width,
-  cameraFeedback.height);
-
+  drawContext.clearRect(0, 0, cameraFeedback.width, cameraFeedback.height);
 }
 
 function setupColor(displayable)

@@ -11,7 +11,7 @@ import {
   EventReady,
   VideoRecognitionConfiguration,
   ImageRecognitionConfiguration,
-  CombinedImageRecognitionConfiguration,
+  MultiSideImageRecognitionConfiguration,
   ImageRecognitionType,
   RecognizerInstance,
   RecognitionEvent,
@@ -232,7 +232,10 @@ export class SdkService {
           }
 
           window.setTimeout(() => void this.cancelRecognition(), 400);
-        }, configuration.recognitionTimeout);
+        }, configuration.recognitionTimeout)
+        .then(() => { /* Scanning... */ })
+        .catch((error) => { throw error; });
+;
     } catch (error) {
       if (error && error.details?.reason) {
         const reason = error.details?.reason;
@@ -284,10 +287,10 @@ export class SdkService {
 
   public getScanFromImageType(_recognizers: Array<string> = [], _recognizerOptions: any = {}): ImageRecognitionType {
     if (_recognizers.indexOf('BlinkCardRecognizer') > -1) {
-      return ImageRecognitionType.Combined;
+      return ImageRecognitionType.MultiSide;
     }
 
-    return ImageRecognitionType.Single;
+    return ImageRecognitionType.SingleSide;
   }
 
   public async scanFromImage(
@@ -393,8 +396,8 @@ export class SdkService {
     window.setTimeout(() => void this.cancelRecognition(), 500);
   }
 
-  public async scanFromImageCombined(
-    configuration: CombinedImageRecognitionConfiguration,
+  public async scanFromImageMultiSide(
+    configuration: MultiSideImageRecognitionConfiguration,
     eventCallback: (ev: RecognitionEvent) => void
   ): Promise<void> {
     eventCallback({ status: RecognitionStatus.Preparing });

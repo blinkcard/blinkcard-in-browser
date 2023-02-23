@@ -147,16 +147,16 @@ export namespace Components {
          */
         "startCameraScan": () => Promise<void>;
         /**
-          * Starts combined image scan, emits results from provided files.
-          * @param firstFile File to scan as first image
-          * @param secondFile File to scan as second image
-         */
-        "startCombinedImageScan": (firstFile: File, secondFile: File) => Promise<void>;
-        /**
           * Starts image scan, emits results from provided file.
           * @param file File to scan
          */
         "startImageScan": (file: File) => Promise<void>;
+        /**
+          * Starts multi-side image scan, emits results from provided files.
+          * @param firstFile File to scan as first image
+          * @param secondFile File to scan as second image
+         */
+        "startMultiSideImageScan": (firstFile: File, secondFile: File) => Promise<void>;
         /**
           * Set custom translations for UI component. List of available translation keys can be found in `src/utils/translation.service.ts` file.
          */
@@ -250,6 +250,7 @@ export namespace Components {
           * Camera horizontal state passed from root component.  Horizontal camera image can be mirrored
          */
         "cameraFlipped": boolean;
+        "clearIsCameraActive": boolean;
         /**
           * Populate list of camera devices.
          */
@@ -292,6 +293,7 @@ export namespace Components {
         "type": CameraExperience;
     }
     interface MbCameraSelection {
+        "clearIsCameraActive": boolean;
         /**
           * Populate list of camera devices.
          */
@@ -306,6 +308,7 @@ export namespace Components {
           * Whether the camera is flipped, this property will be flip the relevant icon.
          */
         "cameraFlipped": boolean;
+        "clearIsCameraActive": boolean;
         /**
           * Whether to show 'Camera flip' button.
          */
@@ -467,16 +470,16 @@ export namespace Components {
          */
         "startCameraScan": () => Promise<void>;
         /**
-          * Starts combined image scan, emits results from provided files.
-          * @param firstFile File to scan as first image
-          * @param secondFile File to scan as second image
-         */
-        "startCombinedImageScan": (firstFile: File, secondFile: File) => Promise<void>;
-        /**
           * Starts image scan, emits results from provided file.
           * @param file File to scan
          */
         "startImageScan": (file: File) => Promise<void>;
+        /**
+          * Starts multi-side image scan, emits results from provided files.
+          * @param firstFile File to scan as first image
+          * @param secondFile File to scan as second image
+         */
+        "startMultiSideImageScan": (firstFile: File, secondFile: File) => Promise<void>;
         /**
           * Instance of TranslationService passed from root component.
          */
@@ -964,6 +967,7 @@ declare namespace LocalJSX {
           * Camera horizontal state passed from root component.  Horizontal camera image can be mirrored
          */
         "cameraFlipped"?: boolean;
+        "clearIsCameraActive"?: boolean;
         /**
           * Emitted when user selects a different camera device.
          */
@@ -976,6 +980,10 @@ declare namespace LocalJSX {
           * Emitted when user clicks on Flip button.
          */
         "onFlipCameraAction"?: (event: CustomEvent<void>) => void;
+        /**
+          * Emitted when camera stream becomes active.
+         */
+        "onSetIsCameraActive"?: (event: CustomEvent<boolean>) => void;
         /**
           * Show camera feedback message on camera for Barcode scanning
          */
@@ -998,16 +1006,22 @@ declare namespace LocalJSX {
         "type"?: CameraExperience;
     }
     interface MbCameraSelection {
+        "clearIsCameraActive"?: boolean;
         /**
           * Emitted when user selects a different camera device.
          */
         "onChangeCameraDevice"?: (event: CustomEvent<CameraEntry>) => void;
+        /**
+          * Emitted when camera stream becomes active.
+         */
+        "onSetIsCameraActive"?: (event: CustomEvent<boolean>) => void;
     }
     interface MbCameraToolbar {
         /**
           * Whether the camera is flipped, this property will be flip the relevant icon.
          */
         "cameraFlipped"?: boolean;
+        "clearIsCameraActive"?: boolean;
         /**
           * Whether to show 'Camera flip' button.
          */
@@ -1024,6 +1038,10 @@ declare namespace LocalJSX {
           * Event which is triggered when flip camera button is clicked.
          */
         "onFlipEvent"?: (event: CustomEvent<void>) => void;
+        /**
+          * Emitted when camera stream becomes active.
+         */
+        "onSetIsCameraActive"?: (event: CustomEvent<boolean>) => void;
         /**
           * Set to `true` if close button should be displayed.
          */
@@ -1152,6 +1170,10 @@ declare namespace LocalJSX {
           * See event 'scanSuccess' in public component.
          */
         "onScanSuccess"?: (event: CustomEvent<EventScanSuccess>) => void;
+        /**
+          * Emitted when camera stream becomes active.
+         */
+        "onSetIsCameraActive"?: (event: CustomEvent<boolean>) => void;
         /**
           * See description in public component.
          */

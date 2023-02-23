@@ -14,7 +14,7 @@ export default [
         plugins: [
             nodeResolve(),
             typescript(),
-            terser({
+            terser( {
                 compress:
                 {
                     pure_getters: true,
@@ -22,13 +22,15 @@ export default [
                     unsafe_comps: true,
                     warnings: false
                 }
-            }),
-            copy({
+            } ),
+            copy( {
                 targets: [
-                    { src: "public/*", dest: "dist" },
-                    { src: "node_modules/@microblink/blinkcard-in-browser-sdk/resources/*", dest: "dist" }
+                    { src: "public/*",
+                        dest: "dist" },
+                    { src: "node_modules/@microblink/blinkcard-in-browser-sdk/resources/*",
+                        dest: "dist" }
                 ]
-            })
+            } )
         ]
     }
 ];
