@@ -29,7 +29,7 @@ function main() {
     }
 
     // 1. It's possible to obtain a free trial license key on microblink.com
-    const licenseKey = "sRwAAAYJbG9jYWxob3N0r/lOPmg/w35CpOHWKSo9Yu0SKDY8JDHvmvafuNoVRNJAxUytgg+QDUl6ItRyahGVB4L612RDjDSnrBrTlOrPVuu41G5BMrAvYE0yojkq7wg1nS2Pg8sgUyMgG48qRWM6Nt/RbhRoqxNcVBIZaZmbwQ/8IWjHtwd0f4sl1jMpmR6QW4/lxMUm5rn3Y8M89uwI8IfWBgaRYKkR6HES9BCN7KeiMOcI7DQKNGGGkQ5MCg==";
+    const licenseKey = "sRwAAAYJbG9jYWxob3N0r/lOPmg/w35CpOHWLcIXyZqx58jBjDQEgc9g8PbxdaaDM+jedRKGXjqKQKz7ocX5/uQ6wvwfkHd4iovo1UDxWg4K+dstSEarVzTkBgKXX7iqpHoOjlU1pXPWbWBGasvjaoC2sKOnT7RozIdO8ljPeJVQO0owX3JzguXvoYK3p2ZtlcV/ndSC43hDJjKy4ACGg4Cul5jogfwPEdtJ7bk0XmtamIvtCVSnqQMfF1EwxCXOHw==";
 
     // 2. Create instance of SDK load settings with your license key
     const loadSettings = new BlinkCardSDK.WasmSDKLoadSettings(licenseKey);
@@ -46,13 +46,16 @@ function main() {
     loadSettings.engineLocation = window.location.origin;
 
     // Set absolute location of the worker file
-    loadSettings.workerLocation = window.location.origin + "/BlinkCardWasmSDK.worker.min.js";
+    loadSettings.workerLocation =
+        window.location.origin + "/BlinkCardWasmSDK.worker.min.js";
 
     // 3. Load SDK
     BlinkCardSDK.loadWasmModule(loadSettings).then((sdk: BlinkCardSDK.WasmSDK) => {
         document.getElementById("screen-initial")?.classList.add("hidden");
         document.getElementById("screen-start")?.classList.remove("hidden");
-        document.getElementById("start-button")?.addEventListener("click", (ev) => {
+        document
+            .getElementById("start-button")
+            ?.addEventListener("click", (ev) => {
             ev.preventDefault();
             startScan(sdk);
         });
@@ -143,7 +146,7 @@ async function startScan(sdk: BlinkCardSDK.WasmSDK) {
                 const cardNumber = results.cardNumber;
                 const dateOfExpiry = {
                     year: results.expiryDate.year,
-                    month: results.expiryDate.month
+                    month: results.expiryDate.month,
                 };
                 alert(`Hello, ${firstAndLastName}!\n Your payment card with card number ${cardNumber} will expire on ${dateOfExpiry.year}/${dateOfExpiry.month}.`);
             }

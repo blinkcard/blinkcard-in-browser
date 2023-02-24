@@ -133,16 +133,19 @@
         margin-bottom: 1.5rem;
       }
     </style>
-    <script type="module" src="https://unpkg.com/@microblink/blinkcard-in-browser-sdk@2.6.1/ui/dist/blinkcard-in-browser/blinkcard-in-browser.esm.js"></script>
-    <script nomodule src="https://unpkg.com/@microblink/blinkcard-in-browser-sdk@2.6.1/ui/dist/blinkcard-in-browser.js"></script>
+    <script type="module" src="https://cdn.jsdelivr.net/npm/@microblink/blinkcard-in-browser-sdk@2.7.0/ui/dist/blinkcard-in-browser/blinkcard-in-browser.esm.js"></script>
+    <script nomodule src="https://cdn.jsdelivr.net/npm/@microblink/blinkcard-in-browser-sdk@2.7.0/ui/dist/blinkcard-in-browser.js"></script>
         <script type="text/javascript">
+
+// Workaround for D2D
+var parcelRequire;
 
 window.getSafePathname = (p) => p[p.length - 1] === '/' ? p : p.split('/').slice(0, -1).join('/') + '/';
 
-window.licenseKey = "sRwAAAYJbG9jYWxob3N0r/lOPmg/w35CpOHWKSo9Yu0SKDY8JDHvmvafuNoVRNJAxUytgg+QDUl6ItRyahGVB4L612RDjDSnrBrTlOrPVuu41G5BMrAvYE0yojkq7wg1nS2Pg8sgUyMgG48qRWM6Nt/RbhRoqxNcVBIZaZmbwQ/8IWjHtwd0f4sl1jMpmR6QW4/lxMUm5rn3Y8M89uwI8IfWBgaRYKkR6HES9BCN7KeiMOcI7DQKNGGGkQ5MCg==";
+window.licenseKey = "sRwAAAYJbG9jYWxob3N0r/lOPmg/w35CpOHWLcIXyZqx58jBjDQEgc9g8PbxdaaDM+jedRKGXjqKQKz7ocX5/uQ6wvwfkHd4iovo1UDxWg4K+dstSEarVzTkBgKXX7iqpHoOjlU1pXPWbWBGasvjaoC2sKOnT7RozIdO8ljPeJVQO0owX3JzguXvoYK3p2ZtlcV/ndSC43hDJjKy4ACGg4Cul5jogfwPEdtJ7bk0XmtamIvtCVSnqQMfF1EwxCXOHw==";
 
 if (window.location.hostname === 'blinkcard.github.io') {
-  window.licenseKey = "sRwAAAYTYmxpbmtjYXJkLmdpdGh1Yi5pby+N7zvpysD9Mbe+K3px7tTp4HNXAWbol0CEWuExmrhYJYfceSRLnjREj2Xk3jP0a40DYnJATo+7axb6OF9PFH9HvdL6V1JChBLGneXhk16tuWgVZqevVufY4kuMQN7gl7Li4IoP9FBTZS1EdX2xjaOupovff5nIxtU0crjUG6OnPxoTZwPcLqp05sfa4Z2x/JlNQi6niEyy3d1lQQ7hKI8xsajpu2GmSZsV8pEE4i0=";
+  window.licenseKey = "sRwAAAYTYmxpbmtjYXJkLmdpdGh1Yi5pby+N7zvpysD9Mbe+K36ZxH84iPO5UizTDjd3UMrotMVNG4OWJpwSC8vh+SYmFWkS5v+Biodkzoa6iMHgneLnPJxo1p3rcRal8VYRJuJoo98xSeGaZX90jyjXMsDBoBm3tor+67zWr3fO3Dgl7u921IwGGRmaLiEpdYQXgpZUZRHy3VQDP0khXQ9EaBy48GXsV2xBHuHcnneW/MWmtr/+jp15d/uHRQfsMitmnTYP69uX0iw=";
 }
 window.engineLocation = "https://blinkcard.github.io/blinkcard-in-browser/resources";
 window.workerLocation = "https://blinkcard.github.io/blinkcard-in-browser/resources/BlinkCardWasmSDK.worker.min.js";
@@ -263,8 +266,8 @@ show-scanning-line=&quot;true&quot;
   el.recognizers = ['BlinkCardRecognizer'];
   window.setTimeout(() => {
     el.translations = {
-      'action-message': 'Alternative CTA' };
-
+      'action-message': 'Alternative CTA'
+    };
   }, 3000);
 
 
@@ -314,8 +317,8 @@ show-scanning-line=&quot;true&quot;
 
   window.setTimeout(() => {
     el.translations = {
-      'action-message': 'Alternative CTA' };
-
+      'action-message': 'Alternative CTA'
+    };
   }, 3000);
 
 

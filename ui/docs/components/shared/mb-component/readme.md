@@ -59,6 +59,7 @@
 | `scanAborted`       | See event 'scanAborted' in public component.                                  | `CustomEvent<null>`             |
 | `scanError`         | See event 'scanError' in public component.                                    | `CustomEvent<EventScanError>`   |
 | `scanSuccess`       | See event 'scanSuccess' in public component.                                  | `CustomEvent<EventScanSuccess>` |
+| `setIsCameraActive` | Emitted when camera stream becomes active.                                    | `CustomEvent<boolean>`          |
 
 
 ## Methods
@@ -86,9 +87,9 @@ Type: `Promise<void>`
 
 
 
-### `startCombinedImageScan(firstFile: File, secondFile: File) => Promise<void>`
+### `startImageScan(file: File) => Promise<void>`
 
-Starts combined image scan, emits results from provided files.
+Starts image scan, emits results from provided file.
 
 #### Returns
 
@@ -96,9 +97,9 @@ Type: `Promise<void>`
 
 
 
-### `startImageScan(file: File) => Promise<void>`
+### `startMultiSideImageScan(firstFile: File, secondFile: File) => Promise<void>`
 
-Starts image scan, emits results from provided file.
+Starts multi-side image scan, emits results from provided files.
 
 #### Returns
 

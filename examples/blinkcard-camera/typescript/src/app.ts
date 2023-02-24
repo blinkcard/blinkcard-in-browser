@@ -30,7 +30,7 @@ function main() {
     }
 
     // 1. It's possible to obtain a free trial license key on microblink.com
-    const licenseKey = "sRwAAAYJbG9jYWxob3N0r/lOPmg/w35CpOHWKeIcyUSz8fDN+kpZwh39JTAYyAQ+7adUFfgptY2QPtEII9rfosGVKtbC/pMs5g8QQIzFmx0voaH4qjuMs7p/Pdnoi7kqPYB6QL9cRIsBMfqJOJmf9jTsUQtHdubYz8Sv3PEoul18uBorUMM86Bw7tFLEcDjfp8xOXM1fuNfgDVG2BvK/UwpVc4k8a3SiQLXgDUU0ItaNXo7yY9au8ZX/R6yDOfbXRw==";
+    const licenseKey = "sRwAAAYJbG9jYWxob3N0r/lOPmg/w35CpOHWLcIXyZqx58jBjDQEgc9g8PbxdaaDM+jedRKGXjqKQKz7ocX5/uQ6wvwfkHd4iovo1UDxWg4K+dstSEarVzTkBgKXX7iqpHoOjlU1pXPWbWBGasvjaoC2sKOnT7RozIdO8ljPeJVQO0owX3JzguXvoYK3p2ZtlcV/ndSC43hDJjKy4ACGg4Cul5jogfwPEdtJ7bk0XmtamIvtCVSnqQMfF1EwxCXOHw==";
 
     // 2. Create instance of SDK load settings with your license key
     const loadSettings = new BlinkCardSDK.WasmSDKLoadSettings(licenseKey);
@@ -41,19 +41,22 @@ function main() {
     loadSettings.allowHelloMessage = true;
 
     // In order to provide better UX, display progress bar while loading the SDK
-    loadSettings.loadProgressCallback = (progress: number) => progressEl!.value = progress;
+    loadSettings.loadProgressCallback = (progress: number) => (progressEl!.value = progress);
 
     // Set absolute location of the engine, i.e. WASM and support JS files
     loadSettings.engineLocation = window.location.origin;
 
     // Set absolute location of the worker file
-    loadSettings.workerLocation = window.location.origin + "/BlinkCardWasmSDK.worker.min.js";
+    loadSettings.workerLocation =
+        window.location.origin + "/BlinkCardWasmSDK.worker.min.js";
 
     // 3. Load SDK
     BlinkCardSDK.loadWasmModule(loadSettings).then((sdk: BlinkCardSDK.WasmSDK) => {
         document.getElementById("screen-initial")?.classList.add("hidden");
         document.getElementById("screen-start")?.classList.remove("hidden");
-        document.getElementById("start-scan")?.addEventListener("click", (ev: any) => {
+        document
+            .getElementById("start-scan")
+            ?.addEventListener("click", (ev: any) => {
             ev.preventDefault();
             startScan(sdk);
         });
@@ -81,7 +84,7 @@ async function startScan(sdk: BlinkCardSDK.WasmSDK) {
     // [OPTIONAL] Create a callbacks object that will receive recognition events, such as detected object location etc.
     const callbacks = {
         onQuadDetection: (quad: BlinkCardSDK.DisplayableQuad) => drawQuad(quad),
-        onFirstSideResult: () => alert("Flip the document")
+        onFirstSideResult: () => alert("Flip the document"),
     };
 
     // 2. Create a RecognizerRunner object which orchestrates the recognition with one or more
@@ -116,7 +119,7 @@ async function startScan(sdk: BlinkCardSDK.WasmSDK) {
             const cardNumber = blinkCardResult.cardNumber;
             const dateOfExpiry = {
                 year: blinkCardResult.expiryDate.year,
-                month: blinkCardResult.expiryDate.month
+                month: blinkCardResult.expiryDate.month,
             };
             alert(`Hello, ${firstAndLastName}!\n Your payment card with card number ${cardNumber} will expire on ${dateOfExpiry.year}/${dateOfExpiry.month}.`);
         }

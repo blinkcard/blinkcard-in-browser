@@ -6,8 +6,8 @@
         <title>Example: BlinkCard UI</title>
 
         <!-- Import UI component which includes WASM library -->
-        <!-- Keep in mind that Unpkg CDN is used for demonstration, it's not intended to be used in production! -->
-        <script type="module" src="https://unpkg.com/@microblink/blinkcard-in-browser-sdk@2.6.1/ui/dist/blinkcard-in-browser/blinkcard-in-browser.esm.js"></script>
+        <!-- Keep in mind that the jsDelivr CDN is used for demonstration, it's not intended to be used in production! -->
+        <script type="module" src="https://cdn.jsdelivr.net/npm/@microblink/blinkcard-in-browser-sdk@2.7.0/ui/dist/blinkcard-in-browser/blinkcard-in-browser.esm.js"></script>
 
         <style type="text/css">
             html,
@@ -52,7 +52,7 @@
     </head>
     <body>
         <!-- It's possible to obtain a free trial license key on microblink.com -->
-        <blinkcard-in-browser license-key="sRwAAAYJbG9jYWxob3N0r/lOPmg/w35CpOHWKeIcyUSz8fDN+kpZwh39JTAYyAQ+7adUFfgptY2QPtEII9rfosGVKtbC/pMs5g8QQIzFmx0voaH4qjuMs7p/Pdnoi7kqPYB6QL9cRIsBMfqJOJmf9jTsUQtHdubYz8Sv3PEoul18uBorUMM86Bw7tFLEcDjfp8xOXM1fuNfgDVG2BvK/UwpVc4k8a3SiQLXgDUU0ItaNXo7yY9au8ZX/R6yDOfbXRw==" recognizers="BlinkCardRecognizer"></blinkcard-in-browser>
+        <blinkcard-in-browser license-key="sRwAAAYJbG9jYWxob3N0r/lOPmg/w35CpOHWLcIXyZqx58jBjDQEgc9g8PbxdaaDM+jedRKGXjqKQKz7ocX5/uQ6wvwfkHd4iovo1UDxWg4K+dstSEarVzTkBgKXX7iqpHoOjlU1pXPWbWBGasvjaoC2sKOnT7RozIdO8ljPeJVQO0owX3JzguXvoYK3p2ZtlcV/ndSC43hDJjKy4ACGg4Cul5jogfwPEdtJ7bk0XmtamIvtCVSnqQMfF1EwxCXOHw==" recognizers="BlinkCardRecognizer"></blinkcard-in-browser>
 
         <script type="text/javascript">
 
@@ -63,7 +63,7 @@ function run()
 
   if (window.location.hostname === "blinkcard.github.io")
   {
-    blinkCard.licenseKey = "sRwAAAYTYmxpbmtjYXJkLmdpdGh1Yi5pby+N7zvpysD9Mbe+K3q5z39+KlTgPQi5ktCkjm2XjBep8tLiy+adpNQombp6cm0Lz64cc8k1XM6Egns2x1pkf1Vp03t+Gd47pfZ17KUzir2xhwcdAsGOA0mQsII3LmuwTBsSCxBkgojShS5dq1tk5Iz4NU2XyvZNj5Tqm6sQkmySVbDi8kGnEEyvu39FxrD3Yq0VqKD2Yxgz+BH4vtzk1HYoF+63++xeEOYaXF0LoD8MNOI=";
+    blinkCard.licenseKey = "sRwAAAYTYmxpbmtjYXJkLmdpdGh1Yi5pby+N7zvpysD9Mbe+K36ZxH84iPO5UizTDjd3UMrotMVNG4OWJpwSC8vh+SYmFWkS5v+Biodkzoa6iMHgneLnPJxo1p3rcRal8VYRJuJoo98xSeGaZX90jyjXMsDBoBm3tor+67zWr3fO3Dgl7u921IwGGRmaLiEpdYQXgpZUZRHy3VQDP0khXQ9EaBy48GXsV2xBHuHcnneW/MWmtr/+jp15d/uHRQfsMitmnTYP69uX0iw=";
   }
 
   blinkCard.engineLocation = "https://blinkcard.github.io/blinkcard-in-browser/resources";

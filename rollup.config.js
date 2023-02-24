@@ -1,5 +1,3 @@
-import { readFileSync, writeFileSync } from 'fs'
-
 import babel from '@rollup/plugin-babel'
 import nodeResolve from '@rollup/plugin-node-resolve'
 import typescript from 'rollup-plugin-typescript2'
@@ -23,28 +21,11 @@ const terserConfig = {
     }
 }
 
-function replaceWorker(workerFile) {
-    return {
-        name: 'replace-placeholder',
-        writeBundle: (options, bundle) => {
-            const outputFilePath = options.file
-            const outputFileName = outputFilePath.split('/').pop()
-            const incompleteCode = bundle[outputFileName].code
-
-            const workerContent = readFileSync(workerFile, 'utf8')
-
-            const completeCode = incompleteCode.replace('@PLACEHOLDER:worker', workerContent)
-
-            writeFileSync(outputFilePath, completeCode)
-        }
-    }
-}
-
 const config = {
     worker: {
         input: 'src/worker.ts',
         output: {
-            file: 'resources/BlinkCardSDK.worker.min.js',
+            file: 'resources/BlinkCardWasmSDK.worker.min.js',
             format: 'iife'
         },
         plugins: [
@@ -65,8 +46,7 @@ const config = {
         plugins: [
             nodeResolve(),
             typescript({ useTsconfigDeclarationDir: true }),
-            babel({ babelHelpers: 'bundled' }),
-            replaceWorker('resources/BlinkCardSDK.worker.min.js')
+            babel({ babelHelpers: 'bundled' })
         ]
     },
     es: {
@@ -81,8 +61,7 @@ const config = {
         plugins: [
             nodeResolve(),
             typescript({ tsconfigOverride: { compilerOptions: { declaration: false, sourceMap: true } } }),
-            babel({ babelHelpers: 'bundled' }),
-            replaceWorker('resources/BlinkCardSDK.worker.min.js')
+            babel({ babelHelpers: 'bundled' })
         ]
     },
     esModule: {
@@ -97,8 +76,7 @@ const config = {
             nodeResolve(),
             typescript({ tsconfigOverride: { compilerOptions: { declaration: false } } }),
             babel({ babelHelpers: 'bundled' }),
-            terser(terserConfig),
-            replaceWorker('resources/BlinkCardSDK.worker.min.js')
+            terser(terserConfig)
         ]
     },
     umdDev: {
@@ -114,8 +92,7 @@ const config = {
         plugins: [
             nodeResolve(),
             typescript({ tsconfigOverride: { compilerOptions: { declaration: false, sourceMap: true } } }),
-            babel({ babelHelpers: 'bundled' }),
-            replaceWorker('resources/BlinkCardSDK.worker.min.js')
+            babel({ babelHelpers: 'bundled' })
         ]
     },
     umdProd: {
@@ -131,19 +108,8 @@ const config = {
             nodeResolve(),
             typescript({ tsconfigOverride: { compilerOptions: { declaration: false } } }),
             babel({ babelHelpers: 'bundled' }),
-            terser(terserConfig),
-            replaceWorker('resources/BlinkCardSDK.worker.min.js')
+            terser(terserConfig)
         ]
-    },
-    workerTest: {
-        input: 'src/MicroblinkSDK/worker/WorkerTest.js',
-        treeshake: false,
-        output: {
-            file: 'resources/WorkerTest.js',
-            format: 'iife',
-            indent: false,
-            banner: bannerMsg
-        }
     }
 }
 
@@ -153,6 +119,5 @@ export default [
     config.es,
     config.esModule,
     config.umdDev,
-    config.umdProd,
-    config.workerTest
+    config.umdProd
 ]

@@ -1,6 +1,6 @@
 {
     "name": "@microblink/blinkcard-in-browser-sdk",
-    "version": "2.6.1",
+    "version": "2.7.0",
     "description": "BlinkCard SDK is credit or payment cards scanning library for WebAssembly-enabled browsers.",
     "homepage": "https://github.com/BlinkCard/blinkcard-in-browser",
     "repository": "github:BlinkCard/blinkcard-in-browser",
@@ -14,11 +14,10 @@
         "optical-character-recognition"
     ],
     "engines": {
-        "node": ">=12.0.0"
+        "node": ">=16.3.0"
     },
     "main": "lib/blinkcard-sdk.js",
     "module": "es/blinkcard-sdk.js",
-    "unpkg": "dist/blinkcard-sdk.js",
     "types": "types/index.d.ts",
     "files": [
         "ui/dist",

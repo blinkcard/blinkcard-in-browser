@@ -120,20 +120,20 @@ Alternatively, it's possible to use UMD builds which can be loaded from public C
 
 However, **we strongly advise** that you host the JavaScript bundles on your infrastructure since there is no guarantee that the public CDN service has satisfactory uptime and availability throughout the world.
 
-For example, it's possible to use UMD builds from [the `dist` folder on Unpkg CDN](https://unpkg.com/@microblink/blinkcard-in-browser-sdk/dist/). The UMD builds make `BlinkCardSDK` available as a `window.BlinkCardSDK` global variable:
+For example, it's possible to use UMD builds from [the `dist` folder on the jsDelivr CDN](https://cdn.jsdelivr.net/npm/@microblink/blinkcard-in-browser-sdk/dist/). The UMD builds make `BlinkCardSDK` available as a `window.BlinkCardSDK` global variable:
 
 ```html
 <!-- IMPORTANT: change "X.Y.Z" to the version number you wish to use! -->
-<script src="https://unpkg.com/@microblink/blinkcard-in-browser-sdk@X.Y.Z/dist/blinkcard-sdk.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@microblink/blinkcard-in-browser-sdk@X.Y.Z/dist/blinkcard-sdk.min.js"></script>
 ```
 
-Finally, it's possible to use ES builds, which can be downloaded from [the `es` folder on unpkg](https://unpkg.com/@microblink/blinkcard-in-browser-sdk/es/). ES modules are used in a similar manner as NPM package:
+Finally, it's possible to use ES builds, which can be downloaded from [the `es` folder on jsDelivr](https://cdn.jsdelivr.net/npm/@microblink/blinkcard-in-browser-sdk/es/). ES modules are used in a similar manner as NPM package:
 
 ```javascript
 import * as BlinkCardSDK from "./es/blinkcard-sdk.js";
 ```
 
-**Important:** Unpkg CDN is used here due to simplicity of usage. It's not intended to be used in production!
+**Important:** the jsDelivr CDN is used here due to simplicity of usage. It's not intended to be used in production!
 
 #### WASM Resources
 
@@ -708,13 +708,13 @@ Requirements:
 
 Minimal browser versions with support for all features required by BlinkCard.
 
-|Chrome|Safari|Edge|Firefox|Opera|iOS Safari|Android Browser|Opera Mobile|Chrome for Android|Firefox for Android|
-|------|------|----|-------|-----|----------|---------------|------------|------------------|-------------------|
-|    57|    11|  79|     52|   44|        14|             81|          59|                86|                 82|
+|Chrome|Safari|Edge|Firefox|Opera|iOS Safari|Android Browser|Chrome for Android|Firefox for Android|
+|------|------|----|-------|-----|----------|---------------|------------------|-------------------|
+|    96|    15|  93|     79|   82|        15|             81|                96|                 79|
 
 Internet Explorer is **not supported**.
 
-*Source: [caniuse](https://caniuse.com/wasm)*
+*Sources: [caniuse](https://caniuse.com/wasm) and [WebAssembly Roadmap](https://webassembly.org/roadmap/)*
 
 ## <a name="camera-devices"></a> Camera devices
 
