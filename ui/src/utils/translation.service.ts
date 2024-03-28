@@ -3,7 +3,20 @@
  */
 
 export const defaultTranslations: { [key: string]: string|Array<string> } = {
-
+  /* Help Screens */
+  'help-button-lobby-tooltip': 'Need help?',
+  'help-button-back': 'Back',
+  'help-button-next': 'Next',
+  'help-button-done': 'Done',
+  'help-button-start-scanning': 'Start Scanning',
+  'help-doc-valid-title': 'Keep all the details visible',
+  'help-doc-valid-description': 'Make sure you keep the document well lit. All document fields should be visible on the camera screen.',
+  'help-doc-invalid-invisible-fields-title': 'Keep all the details visible',
+  'help-doc-invalid-invisible-fields-description': 'Make sure you aren\'t covering parts of the document with a finger, including the bottom lines. Also, watch out for hologram reflections that go over the document fields.',
+  'help-doc-invalid-harsh-light-title': 'Watch out for harsh light',
+  'help-doc-invalid-harsh-light-description': 'Avoid direct harsh light because it reflects from the document and can make parts of the document unreadable. If you can\'t read data on the document, it won\'t be visible to the camera either.',
+  'help-doc-invalid-to-much-motion-title': 'Keep still while scanning',
+  'help-doc-invalid-to-much-motion-description': 'Try to keep the phone and document still while scanning. Moving either can blur the image and make data on the document unreadable.',
 
   'action-alt-camera': 'Device camera',
   'action-alt-gallery': 'From gallery',

@@ -2,7 +2,6 @@
  * Copyright (c) Microblink Ltd. All rights reserved.
  */
 
-
 import {
   Component,
   Element,
@@ -46,11 +45,12 @@ import * as BlinkCardSDK from '../../../../../es/blinkcard-sdk';
 
 import { TranslationService } from '../../../utils/translation.service';
 
-
 import * as DeviceHelpers from '../../../utils/device.helpers';
 import * as GenericHelpers from '../../../utils/generic.helpers';
 
 import * as Utils from './mb-component.utils';
+
+import { MbHelpCallbacks } from '../mb-help/mb-help.model';
 
 @Component({
   tag: 'mb-component',
@@ -70,8 +70,6 @@ export class MbComponent {
     draganddrop: null,
     processing: null,
     modal: null,
-    deviceselection: null,
-    deviceselectionmobile: null
   }
 
   private cameraExperience!: HTMLMbCameraExperienceElement;
@@ -92,6 +90,7 @@ export class MbComponent {
   private imageRecognitionType: ImageRecognitionType;
   private imageBoxFirst: HTMLMbImageBoxElement;
   private imageBoxSecond: HTMLMbImageBoxElement;
+  private areHelpScreensOpen: boolean = false;
   private galleryImageFirstFile: File | null = null;
   private galleryImageSecondFile: File | null = null;
   private multiSideScanFromImageButton: HTMLMbButtonClassicElement;
@@ -110,7 +109,6 @@ export class MbComponent {
    * Host element as variable for manipulation (CSS in this case)
    */
   @Element() hostEl: HTMLElement;
-
 
   /**
    * See description in public component.
@@ -289,6 +287,31 @@ export class MbComponent {
   @Prop() cameraId: string | null = null;
 
   /**
+   * Dictates if Help Screens usage is allowed (turned on).
+   */
+  @Prop() allowHelpScreens: boolean = false;
+
+  /**
+   * See description in public component.
+   */
+  @Prop() allowHelpScreensFab: boolean = false;
+
+  /**
+   * See description in public component.
+   */
+  @Prop() allowHelpScreensOnboarding: boolean = false;
+
+  /**
+   * See description in public component.
+   */
+  @Prop() allowHelpScreensOnboardingPerpetuity: boolean = false;
+
+  /**
+   * See description in public component.
+   */
+  @Prop() helpScreensTooltipPauseTimeout: number = 15000;
+
+  /**
    * Event containing boolean which used to check whether component is blocked.
    */
   @Event() block: EventEmitter<boolean>;
@@ -336,8 +359,7 @@ export class MbComponent {
   /**
    * Emitted when camera stream becomes active.
    */
-   @Event() setIsCameraActive: EventEmitter<boolean>;
-
+  @Event() setIsCameraActive: EventEmitter<boolean>;
 
   componentDidLoad() {
     // Set `exportparts` attribute on root `mb-component` element to enable ::part() CSS customization
@@ -349,7 +371,6 @@ export class MbComponent {
     this.hostEl.setAttribute('exportparts', parts.concat(exportedParts).join(', '));
 
     this.init();
-
   }
 
   componentDidUpdate() {
@@ -368,7 +389,6 @@ export class MbComponent {
         this.handleSetIsCameraActive(false);
         this.clearIsCameraActive = true;
       }
-
     }
   }
 
@@ -487,7 +507,6 @@ export class MbComponent {
       return;
     }
 
-
     const internetIsAvailable = navigator.onLine;
 
     if (!internetIsAvailable) {
@@ -583,7 +602,6 @@ export class MbComponent {
     this.blocked = false;
     this.block.emit(false);
 
-
     this.showScreen('action');
 
     if (this.enableDrag) {
@@ -628,11 +646,6 @@ export class MbComponent {
 
     this.cameraExperience.type = this.sdkService.getDesiredCameraExperience(this.recognizers, this.recognizerOptions);
     return true;
-  }
-
-  private async openDeviceModal() {
-
-    this.startScanFromCamera();
   }
 
   private async startScanFromCamera() {
@@ -748,6 +761,9 @@ export class MbComponent {
           this.sdkService.videoRecognizer.pauseRecognition();
 
           window.setTimeout(async () => {
+            if (this.areHelpScreensOpen) {
+              return; // help screens close will resume
+            }
             await this.sdkService.videoRecognizer.resumeRecognition(false);
           }, this.recognitionPauseTimeout);
 
@@ -777,6 +793,7 @@ export class MbComponent {
             this.cameraExperience.setState(CameraExperienceState.DoneAll, false, true)
               .then(() => {
                 this.cameraExperience.resetState();
+                this.terminateHelpScreens();
                 this.cameraExperience.classList.add('hide');
 
                 this.scanSuccess.emit(recognitionEvent.data?.result);
@@ -785,7 +802,6 @@ export class MbComponent {
                   state: 'FEEDBACK_OK',
                   message: ''
                 });
-
 
                 this.showOverlay('');
               });
@@ -892,6 +908,8 @@ export class MbComponent {
 
       const cameraFlipped = this.sdkService.isCameraFlipped();
       this.cameraExperience.setCameraFlipState(cameraFlipped);
+
+      this.initializeHelpScreensAndStartOnboarding();
     } catch (error) {
       this.handleScanError(error);
       this.showOverlay('');
@@ -1325,6 +1343,7 @@ export class MbComponent {
   }
 
   private stopRecognition() {
+    this.terminateHelpScreens();
     this.cameraExperience.classList.add('hide');
 
     this.sdkService.stopRecognition();
@@ -1333,7 +1352,6 @@ export class MbComponent {
     window.setTimeout(() => {
       this.cameraExperience.setState(CameraExperienceState.Default, false, true);
       this.cameraExperience.apiState = '';
-
     }, 500);
 
     this.showOverlay('');
@@ -1377,6 +1395,8 @@ export class MbComponent {
 
     this.scanFromImageButton.selected = true;
     this.multiSideGalleryOpened = true;
+
+    this.overlays.draganddrop.classList.add('hidden')
   }
 
   private closeMultiSideGalleryUpload(): void {
@@ -1385,6 +1405,8 @@ export class MbComponent {
 
     this.scanFromImageButton.selected = false;
     this.multiSideGalleryOpened = false;
+
+    this.overlays.draganddrop.classList.remove('hidden')
   }
 
   private async onMultiSideImageChange(ev: FileList, imageType: MultiSideImageType) {
@@ -1438,6 +1460,26 @@ export class MbComponent {
     }
   }
 
+  private terminateHelpScreens = async (): Promise<void> => {
+    this.areHelpScreensOpen = false;
+    await this.cameraExperience.terminateHelpScreens();
+  };
+
+  private initializeHelpScreensAndStartOnboarding = async (): Promise<void> => {
+    this.areHelpScreensOpen = false;
+    await this.cameraExperience.initializeHelpScreens({
+      onOpen: () => {
+        this.areHelpScreensOpen = true;
+        this.sdkService.videoRecognizer.pauseRecognition();
+      },
+      onClose: () => {
+        this.areHelpScreensOpen = false;
+        this.sdkService.videoRecognizer.resumeRecognition(false);
+      }
+    } as MbHelpCallbacks);
+    await this.cameraExperience.openHelpScreensOnboarding();
+  }
+
   render() {
     return (
       <Host>
@@ -1477,7 +1519,7 @@ export class MbComponent {
                 ref={el => this.scanFromCameraButton = el as HTMLMbButtonElement}
                 visible={true}
                 disabled={false}
-                clickHandler={() => this.openDeviceModal()}
+                clickHandler={() => this.startScanFromCamera()}
                 imageSrcDefault={this.iconCameraDefault}
                 imageSrcActive={this.iconCameraActive}
                 buttonTitle={this.translationService.i('action-alt-camera') as string}
@@ -1506,6 +1548,7 @@ export class MbComponent {
 
           {/* Multi-side image upload */}
           <div class="multi-side-image-upload">
+            <div class="image-upload-row">
             <mb-image-box
               ref={el => this.imageBoxFirst = el as HTMLMbImageBoxElement}
               box-title={this.translationService.i('process-image-box-first').toString()}
@@ -1516,6 +1559,7 @@ export class MbComponent {
               box-title={this.translationService.i('process-image-box-second').toString()}
               anchor-text={this.translationService.i('process-image-box-add').toString()}
               onImageChange={(ev: CustomEvent<FileList>) => this.onMultiSideImageChange(ev.detail, MultiSideImageType.Second)}></mb-image-box>
+            </div>
             <mb-button-classic
               ref={el => this.multiSideScanFromImageButton = el as HTMLMbButtonClassicElement}
               disabled={true}
@@ -1596,6 +1640,11 @@ export class MbComponent {
               onFlipCameraAction={() => this.flipCameraAction()}
               onSetIsCameraActive={(ev: CustomEvent<boolean>) => this.handleSetIsCameraActive(ev.detail)}
               onChangeCameraDevice={(ev: CustomEvent<CameraEntry>) => this.changeCameraDevice(ev.detail)}
+              allowHelpScreens={ this.allowHelpScreens }
+              allowHelpScreensFab={ this.allowHelpScreensFab }
+              allowHelpScreensOnboarding={ this.allowHelpScreensOnboarding }
+              allowHelpScreensOnboardingPerpetuity={ this.allowHelpScreensOnboardingPerpetuity }
+              helpScreensTooltipPauseTimeout={ this.helpScreensTooltipPauseTimeout }
               class="overlay-camera-element"
             ></mb-camera-experience>
             <mb-api-process-status
@@ -1624,7 +1673,6 @@ export class MbComponent {
             </div>
           </mb-modal>
         </mb-overlay>
-
       </Host>
     );
   }

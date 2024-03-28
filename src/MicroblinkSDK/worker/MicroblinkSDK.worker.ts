@@ -20,6 +20,7 @@ import { ClearTimeoutCallback } from "../ClearTimeoutCallback";
 import { setupModule, supportsThreads, waitForThreadWorkers } from "../PThreadHelper";
 import { WasmType } from "../WasmType";
 import { SDKError } from "../SDKError";
+import { CapturedFrame } from "../FrameCapture";
 
 interface MessageWithParameters extends Messages.RequestMessage
 {
@@ -81,7 +82,7 @@ export default class MicroblinkWorker
                     this.processDeleteRecognizerRunner( msg as Messages.DeleteRecognizerRunner );
                     break;
                 case Messages.ProcessImage.action:
-                    void this.processImage( msg as Messages.ProcessImage );
+                    this.processImage( msg as Messages.ProcessImage );
                     break;
                 case Messages.ResetRecognizers.action:
                     this.resetRecognizers( msg as Messages.ResetRecognizers );
@@ -275,7 +276,6 @@ export default class MicroblinkWorker
             },
             heartBeatDelay * 1000
         );
-
     }
 
     private unregisterHeartBeat()
@@ -395,7 +395,11 @@ export default class MicroblinkWorker
 
     private calculateEngineLocationPrefix( msg: Messages.InitMessage, wasmType: WasmType ): string
     {
-        const engineLocation = msg.engineLocation === "" ? self.location.origin : msg.engineLocation;
+        let engineLocation = msg.engineLocation === "" ? self.location.origin : msg.engineLocation;
+        if ( msg.wasmFlavor !== "" )
+        {
+            engineLocation = Utils.getSafePath( engineLocation, msg.wasmFlavor );
+        }
         const engineLocationPrefix = Utils.getSafePath( engineLocation, WasmLoadUtils.wasmFolder( wasmType ) );
         if ( msg.allowHelloMessage )
         {
@@ -419,7 +423,11 @@ export default class MicroblinkWorker
             locateFile: ( path: string ) =>
             {
                 return Utils.getSafePath( engineLocation, path );
-            }
+            },
+            // don't automatically terminate WASM runtime after last native function is executed (e.g. async ping
+            // after recognition is over) We need to manually call `mbWasmModule.exitRuntime()` when we are completely
+            // done with all native processing
+            noExitRuntime: true,
         };
 
         if ( msg.registerLoadCallback )
@@ -850,7 +858,7 @@ export default class MicroblinkWorker
 
         try
         {
-            const image = msg.frame;
+            let image: CapturedFrame | null = msg.frame;
             /* eslint-disable @typescript-eslint/no-unsafe-call,
                               @typescript-eslint/no-unsafe-member-access,
                               @typescript-eslint/no-unsafe-assignment */
@@ -859,7 +867,10 @@ export default class MicroblinkWorker
                              @typescript-eslint/no-unsafe-member-access,
                              @typescript-eslint/no-unsafe-assignment */
 
-            this.context.postMessage( new Messages.ImageProcessResultMessage( msg.messageID, result ) );
+            // deref the image
+            this.context.postMessage( new Messages.ImageProcessResultMessage( msg.messageID, result ),
+                [image.imageData.data.buffer] );
+            image = null;
         }
         catch( error )
         {

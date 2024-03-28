@@ -63,6 +63,8 @@ export class InitMessage extends BaseRequestMessage
 
     readonly wasmType: WasmType | null;
 
+    readonly wasmFlavor: string;
+
     readonly numberOfWorkers: number | null;
 
     constructor( wasmLoadSettings: WasmSDKLoadSettings, userId: string )
@@ -75,6 +77,7 @@ export class InitMessage extends BaseRequestMessage
         this.allowHelloMessage = wasmLoadSettings.allowHelloMessage;
         this.engineLocation = wasmLoadSettings.engineLocation;
         this.wasmType = wasmLoadSettings.wasmType;
+        this.wasmFlavor = wasmLoadSettings.wasmFlavor;
         this.numberOfWorkers = wasmLoadSettings.numberOfWorkers;
     }
 }

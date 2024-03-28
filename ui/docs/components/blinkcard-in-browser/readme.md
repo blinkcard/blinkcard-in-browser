@@ -153,7 +153,13 @@ graph TD;
   mb-component --> mb-camera-experience
   mb-component --> mb-api-process-status
   mb-camera-experience --> mb-camera-toolbar
+  mb-camera-experience --> mb-help
   mb-camera-toolbar --> mb-camera-selection
+  mb-help --> mb-tooltip-advanced
+  mb-help --> mb-overlay
+  mb-help --> mb-modal
+  mb-help --> mb-progress-tracker
+  mb-help --> mb-button-classic
   mb-api-process-status --> mb-modal
   style blinkcard-in-browser fill:#f9f,stroke:#333,stroke-width:4px
 ```

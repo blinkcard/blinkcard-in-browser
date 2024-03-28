@@ -173,7 +173,7 @@ export class SdkService {
 
       await this.videoRecognizer.setVideoRecognitionMode(BlinkCardSDK.VideoRecognitionMode.Recognition);
 
-      this.videoRecognizer.startRecognition(
+      await this.videoRecognizer.startRecognition(
         async (recognitionState: BlinkCardSDK.RecognizerResultState) => {
           this.videoRecognizer.pauseRecognition();
 
@@ -237,34 +237,30 @@ export class SdkService {
         .catch((error) => { throw error; });
 ;
     } catch (error) {
-      if (error && error.details?.reason) {
-        const reason = error.details?.reason;
-
-        switch (reason) {
-          case BlinkCardSDK.NotSupportedReason.MediaDevicesNotSupported:
+      if (!error.code) {
+        eventCallback({ status: RecognitionStatus.UnknownError });
+      } else {
+        switch (error.code) {
+          case BlinkCardSDK.ErrorCodes.VIDEO_RECOGNIZER_MEDIA_DEVICES_UNSUPPORTED:
             eventCallback({ status: RecognitionStatus.NoSupportForMediaDevices });
             break;
-
-          case BlinkCardSDK.NotSupportedReason.CameraNotFound:
+          case BlinkCardSDK.ErrorCodes.VIDEO_RECOGNIZER_CAMERA_MISSING:
             eventCallback({ status: RecognitionStatus.CameraNotFound });
             break;
-
-          case BlinkCardSDK.NotSupportedReason.CameraNotAllowed:
+          case BlinkCardSDK.ErrorCodes.VIDEO_RECOGNIZER_CAMERA_NOT_ALLOWED:
             eventCallback({ status: RecognitionStatus.CameraNotAllowed });
             break;
-
-          case BlinkCardSDK.NotSupportedReason.CameraInUse:
+          case BlinkCardSDK.ErrorCodes.VIDEO_RECOGNIZER_CAMERA_IN_USE:
             eventCallback({ status: RecognitionStatus.CameraInUse });
             break;
 
           default:
             eventCallback({ status: RecognitionStatus.UnableToAccessCamera });
+            break;
         }
-
-        console.warn('VideoRecognizerError', error.name, '[' + reason + ']:', error.message);
-      } else {
-        eventCallback({ status: RecognitionStatus.UnknownError });
       }
+
+      console.warn('Error in VideoRecognizer', error.code, error.message);
 
       void this.cancelRecognition();
     }
@@ -301,7 +297,7 @@ export class SdkService {
 
     const recognizers = await this.createRecognizers(
       configuration.recognizers,
-      configuration.recognizerOptions
+      configuration.recognizerOptions,
     );
 
     const recognizerRunner = await this.createRecognizerRunner(
@@ -404,7 +400,7 @@ export class SdkService {
 
     const recognizers = await this.createRecognizers(
       configuration.recognizers,
-      configuration.recognizerOptions
+      configuration.recognizerOptions,
     );
 
     const recognizerRunner = await this.createRecognizerRunner(
@@ -550,7 +546,7 @@ export class SdkService {
 
   private async createRecognizers(
     recognizers: Array<string>,
-    recognizerOptions?: any,
+    recognizerOptions: any,
     successFrame: boolean = false
   ): Promise<Array<RecognizerInstance>> {
     const pureRecognizers = [];
@@ -563,6 +559,8 @@ export class SdkService {
     if (recognizerOptions && Object.keys(recognizerOptions).length > 0) {
       for (const recognizer of pureRecognizers) {
         const settings = await recognizer.currentSettings();
+
+
         let updated = false;
 
         if (
@@ -613,7 +611,7 @@ export class SdkService {
 
         const detectionStatus = quad.detectionStatus;
         switch (detectionStatus) {
-          case BlinkCardSDK.DetectionStatus.Fail:
+          case BlinkCardSDK.DetectionStatus.Failed:
             eventCallback({ status: RecognitionStatus.DetectionStatusSuccess });
             break;
 
@@ -621,7 +619,7 @@ export class SdkService {
             eventCallback({ status: RecognitionStatus.DetectionStatusSuccess });
             break;
 
-          case BlinkCardSDK.DetectionStatus.CameraTooHigh:
+          case BlinkCardSDK.DetectionStatus.CameraTooFar:
             eventCallback({ status: RecognitionStatus.DetectionStatusCameraTooHigh });
             break;
 
@@ -629,19 +627,19 @@ export class SdkService {
             eventCallback({ status: RecognitionStatus.DetectionStatusFallbackSuccess });
             break;
 
-          case BlinkCardSDK.DetectionStatus.Partial:
+          case BlinkCardSDK.DetectionStatus.DocumentPartiallyVisible:
             eventCallback({ status: RecognitionStatus.DetectionStatusPartial });
             break;
 
-          case BlinkCardSDK.DetectionStatus.CameraAtAngle:
+          case BlinkCardSDK.DetectionStatus.CameraAngleTooSteep:
             eventCallback({ status: RecognitionStatus.DetectionStatusCameraAtAngle });
             break;
 
-          case BlinkCardSDK.DetectionStatus.CameraTooNear:
+          case BlinkCardSDK.DetectionStatus.CameraTooClose:
             eventCallback({ status: RecognitionStatus.DetectionStatusCameraTooNear });
             break;
 
-          case BlinkCardSDK.DetectionStatus.DocumentTooCloseToEdge:
+          case BlinkCardSDK.DetectionStatus.DocumentTooCloseToCameraEdge:
             eventCallback({ status: RecognitionStatus.DetectionStatusDocumentTooCloseToEdge });
             break;
 

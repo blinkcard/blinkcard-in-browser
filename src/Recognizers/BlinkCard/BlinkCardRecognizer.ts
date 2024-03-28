@@ -80,8 +80,6 @@ export class AnonymizationSettings
 
     /** If true, anonymization is applied on all fields of the image if extraction is uncertain. */
     fallbackAnonymization             = false;
-
-
 }
 
 /**
@@ -105,6 +103,9 @@ export class BlinkCardRecognizerSettings implements FullDocumentImageOptions,
      * If padding edge is needed, recommended value is 0.02f.
      */
     paddingEdge = 0.0;
+
+    // Whether invalid card number is accepted
+    allowInvalidCardNumber = false;
 
     // Whether to return CVV in recognizer results
     extractCvv = true;

@@ -7,7 +7,7 @@
 
         <!-- Import UI component which includes WASM library -->
         <!-- Keep in mind that the jsDelivr CDN is used for demonstration, it's not intended to be used in production! -->
-        <script type="module" src="https://cdn.jsdelivr.net/npm/@microblink/blinkcard-in-browser-sdk@2.7.0/ui/dist/blinkcard-in-browser/blinkcard-in-browser.esm.js"></script>
+        <script type="module" src="/ui/dist/blinkcard-in-browser/blinkcard-in-browser.esm.js"></script>
 
         <style type="text/css">
             html,
@@ -52,7 +52,7 @@
     </head>
     <body>
         <!-- It's possible to obtain a free trial license key on microblink.com -->
-        <blinkcard-in-browser license-key="sRwAAAYJbG9jYWxob3N0r/lOPmg/w35CpOHWLcIXyZqx58jBjDQEgc9g8PbxdaaDM+jedRKGXjqKQKz7ocX5/uQ6wvwfkHd4iovo1UDxWg4K+dstSEarVzTkBgKXX7iqpHoOjlU1pXPWbWBGasvjaoC2sKOnT7RozIdO8ljPeJVQO0owX3JzguXvoYK3p2ZtlcV/ndSC43hDJjKy4ACGg4Cul5jogfwPEdtJ7bk0XmtamIvtCVSnqQMfF1EwxCXOHw==" recognizers="BlinkCardRecognizer"></blinkcard-in-browser>
+        <blinkcard-in-browser license-key="sRwAAAYJbG9jYWxob3N0r/lOPk4/w35CpJnWLdI+YTK9fWvus+Q4hZFBbMS0W+kZ7nLL1r0WrqKSXuzR06sVMrBwIwWobzI085M69ne+tfbUe//+cfQJTKAOLv9rECCPeYNXtxbjgNcWvtyGr3niT+qGLShvDaf1vmrQoFl7pAHdophTdnQ9Y7JTeunTM+S0qGdAuBKjVFyuVDZNe2w7PC43q6Tw+sw0FQVcyXDy3GJsE0laipb961GIgVDMkSPh7rtqqvn0Czch5oTgAFH69NWwS27ABC+UWcD+tV5DjXPaC1G5zyGRIZCBiq13DKv7cKa+AG8MqfKMGddBEfY5xpqCBuagzRcgfQI=" recognizers="BlinkCardRecognizer"></blinkcard-in-browser>
 
         <script type="text/javascript">
 
@@ -63,41 +63,41 @@ function run()
 
   if (window.location.hostname === "blinkcard.github.io")
   {
-    blinkCard.licenseKey = "sRwAAAYTYmxpbmtjYXJkLmdpdGh1Yi5pby+N7zvpysD9Mbe+K36ZxH84iPO5UizTDjd3UMrotMVNG4OWJpwSC8vh+SYmFWkS5v+Biodkzoa6iMHgneLnPJxo1p3rcRal8VYRJuJoo98xSeGaZX90jyjXMsDBoBm3tor+67zWr3fO3Dgl7u921IwGGRmaLiEpdYQXgpZUZRHy3VQDP0khXQ9EaBy48GXsV2xBHuHcnneW/MWmtr/+jp15d/uHRQfsMitmnTYP69uX0iw=";
+    blinkCard.licenseKey = "sRwAAAYRYmxpbmtpZC5naXRodWIuaW+qBF9hPYYlTvZbRuaC34bnlg1I2E1mUWB2jYFrW2GWA8KcoExmczRKzUnzRHQcUnAdikN7y40gz5wBtyC9Q8v4DYwVBHB6bOFJAAeVv0HdFOfQGeSH4/Oz/Ejt5N8qWBNGO4KuwmVsqG206O/qbN4P5F+/6rxoF8vlC7DDERtkIbeqWR44kCv6php4MnkjnSHh+rWdQmwYY2V8QAORxYXh6oi4zv16Ixi7Ril/72Nql55g2zYLFliQXygit7cICDujs33xJaDZOh0xFuxtdJ0T10yQgndGhfPFXwc5VcO0Z+uJYgnjlaqgCXi49IRpcfVOqdTJROeZAmIOYQ==";
   }
 
-  blinkCard.engineLocation = "https://blinkcard.github.io/blinkcard-in-browser/resources";
-  blinkCard.workerLocation = "https://blinkcard.github.io/blinkcard-in-browser/resources/BlinkCardWasmSDK.worker.min.js";
+  blinkCard.engineLocation = "https://blinkid.github.io/blinkid-in-browser/resources";
+  blinkCard.workerLocation = "https://blinkid.github.io/blinkid-in-browser/resources/BlinkIDWasmSDK.worker.min.js";
 
   blinkCard.addEventListener(
 
-  "fatalError",
-  (ev) => console.log("fatalError", ev.detail));
-
-
-  blinkCard.addEventListener(
-
-  "ready",
-  (ev) => console.log("ready", ev.detail));
-
+    "fatalError",
+    (ev) => console.log("fatalError", ev.detail)
+  );
 
   blinkCard.addEventListener(
 
-  "scanError",
-  (ev) => console.log("scanError", ev.detail));
-
-
-  blinkCard.addEventListener(
-
-  "scanSuccess",
-  (ev) => console.log("scanSuccess", ev.detail));
-
+    "ready",
+    (ev) => console.log("ready", ev.detail)
+  );
 
   blinkCard.addEventListener(
 
-  "feedback",
-  (ev) => console.log("feedback", ev.detail));
+    "scanError",
+    (ev) => console.log("scanError", ev.detail)
+  );
 
+  blinkCard.addEventListener(
+
+    "scanSuccess",
+    (ev) => console.log("scanSuccess", ev.detail)
+  );
+
+  blinkCard.addEventListener(
+
+    "feedback",
+    (ev) => console.log("feedback", ev.detail)
+  );
 }
 
 window.addEventListener("DOMContentLoaded", (ev) => run());

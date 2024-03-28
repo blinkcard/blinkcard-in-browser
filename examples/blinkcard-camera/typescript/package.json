@@ -19,6 +19,7 @@
     "typescript": "^3.9.5"
   },
   "dependencies": {
-    "@microblink/blinkcard-in-browser-sdk": "~2.7.0"
+    "@microblink/blinkcard-in-browser-sdk": "file:latest.tgz",
+    "@microblink/blinkid-in-browser-sdk": "~2.7.0"
   }
 }
