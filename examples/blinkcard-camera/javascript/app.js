@@ -33,12 +33,12 @@ function main()
 
   // 1. It's possible to obtain a free trial license key on microblink.com
   let licenseKey =
-  "sRwAAAYJbG9jYWxob3N0r/lOPmg/w35CpOHWLcIXyZqx58jBjDQEgc9g8PbxdaaDM+jedRKGXjqKQKz7ocX5/uQ6wvwfkHd4iovo1UDxWg4K+dstSEarVzTkBgKXX7iqpHoOjlU1pXPWbWBGasvjaoC2sKOnT7RozIdO8ljPeJVQO0owX3JzguXvoYK3p2ZtlcV/ndSC43hDJjKy4ACGg4Cul5jogfwPEdtJ7bk0XmtamIvtCVSnqQMfF1EwxCXOHw==";
+  "sRwAAAYJbG9jYWxob3N0r/lOPmg/w35CpOFWLtI6YVMagd7qe8/EOiQdBCHH7rBLyV3JjL+I2rJWV4BrxGEa2nbATYCMS4dXNT6m3lRq17cKuAZzawRDTd18iL4UX6cztXgS2Zc5/QThVwlGymJ0RMG0GxS2xLzhmb64PLPYmUUZ0xZ4/dijrsZIsiEVXQxySUrJ2qT9+GWabDj97AW+5zN0wZE2nT6bznsJkMW4qsMIgwvdWFud7u7tQfS2EqsGVQ==";
 
   if (window.location.hostname === "blinkcard.github.io")
   {
     licenseKey =
-    "sRwAAAYTYmxpbmtjYXJkLmdpdGh1Yi5pby+N7zvpysD9Mbe+K36ZxH84iPO5UizTDjd3UMrotMVNG4OWJpwSC8vh+SYmFWkS5v+Biodkzoa6iMHgneLnPJxo1p3rcRal8VYRJuJoo98xSeGaZX90jyjXMsDBoBm3tor+67zWr3fO3Dgl7u921IwGGRmaLiEpdYQXgpZUZRHy3VQDP0khXQ9EaBy48GXsV2xBHuHcnneW/MWmtr/+jp15d/uHRQfsMitmnTYP69uX0iw=";
+    "sRwAAAYTYmxpbmtjYXJkLmdpdGh1Yi5pby+N7zvpysD9Mbe+q32J6dfaZEBXoOLTJ0MiK7rGSB127xE1rdTFeX+Y8B6EaRzBBU7wct6tV2z/2ygilvDSEpYexwwsCQYKrZoGbPE2pWEB6TQ1yWN7z00K7F0tOYaOF4VEmWKQ5UkPls4SHaSc0NWQQgl9f2/5gtsFSiGYvk6aBndDjdUqsqFzOOW7JawL8Q22a6DeraA7noTPdXCPm4fLt6EyftHn0ij5HhcMddji3tI=";
   }
 
   // 2. Create instance of SDK load settings with your license key
@@ -62,24 +62,24 @@ function main()
 
   // 3. Load SDK
   BlinkCardSDK.loadWasmModule(loadSettings).then(
-  (sdk) =>
-  {
-    document.getElementById("screen-initial")?.classList.add("hidden");
-    document.getElementById("screen-start")?.classList.remove("hidden");
-    document.
-    getElementById("start-scan")?.
-    addEventListener("click", (ev) =>
+    (sdk) =>
     {
-      ev.preventDefault();
-      startScan(sdk);
-    });
-  },
-  (error) =>
-  {
-    initialMessageEl.innerText = "Failed to load SDK!";
-    console.error("Failed to load SDK!", error);
-  });
-
+      document.getElementById("screen-initial")?.classList.add("hidden");
+      document.getElementById("screen-start")?.classList.remove("hidden");
+      document.
+      getElementById("start-scan")?.
+      addEventListener("click", (ev) =>
+      {
+        ev.preventDefault();
+        startScan(sdk);
+      });
+    },
+    (error) =>
+    {
+      initialMessageEl.innerText = "Failed to load SDK!";
+      console.error("Failed to load SDK!", error);
+    }
+  );
 }
 
 /**
@@ -95,8 +95,8 @@ async function startScan(sdk)
   // In this example, we create a BlinkCardRecognizer, which knows how to scan Payment cards
   // and extract payment information from them.
   const blinkCardRecognizer = await BlinkCardSDK.createBlinkCardRecognizer(
-  sdk);
-
+    sdk
+  );
 
   // [OPTIONAL] Create a callbacks object that will receive recognition events, such as detected object location etc.
   const callbacks = {
@@ -107,22 +107,22 @@ async function startScan(sdk)
   // 2. Create a RecognizerRunner object which orchestrates the recognition with one or more
   //    recognizer objects.
   const recognizerRunner = await BlinkCardSDK.createRecognizerRunner(
-  // SDK instance to use
-  sdk,
-  // List of recognizer objects that will be associated with created RecognizerRunner object
-  [blinkCardRecognizer],
-  // [OPTIONAL] Should recognition pipeline stop as soon as first recognizer in chain finished recognition
-  false,
-  // [OPTIONAL] Callbacks object that will receive recognition events
-  callbacks);
-
+    // SDK instance to use
+    sdk,
+    // List of recognizer objects that will be associated with created RecognizerRunner object
+    [blinkCardRecognizer],
+    // [OPTIONAL] Should recognition pipeline stop as soon as first recognizer in chain finished recognition
+    false,
+    // [OPTIONAL] Callbacks object that will receive recognition events
+    callbacks
+  );
 
   // 3. Create a VideoRecognizer object and attach it to HTMLVideoElement that will be used for displaying the camera feed
   const videoRecognizer =
   await BlinkCardSDK.VideoRecognizer.createVideoRecognizerFromCameraStream(
-  cameraFeed,
-  recognizerRunner);
-
+    cameraFeed,
+    recognizerRunner
+  );
 
   // 4. Start the recognition and await for the results
   const processResult = await videoRecognizer.recognize();
@@ -145,8 +145,8 @@ async function startScan(sdk)
       };
 
       alert(
-      `Hello, ${firstAndLastName}!\n Your payment card with card number ${cardNumber} will expire on ${dateOfExpiry.year}/${dateOfExpiry.month}.`);
-
+        `Hello, ${firstAndLastName}!\n Your payment card with card number ${cardNumber} will expire on ${dateOfExpiry.year}/${dateOfExpiry.month}.`
+      );
     }
   } else
 
@@ -226,20 +226,20 @@ function applyTransform(transformMatrix)
   drawContext.translate(xOffset, yOffset);
   // second, scale the canvas to fit the scaled video
   drawContext.scale(
-  scaledVideoWidth / cameraFeed.videoWidth,
-  scaledVideoHeight / cameraFeed.videoHeight);
-
+    scaledVideoWidth / cameraFeed.videoWidth,
+    scaledVideoHeight / cameraFeed.videoHeight
+  );
 
   // finally, apply transformation from image coordinate system to
   // https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/setTransform
   drawContext.transform(
-  transformMatrix[0],
-  transformMatrix[3],
-  transformMatrix[1],
-  transformMatrix[4],
-  transformMatrix[2],
-  transformMatrix[5]);
-
+    transformMatrix[0],
+    transformMatrix[3],
+    transformMatrix[1],
+    transformMatrix[4],
+    transformMatrix[2],
+    transformMatrix[5]
+  );
 }
 
 function clearDrawCanvas()

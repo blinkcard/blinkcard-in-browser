@@ -23,6 +23,7 @@ const terserConfig = {
 
 const config = {
     worker: {
+        preserveSymlinks: true,
         input: 'src/worker.ts',
         output: {
             file: 'resources/BlinkCardWasmSDK.worker.min.js',
@@ -30,12 +31,13 @@ const config = {
         },
         plugins: [
             nodeResolve(),
-            typescript({ tsconfigOverride: { compilerOptions: { declaration: false } } }),
+            typescript({ tsconfigOverride: { compilerOptions: { declaration: false, types: [] } } }),
             babel({ babelHelpers: 'bundled' }),
             terser(terserConfig)
         ]
     },
     cjs: {
+        preserveSymlinks: true,
         input: 'src/index.ts',
         output: {
             file: 'lib/blinkcard-sdk.js',
@@ -46,10 +48,11 @@ const config = {
         plugins: [
             nodeResolve(),
             typescript({ useTsconfigDeclarationDir: true }),
-            babel({ babelHelpers: 'bundled' })
+            babel({ babelHelpers: 'bundled' }),
         ]
     },
     es: {
+        preserveSymlinks: true,
         input: 'src/index.ts',
         output: {
             file: 'es/blinkcard-sdk.js',
@@ -61,10 +64,11 @@ const config = {
         plugins: [
             nodeResolve(),
             typescript({ tsconfigOverride: { compilerOptions: { declaration: false, sourceMap: true } } }),
-            babel({ babelHelpers: 'bundled' })
+            babel({ babelHelpers: 'bundled' }),
         ]
     },
     esModule: {
+        preserveSymlinks: true,
         input: 'src/index.ts',
         output: {
             file: 'es/blinkcard-sdk.mjs',
@@ -76,10 +80,11 @@ const config = {
             nodeResolve(),
             typescript({ tsconfigOverride: { compilerOptions: { declaration: false } } }),
             babel({ babelHelpers: 'bundled' }),
-            terser(terserConfig)
+            terser(terserConfig),
         ]
     },
     umdDev: {
+        preserveSymlinks: true,
         input: 'src/index.ts',
         output: {
             file: 'dist/blinkcard-sdk.js',
@@ -92,10 +97,11 @@ const config = {
         plugins: [
             nodeResolve(),
             typescript({ tsconfigOverride: { compilerOptions: { declaration: false, sourceMap: true } } }),
-            babel({ babelHelpers: 'bundled' })
+            babel({ babelHelpers: 'bundled' }),
         ]
     },
     umdProd: {
+        preserveSymlinks: true,
         input: 'src/index.ts',
         output: {
             file: 'dist/blinkcard-sdk.min.js',
@@ -108,7 +114,7 @@ const config = {
             nodeResolve(),
             typescript({ tsconfigOverride: { compilerOptions: { declaration: false } } }),
             babel({ babelHelpers: 'bundled' }),
-            terser(terserConfig)
+            terser(terserConfig),
         ]
     }
 }

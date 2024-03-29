@@ -7,6 +7,7 @@
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
 import { CameraEntry, CameraExperience, CameraExperienceState, CameraExperienceTimeoutDurations, EventReady, EventScanError, EventScanSuccess, FeedbackMessage, ProductIntegrationInfo, SDKError } from "./utils/data-structures";
 import { TranslationService } from "./utils/translation.service";
+import { MbHelpCallbacks } from "./components/shared/mb-help/mb-help.model";
 import { SdkService } from "./utils/sdk.service";
 export namespace Components {
     interface BlinkcardInBrowser {
@@ -236,8 +237,25 @@ export namespace Components {
           * Set to 'true' if default event should be prevented.
          */
         "preventDefault": boolean;
+        "quit": boolean;
     }
     interface MbCameraExperience {
+        /**
+          * Dictates if Help Screens usage is allowed (turned on).
+         */
+        "allowHelpScreens": boolean;
+        /**
+          * See description in public component.
+         */
+        "allowHelpScreensFab": boolean;
+        /**
+          * See description in public component.
+         */
+        "allowHelpScreensOnboarding": boolean;
+        /**
+          * See description in public component.
+         */
+        "allowHelpScreensOnboardingPerpetuity": boolean;
         /**
           * Api state passed from root component.
          */
@@ -251,6 +269,18 @@ export namespace Components {
          */
         "cameraFlipped": boolean;
         "clearIsCameraActive": boolean;
+        /**
+          * See description in public component.
+         */
+        "helpScreensTooltipPauseTimeout": number;
+        /**
+          * Initializes Help Screens.
+         */
+        "initializeHelpScreens": (callbacks: MbHelpCallbacks) => Promise<void>;
+        /**
+          * Opens Help Screens in the Onboarding mode.
+         */
+        "openHelpScreensOnboarding": () => Promise<void>;
         /**
           * Populate list of camera devices.
          */
@@ -283,6 +313,10 @@ export namespace Components {
           * Show scanning line on camera
          */
         "showScanningLine": boolean;
+        /**
+          * Terminates Help Screens.
+         */
+        "terminateHelpScreens": () => Promise<void>;
         /**
           * Instance of TranslationService passed from root component.
          */
@@ -338,6 +372,22 @@ export namespace Components {
          */
         "allowHelloMessage": boolean;
         /**
+          * Dictates if Help Screens usage is allowed (turned on).
+         */
+        "allowHelpScreens": boolean;
+        /**
+          * See description in public component.
+         */
+        "allowHelpScreensFab": boolean;
+        /**
+          * See description in public component.
+         */
+        "allowHelpScreensOnboarding": boolean;
+        /**
+          * See description in public component.
+         */
+        "allowHelpScreensOnboardingPerpetuity": boolean;
+        /**
           * See description in public component.
          */
         "cameraExperienceStateDurations": CameraExperienceTimeoutDurations;
@@ -361,6 +411,10 @@ export namespace Components {
           * See description in public component.
          */
         "galleryOverlayType": 'FULLSCREEN' | 'INLINE';
+        /**
+          * See description in public component.
+         */
+        "helpScreensTooltipPauseTimeout": number;
         /**
           * See description in public component.
          */
@@ -505,6 +559,52 @@ export namespace Components {
          */
         "visible": boolean;
     }
+    interface MbHelp {
+        /**
+          * Dictates if usage is allowed (turned on).
+         */
+        "allow": boolean;
+        /**
+          * Dictates if Floating-Action-Button (Fab) is shown.
+         */
+        "allowFab": boolean;
+        /**
+          * Dictates if the onboarding is allowed.
+         */
+        "allowOnboarding": boolean;
+        /**
+          * Dictates if onboarding is executed all the time, or just once.
+         */
+        "allowOnboardingPerpetuity": boolean;
+        /**
+          * Closes modal.
+         */
+        "close": () => Promise<void>;
+        /**
+          * Initializes - starts tooltip timer, etc.
+         */
+        "initialize": (callbacks: MbHelpCallbacks) => Promise<void>;
+        /**
+          * Opens modal for Help Screens purpose.
+         */
+        "openHelpScreens": () => Promise<void>;
+        /**
+          * Opens modal for Onboarding purpose.
+         */
+        "openOnboarding": () => Promise<void>;
+        /**
+          * Terminates - cancels tooltip timer, closes modal, etc.
+         */
+        "terminate": () => Promise<void>;
+        /**
+          * Dictates Milliseconds after which a "Need Help?" tooltip will be shown.
+         */
+        "tooltipPauseTimeout": number;
+        /**
+          * Translation service.
+         */
+        "translationService": TranslationService;
+    }
     interface MbImageBox {
         /**
           * Text which should be displayed inside 'Add image' anchor element when file is not selected.
@@ -537,6 +637,10 @@ export namespace Components {
          */
         "elevated": boolean;
         /**
+          * Whether to hide the close button or not.
+         */
+        "hideCloseButton": boolean;
+        /**
           * Whether to hide the footer or not
          */
         "hideFooter": boolean;
@@ -563,6 +667,16 @@ export namespace Components {
          */
         "visible": boolean;
     }
+    interface MbProgressTracker {
+        /**
+          * Current step.  Steps start from 1 up to the size number.  Default is 1.
+         */
+        "current": number;
+        /**
+          * Steps count.  Default is 3.
+         */
+        "size": number;
+    }
     interface MbScreen {
         /**
           * Set to 'true' if screen should be visible.
@@ -588,6 +702,46 @@ export namespace Components {
         "showWarningIcon"?: boolean;
         "textAlign"?: 'text-center' | 'text-left' | 'text-right';
     }
+    interface MbTooltipAdvanced {
+        "arrowPosition"?: 'arrow-left' | 'arrow-right'
+    | 'arrow-up' | 'arrow-up-left' | 'arrow-up-right'
+    | 'arrow-down' | 'arrow-down-left' | 'arrow-down-right';
+        "message": string;
+        "show": boolean;
+        "textAlign"?: 'text-center' | 'text-left' | 'text-right';
+    }
+}
+export interface BlinkcardInBrowserCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLBlinkcardInBrowserElement;
+}
+export interface MbApiProcessStatusCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLMbApiProcessStatusElement;
+}
+export interface MbCameraExperienceCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLMbCameraExperienceElement;
+}
+export interface MbCameraSelectionCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLMbCameraSelectionElement;
+}
+export interface MbCameraToolbarCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLMbCameraToolbarElement;
+}
+export interface MbComponentCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLMbComponentElement;
+}
+export interface MbImageBoxCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLMbImageBoxElement;
+}
+export interface MbModalCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLMbModalElement;
 }
 declare global {
     interface HTMLBlinkcardInBrowserElement extends Components.BlinkcardInBrowser, HTMLStencilElement {
@@ -656,6 +810,12 @@ declare global {
         prototype: HTMLMbFeedbackElement;
         new (): HTMLMbFeedbackElement;
     };
+    interface HTMLMbHelpElement extends Components.MbHelp, HTMLStencilElement {
+    }
+    var HTMLMbHelpElement: {
+        prototype: HTMLMbHelpElement;
+        new (): HTMLMbHelpElement;
+    };
     interface HTMLMbImageBoxElement extends Components.MbImageBox, HTMLStencilElement {
     }
     var HTMLMbImageBoxElement: {
@@ -673,6 +833,12 @@ declare global {
     var HTMLMbOverlayElement: {
         prototype: HTMLMbOverlayElement;
         new (): HTMLMbOverlayElement;
+    };
+    interface HTMLMbProgressTrackerElement extends Components.MbProgressTracker, HTMLStencilElement {
+    }
+    var HTMLMbProgressTrackerElement: {
+        prototype: HTMLMbProgressTrackerElement;
+        new (): HTMLMbProgressTrackerElement;
     };
     interface HTMLMbScreenElement extends Components.MbScreen, HTMLStencilElement {
     }
@@ -692,6 +858,12 @@ declare global {
         prototype: HTMLMbTooltipElement;
         new (): HTMLMbTooltipElement;
     };
+    interface HTMLMbTooltipAdvancedElement extends Components.MbTooltipAdvanced, HTMLStencilElement {
+    }
+    var HTMLMbTooltipAdvancedElement: {
+        prototype: HTMLMbTooltipAdvancedElement;
+        new (): HTMLMbTooltipAdvancedElement;
+    };
     interface HTMLElementTagNameMap {
         "blinkcard-in-browser": HTMLBlinkcardInBrowserElement;
         "mb-api-process-status": HTMLMbApiProcessStatusElement;
@@ -704,12 +876,15 @@ declare global {
         "mb-component": HTMLMbComponentElement;
         "mb-container": HTMLMbContainerElement;
         "mb-feedback": HTMLMbFeedbackElement;
+        "mb-help": HTMLMbHelpElement;
         "mb-image-box": HTMLMbImageBoxElement;
         "mb-modal": HTMLMbModalElement;
         "mb-overlay": HTMLMbOverlayElement;
+        "mb-progress-tracker": HTMLMbProgressTrackerElement;
         "mb-screen": HTMLMbScreenElement;
         "mb-spinner": HTMLMbSpinnerElement;
         "mb-tooltip": HTMLMbTooltipElement;
+        "mb-tooltip-advanced": HTMLMbTooltipAdvancedElement;
     }
 }
 declare namespace LocalJSX {
@@ -793,35 +968,35 @@ declare namespace LocalJSX {
         /**
           * Event which is emitted when camera scan is started, i.e. when user clicks on _scan from camera_ button.
          */
-        "onCameraScanStarted"?: (event: CustomEvent<null>) => void;
+        "onCameraScanStarted"?: (event: BlinkcardInBrowserCustomEvent<null>) => void;
         /**
           * Event which is emitted during initialization of UI component.  Each event contains `code` property which has deatils about fatal errror.
          */
-        "onFatalError"?: (event: CustomEvent<SDKError>) => void;
+        "onFatalError"?: (event: BlinkcardInBrowserCustomEvent<SDKError>) => void;
         /**
           * Event which is emitted during positive or negative user feedback. If attribute/property `hideFeedback` is set to `false`, UI component will display the feedback.
          */
-        "onFeedback"?: (event: CustomEvent<FeedbackMessage>) => void;
+        "onFeedback"?: (event: BlinkcardInBrowserCustomEvent<FeedbackMessage>) => void;
         /**
           * Event which is emitted when image scan is started, i.e. when user clicks on _scan from gallery button.
          */
-        "onImageScanStarted"?: (event: CustomEvent<null>) => void;
+        "onImageScanStarted"?: (event: BlinkcardInBrowserCustomEvent<null>) => void;
         /**
           * Event which is emitted when UI component is successfully initialized and ready for use.
          */
-        "onReady"?: (event: CustomEvent<EventReady>) => void;
+        "onReady"?: (event: BlinkcardInBrowserCustomEvent<EventReady>) => void;
         /**
           * Event which is emitted when scan is aborted, i.e. when user clicks on close from the gallery toolbar, or presses escape key.
          */
-        "onScanAborted"?: (event: CustomEvent<null>) => void;
+        "onScanAborted"?: (event: BlinkcardInBrowserCustomEvent<null>) => void;
         /**
           * Event which is emitted during or immediately after scan error.
          */
-        "onScanError"?: (event: CustomEvent<EventScanError>) => void;
+        "onScanError"?: (event: BlinkcardInBrowserCustomEvent<EventScanError>) => void;
         /**
           * Event which is emitted after successful scan. This event contains recognition results.
          */
-        "onScanSuccess"?: (event: CustomEvent<EventScanSuccess>) => void;
+        "onScanSuccess"?: (event: BlinkcardInBrowserCustomEvent<EventScanSuccess>) => void;
         /**
           * List of recognizers which should be used.  Available recognizers for BlinkCard:  - BlinkCardRecognizer  Recognizers can be defined by setting HTML attribute "recognizers", for example:  `<blinkcard-in-browser recognizers="BlinkCardRecognizer"></blinkcard-in-browser>`
          */
@@ -883,11 +1058,11 @@ declare namespace LocalJSX {
         /**
           * Emitted when user clicks on 'x' button.
          */
-        "onCloseFromStart"?: (event: CustomEvent<void>) => void;
+        "onCloseFromStart"?: (event: MbApiProcessStatusCustomEvent<void>) => void;
         /**
           * Emitted when user clicks on 'Retry' button.
          */
-        "onCloseTryAgain"?: (event: CustomEvent<void>) => void;
+        "onCloseTryAgain"?: (event: MbApiProcessStatusCustomEvent<void>) => void;
         /**
           * State value of API processing received from parent element ('loading' or 'success').
          */
@@ -953,8 +1128,25 @@ declare namespace LocalJSX {
           * Set to 'true' if default event should be prevented.
          */
         "preventDefault"?: boolean;
+        "quit"?: boolean;
     }
     interface MbCameraExperience {
+        /**
+          * Dictates if Help Screens usage is allowed (turned on).
+         */
+        "allowHelpScreens"?: boolean;
+        /**
+          * See description in public component.
+         */
+        "allowHelpScreensFab"?: boolean;
+        /**
+          * See description in public component.
+         */
+        "allowHelpScreensOnboarding"?: boolean;
+        /**
+          * See description in public component.
+         */
+        "allowHelpScreensOnboardingPerpetuity"?: boolean;
         /**
           * Api state passed from root component.
          */
@@ -969,21 +1161,25 @@ declare namespace LocalJSX {
         "cameraFlipped"?: boolean;
         "clearIsCameraActive"?: boolean;
         /**
+          * See description in public component.
+         */
+        "helpScreensTooltipPauseTimeout"?: number;
+        /**
           * Emitted when user selects a different camera device.
          */
-        "onChangeCameraDevice"?: (event: CustomEvent<CameraEntry>) => void;
+        "onChangeCameraDevice"?: (event: MbCameraExperienceCustomEvent<CameraEntry>) => void;
         /**
           * Emitted when user clicks on 'X' button.
          */
-        "onClose"?: (event: CustomEvent<void>) => void;
+        "onClose"?: (event: MbCameraExperienceCustomEvent<void>) => void;
         /**
           * Emitted when user clicks on Flip button.
          */
-        "onFlipCameraAction"?: (event: CustomEvent<void>) => void;
+        "onFlipCameraAction"?: (event: MbCameraExperienceCustomEvent<void>) => void;
         /**
           * Emitted when camera stream becomes active.
          */
-        "onSetIsCameraActive"?: (event: CustomEvent<boolean>) => void;
+        "onSetIsCameraActive"?: (event: MbCameraExperienceCustomEvent<boolean>) => void;
         /**
           * Show camera feedback message on camera for Barcode scanning
          */
@@ -1010,11 +1206,11 @@ declare namespace LocalJSX {
         /**
           * Emitted when user selects a different camera device.
          */
-        "onChangeCameraDevice"?: (event: CustomEvent<CameraEntry>) => void;
+        "onChangeCameraDevice"?: (event: MbCameraSelectionCustomEvent<CameraEntry>) => void;
         /**
           * Emitted when camera stream becomes active.
          */
-        "onSetIsCameraActive"?: (event: CustomEvent<boolean>) => void;
+        "onSetIsCameraActive"?: (event: MbCameraSelectionCustomEvent<boolean>) => void;
     }
     interface MbCameraToolbar {
         /**
@@ -1029,19 +1225,19 @@ declare namespace LocalJSX {
         /**
           * Emitted when user selects a different camera device.
          */
-        "onChangeCameraDevice"?: (event: CustomEvent<CameraEntry>) => void;
+        "onChangeCameraDevice"?: (event: MbCameraToolbarCustomEvent<CameraEntry>) => void;
         /**
           * Event which is triggered when close button is clicked.
          */
-        "onCloseEvent"?: (event: CustomEvent<void>) => void;
+        "onCloseEvent"?: (event: MbCameraToolbarCustomEvent<void>) => void;
         /**
           * Event which is triggered when flip camera button is clicked.
          */
-        "onFlipEvent"?: (event: CustomEvent<void>) => void;
+        "onFlipEvent"?: (event: MbCameraToolbarCustomEvent<void>) => void;
         /**
           * Emitted when camera stream becomes active.
          */
-        "onSetIsCameraActive"?: (event: CustomEvent<boolean>) => void;
+        "onSetIsCameraActive"?: (event: MbCameraToolbarCustomEvent<boolean>) => void;
         /**
           * Set to `true` if close button should be displayed.
          */
@@ -1058,6 +1254,22 @@ declare namespace LocalJSX {
           * See description in public component.
          */
         "allowHelloMessage"?: boolean;
+        /**
+          * Dictates if Help Screens usage is allowed (turned on).
+         */
+        "allowHelpScreens"?: boolean;
+        /**
+          * See description in public component.
+         */
+        "allowHelpScreensFab"?: boolean;
+        /**
+          * See description in public component.
+         */
+        "allowHelpScreensOnboarding"?: boolean;
+        /**
+          * See description in public component.
+         */
+        "allowHelpScreensOnboardingPerpetuity"?: boolean;
         /**
           * See description in public component.
          */
@@ -1082,6 +1294,10 @@ declare namespace LocalJSX {
           * See description in public component.
          */
         "galleryOverlayType"?: 'FULLSCREEN' | 'INLINE';
+        /**
+          * See description in public component.
+         */
+        "helpScreensTooltipPauseTimeout"?: number;
         /**
           * See description in public component.
          */
@@ -1137,43 +1353,43 @@ declare namespace LocalJSX {
         /**
           * Event containing boolean which used to check whether component is blocked.
          */
-        "onBlock"?: (event: CustomEvent<boolean>) => void;
+        "onBlock"?: (event: MbComponentCustomEvent<boolean>) => void;
         /**
           * See event 'cameraScanStarted' in public component.
          */
-        "onCameraScanStarted"?: (event: CustomEvent<null>) => void;
+        "onCameraScanStarted"?: (event: MbComponentCustomEvent<null>) => void;
         /**
           * See event 'fatalError' in public component.
          */
-        "onFatalError"?: (event: CustomEvent<SDKError>) => void;
+        "onFatalError"?: (event: MbComponentCustomEvent<SDKError>) => void;
         /**
           * Event containing FeedbackMessage which can be passed to MbFeedback component.
          */
-        "onFeedback"?: (event: CustomEvent<FeedbackMessage>) => void;
+        "onFeedback"?: (event: MbComponentCustomEvent<FeedbackMessage>) => void;
         /**
           * See event 'imageScanStarted' in public component.
          */
-        "onImageScanStarted"?: (event: CustomEvent<null>) => void;
+        "onImageScanStarted"?: (event: MbComponentCustomEvent<null>) => void;
         /**
           * See event 'ready' in public component.
          */
-        "onReady"?: (event: CustomEvent<EventReady>) => void;
+        "onReady"?: (event: MbComponentCustomEvent<EventReady>) => void;
         /**
           * See event 'scanAborted' in public component.
          */
-        "onScanAborted"?: (event: CustomEvent<null>) => void;
+        "onScanAborted"?: (event: MbComponentCustomEvent<null>) => void;
         /**
           * See event 'scanError' in public component.
          */
-        "onScanError"?: (event: CustomEvent<EventScanError>) => void;
+        "onScanError"?: (event: MbComponentCustomEvent<EventScanError>) => void;
         /**
           * See event 'scanSuccess' in public component.
          */
-        "onScanSuccess"?: (event: CustomEvent<EventScanSuccess>) => void;
+        "onScanSuccess"?: (event: MbComponentCustomEvent<EventScanSuccess>) => void;
         /**
           * Emitted when camera stream becomes active.
          */
-        "onSetIsCameraActive"?: (event: CustomEvent<boolean>) => void;
+        "onSetIsCameraActive"?: (event: MbComponentCustomEvent<boolean>) => void;
         /**
           * See description in public component.
          */
@@ -1243,6 +1459,32 @@ declare namespace LocalJSX {
          */
         "visible"?: boolean;
     }
+    interface MbHelp {
+        /**
+          * Dictates if usage is allowed (turned on).
+         */
+        "allow"?: boolean;
+        /**
+          * Dictates if Floating-Action-Button (Fab) is shown.
+         */
+        "allowFab"?: boolean;
+        /**
+          * Dictates if the onboarding is allowed.
+         */
+        "allowOnboarding"?: boolean;
+        /**
+          * Dictates if onboarding is executed all the time, or just once.
+         */
+        "allowOnboardingPerpetuity"?: boolean;
+        /**
+          * Dictates Milliseconds after which a "Need Help?" tooltip will be shown.
+         */
+        "tooltipPauseTimeout"?: number;
+        /**
+          * Translation service.
+         */
+        "translationService": TranslationService;
+    }
     interface MbImageBox {
         /**
           * Text which should be displayed inside 'Add image' anchor element when file is not selected.
@@ -1255,7 +1497,7 @@ declare namespace LocalJSX {
         /**
           * Event which is triggered when selected image file is changed.
          */
-        "onImageChange"?: (event: CustomEvent<FileList>) => void;
+        "onImageChange"?: (event: MbImageBoxCustomEvent<FileList>) => void;
     }
     interface MbModal {
         /**
@@ -1275,6 +1517,10 @@ declare namespace LocalJSX {
          */
         "elevated"?: boolean;
         /**
+          * Whether to hide the close button or not.
+         */
+        "hideCloseButton"?: boolean;
+        /**
           * Whether to hide the footer or not
          */
         "hideFooter"?: boolean;
@@ -1285,11 +1531,11 @@ declare namespace LocalJSX {
         /**
           * Emitted when user clicks on 'Back Arrow' button.
          */
-        "onBack"?: (event: CustomEvent<void>) => void;
+        "onBack"?: (event: MbModalCustomEvent<void>) => void;
         /**
           * Emitted when user clicks on 'X' button.
          */
-        "onClose"?: (event: CustomEvent<void>) => void;
+        "onClose"?: (event: MbModalCustomEvent<void>) => void;
         /**
           * Whether to show back arrow or not
          */
@@ -1308,6 +1554,16 @@ declare namespace LocalJSX {
           * Set to 'true' if overlay should be visible.
          */
         "visible"?: boolean;
+    }
+    interface MbProgressTracker {
+        /**
+          * Current step.  Steps start from 1 up to the size number.  Default is 1.
+         */
+        "current"?: number;
+        /**
+          * Steps count.  Default is 3.
+         */
+        "size"?: number;
     }
     interface MbScreen {
         /**
@@ -1334,6 +1590,14 @@ declare namespace LocalJSX {
         "showWarningIcon"?: boolean;
         "textAlign"?: 'text-center' | 'text-left' | 'text-right';
     }
+    interface MbTooltipAdvanced {
+        "arrowPosition"?: 'arrow-left' | 'arrow-right'
+    | 'arrow-up' | 'arrow-up-left' | 'arrow-up-right'
+    | 'arrow-down' | 'arrow-down-left' | 'arrow-down-right';
+        "message"?: string;
+        "show"?: boolean;
+        "textAlign"?: 'text-center' | 'text-left' | 'text-right';
+    }
     interface IntrinsicElements {
         "blinkcard-in-browser": BlinkcardInBrowser;
         "mb-api-process-status": MbApiProcessStatus;
@@ -1346,12 +1610,15 @@ declare namespace LocalJSX {
         "mb-component": MbComponent;
         "mb-container": MbContainer;
         "mb-feedback": MbFeedback;
+        "mb-help": MbHelp;
         "mb-image-box": MbImageBox;
         "mb-modal": MbModal;
         "mb-overlay": MbOverlay;
+        "mb-progress-tracker": MbProgressTracker;
         "mb-screen": MbScreen;
         "mb-spinner": MbSpinner;
         "mb-tooltip": MbTooltip;
+        "mb-tooltip-advanced": MbTooltipAdvanced;
     }
 }
 export { LocalJSX as JSX };
@@ -1369,12 +1636,15 @@ declare module "@stencil/core" {
             "mb-component": LocalJSX.MbComponent & JSXBase.HTMLAttributes<HTMLMbComponentElement>;
             "mb-container": LocalJSX.MbContainer & JSXBase.HTMLAttributes<HTMLMbContainerElement>;
             "mb-feedback": LocalJSX.MbFeedback & JSXBase.HTMLAttributes<HTMLMbFeedbackElement>;
+            "mb-help": LocalJSX.MbHelp & JSXBase.HTMLAttributes<HTMLMbHelpElement>;
             "mb-image-box": LocalJSX.MbImageBox & JSXBase.HTMLAttributes<HTMLMbImageBoxElement>;
             "mb-modal": LocalJSX.MbModal & JSXBase.HTMLAttributes<HTMLMbModalElement>;
             "mb-overlay": LocalJSX.MbOverlay & JSXBase.HTMLAttributes<HTMLMbOverlayElement>;
+            "mb-progress-tracker": LocalJSX.MbProgressTracker & JSXBase.HTMLAttributes<HTMLMbProgressTrackerElement>;
             "mb-screen": LocalJSX.MbScreen & JSXBase.HTMLAttributes<HTMLMbScreenElement>;
             "mb-spinner": LocalJSX.MbSpinner & JSXBase.HTMLAttributes<HTMLMbSpinnerElement>;
             "mb-tooltip": LocalJSX.MbTooltip & JSXBase.HTMLAttributes<HTMLMbTooltipElement>;
+            "mb-tooltip-advanced": LocalJSX.MbTooltipAdvanced & JSXBase.HTMLAttributes<HTMLMbTooltipAdvancedElement>;
         }
     }
 }
