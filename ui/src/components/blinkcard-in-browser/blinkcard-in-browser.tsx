@@ -26,7 +26,6 @@ import {
 
 import { SdkService } from '../../utils/sdk.service';
 
-
 import { TranslationService } from '../../utils/translation.service';
 import * as GenericHelpers from '../../utils/generic.helpers';
 
@@ -37,7 +36,6 @@ import * as GenericHelpers from '../../utils/generic.helpers';
 })
 export class BlinkcardInBrowser implements MicroblinkUI {
   private blocked: boolean = false;
-
 
   /**
    * Write a hello message to the browser console when license check is successfully performed.
@@ -511,7 +509,6 @@ export class BlinkcardInBrowser implements MicroblinkUI {
     this.finalTranslations = this.translations ? this.translations : rawTranslations;
     this.translationService = new TranslationService(this.finalTranslations || {});
 
-
     this.sdkService = new SdkService();
   }
 
@@ -521,7 +518,6 @@ export class BlinkcardInBrowser implements MicroblinkUI {
         <mb-container>
           <mb-component dir={ this.hostEl.getAttribute('dir') }
                         ref={ el => this.mbComponentEl = el as HTMLMbComponentElement }
-
                         allowHelloMessage={ this.allowHelloMessage }
                         recognitionPauseTimeout={ this.recognitionPauseTimeout }
                         cameraExperienceStateDurations={ this.cameraExperienceStateDurations }
@@ -571,5 +567,4 @@ export class BlinkcardInBrowser implements MicroblinkUI {
 
   private feedbackEl!: HTMLMbFeedbackElement;
   private mbComponentEl!: HTMLMbComponentElement;
-
 }

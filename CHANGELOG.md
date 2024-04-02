@@ -1,5 +1,37 @@
 # Release notes
 
+## 2.9.0
+
+### Improvements
+- Included hand, photocopy, and screen detection models to achieve liveness functionality
+- Added anonymization info on which side was anonymized. String data is anonymized using an asterisk instead of blanking the result. 
+- Expanded the number of supported credit card types by 100%.
+- Improved data extraction, including a 30% reduction in incorrect processing of CVV field.
+
+### What's new in the BlinkCard Recognizer?
+- Improved scanning performance and added support for virtually any card layout
+- Improved IBAN parser which now supports more IBAN formats
+- Added option `allowInvalidCardNumber` which allows reading invalid card numbers to avoid endless scanning on samples and test cards:
+    - use with care as it might reduce accuracy in certain situations in production
+    - for invalid card number the flag `cardNumberValid` in `BlinkCardRecognizer.Result` will be set to `false`
+- Added new settings `handScaleThreshold`, `handDocumentOverlapThreshold`, `screenAnalysisMatchLevel`, `photocopyAnalysisMatchLevel`. These settings are used in combination with the new liveness features.
+- Added a new callback `LivenessStatusCallback`, which is invoked when each side of a card is scanned. It is called with one parameter, a `LivenessStatus` enum. Use `BlinkCardRecognizer.setLivenessStatusCallback` method to set the callback.
+
+### BlinkCard Recognizer Result
+- Two new booleans: `firstSideAnonymized` and `secondSideAnonymized` have been added to indicate whether the first or second side of the card has been anonymized, respectively.
+- New result `documentLivenessCheck` which has new liveness model results. It contains liveness information about the first and second sides of the card. Liveness information contains the results of checks performed on the card using screen detection, photocopy detection, and the presence of a live hand.
+
+### Dynamic webassembly memory management
+
+Depending on the device used, the SDK will allocate different amounts of memory on startup.
+This is primarily used as a mitigation mechanism for iOS's memory management, which often blocks webassembly memory growth.
+
+Although it's not recommended, this can be overridden using `WasmSDKLoadSettings.initialMemory`.
+
+### Other fixes:
+- Fixed an issue where certain iOS devices would display a zoomed in preview.
+- Improved scanning of Bolivia IDs by addressing cases where the expiration date is covered by a signature, allowing the completion of the scanning process.
+
 ## 2.7.0
 
 ### Platform-related SDK changes

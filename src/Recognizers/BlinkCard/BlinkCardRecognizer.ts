@@ -19,6 +19,68 @@ import
     WasmSDK
 } from "../../MicroblinkSDK/DataStructures";
 
+
+export enum LivenessStatus {
+    /**
+     *  Verification process has not been started yet
+     */
+    NotAvailable = 0,
+    /**
+     * Hand not present
+     */
+    HandNotPresent = 1,
+    /**
+     * Not enough hand present
+     */
+    NotEnoughHandPresent = 2,
+    /**
+     * Detected document not in hand
+     */
+    DocumentNotInHand = 3,
+    /**
+     * Detected document in hand
+     */
+    DocumentInHand = 4,
+}
+
+export type DocumentLivenessCallback = ( livenessStatus: LivenessStatus ) => void;
+
+export enum CheckResult {
+    NotPerformed = 0,
+    Pass = 1,
+    Fail = 2
+}
+
+export enum MatchLevel {
+    Disabled = 0,
+    Level1 = 1,
+    Level2 = 2,
+    Level3 = 3,
+    Level4 = 4,
+    Level5 = 5,
+    Level6 = 6,
+    Level7 = 7,
+    Level8 = 8,
+    Level9 = 9,
+    Level10 = 10,
+}
+
+export interface TieredCheck {
+    result: CheckResult;
+    matchLevel: MatchLevel;
+}
+
+export interface DocumentLivenessCheckSingleSideResult {
+    screenCheck: TieredCheck;
+    photocopyCheck: TieredCheck;
+    handPresenceCheck: CheckResult;
+}
+
+export interface DocumentLivenessCheck {
+    front: DocumentLivenessCheckSingleSideResult;
+    back: DocumentLivenessCheckSingleSideResult;
+}
+
 /**
  * Determines which data is anonymized in the returned recognizer result
  */
@@ -80,8 +142,6 @@ export class AnonymizationSettings
 
     /** If true, anonymization is applied on all fields of the image if extraction is uncertain. */
     fallbackAnonymization             = false;
-
-
 }
 
 /**
@@ -106,22 +166,64 @@ export class BlinkCardRecognizerSettings implements FullDocumentImageOptions,
      */
     paddingEdge = 0.0;
 
-    // Whether to return CVV in recognizer results
+    /**
+     * Whether invalid card number is accepted
+     */
+    allowInvalidCardNumber = false;
+
+    /**
+     * Whether to return CVV in recognizer results
+     */
     extractCvv = true;
 
-    // Whether to return expiry date in recognizer results
+    /**
+     * Whether to return expiry date in recognizer results
+     */
     extractExpiryDate = true;
 
-    // Whether to return IBAN in recognizer results
+    /**
+     * Whether to return IBAN in recognizer results
+     */
     extractIban = true;
 
-    // Whether to return owner in recognizer results
+    /**
+     * Whether to return owner in recognizer results
+     */
     extractOwner = true;
 
     // implementation of the FullDocumentImageOptions interface
     returnFullDocumentImage        = true;
 
     returnEncodedFullDocumentImage = false;
+
+    /**
+     * Hand scale is calculated as a ratio between area of hand mask and document mask. `handScaleThreshold` is
+     * the minimal value for hand to be accepted as significant.
+     */
+    handScaleThreshold = 0.15;
+
+    /**
+     *  This parameter is used to adjust heuristics that eliminate cases when the hand is present in
+        the input but it is not holding the document. `handDocumentOverlapThreshold` is the minimal ratio of hand
+        pixels inside the frame surrounding the document and area of that frame. Only pixels inside that frame are
+        used to ignore false-positive hand segmentations inside the document (e.g. profile photo on documents)
+     */
+    handDocumentOverlapThreshold = 0.05;
+
+    /**
+     * Screen analysis match level - higher is stricter.
+     */
+    screenAnalysisMatchLevel = MatchLevel.Level5;
+
+    /**
+     * Photocopy analysis match level - higher is stricter.
+     */
+    photocopyAnalysisMatchLevel = MatchLevel.Level5;
+
+    /**
+     * Called when document verification status is available.
+     */
+    documentLivenessCallback: DocumentLivenessCallback | null = null;
 
     private _fullDocumentImageDpi  = 250;
 
@@ -210,6 +312,21 @@ export interface BlinkCardRecognizerResult extends RecognizerResult
      *  Full image of the payment card from second side recognition.
      */
     readonly secondSideFullDocumentImage: ImageResult;
+
+    /**
+     * Is front side anonymized.
+     */
+    readonly firstSideAnonymized: boolean;
+
+    /**
+     * Is back side anonymized.
+     */
+    readonly secondSideAnonymized: boolean;
+
+    /**
+     * Document liveness check for both sides (screen, photocopy, hand presence);
+     */
+    readonly documentLivenessCheck: DocumentLivenessCheck;
 }
 
 /**

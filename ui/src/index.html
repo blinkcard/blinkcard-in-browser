@@ -48,11 +48,59 @@
     </style>
   </head>
   <body>
-    <blinkcard-in-browser engine-location="http://localhost:3333/resources" license-key="sRwAAAYJbG9jYWxob3N0r/lOPmg/w35CpOHWLcIXyZqx58jBjDQEgc9g8PbxdaaDM+jedRKGXjqKQKz7ocX5/uQ6wvwfkHd4iovo1UDxWg4K+dstSEarVzTkBgKXX7iqpHoOjlU1pXPWbWBGasvjaoC2sKOnT7RozIdO8ljPeJVQO0owX3JzguXvoYK3p2ZtlcV/ndSC43hDJjKy4ACGg4Cul5jogfwPEdtJ7bk0XmtamIvtCVSnqQMfF1EwxCXOHw==" recognizers="BlinkCardRecognizer"></blinkcard-in-browser>
+    <!-- Add attribute 'hide-loading-and-error-ui="true"' to hide component during loading and to hide possible error messages -->
+    <!-- First way of setting recognizers is to define them as HTML attribute -->
+    <!--
+      Change default icons via HTML attribute:
+      <blinkcard-in-browser icon-camera="https://lh3.googleusercontent.com/proxy/GzpbA9MhjkACfucnJ4KunNfMzKv10e6cy418zEjQYdKB7Xbzwh7IYjio0X0CBLdWrd7nw5ZHvkCXS4cQ2YaZ5JGjGTMLPmQO5dH4xaJODXoriGpdbjwAkO8ismEoSaRe1Q"></blinkcard-in-browser>
+
+      ---
+
+      Set translations via HTML attribute:
+
+      <blinkcard-in-browser translations='{ "action-message": "Do something else" }'></blinkcard-in-browser>
+
+      Note the single quotes!
+
+      PROPER
+      sRwAAAYJbG9jYWxob3N0r/lOPmg/w35CpOHWLGIazYJQwcjxeYUvc+qBUjt2e9ats0vhsKxCDdUE877nn9Jjl8r7QKJp/gHo2vazSnAvWwxxX7Riw47m5vTix0jCPH/181SukGli5PkrjthcyishYahCMRg8NQe9LccSXMcYR/KHNci1R+GbqI/EfcX2MD1qLEc5KFUYKEKivxB+wfIkhHJWXupsZYgDPh2K0VOkRhN38UzemXMRoCFBEZPwHg==
+    -->
+    <blinkcard-in-browser license-key="sRwAAAYJbG9jYWxob3N0r/lOPmg/w35CpOFWLtI6YVMagd7qe8/EOiQdBCHH7rBLyV3JjL+I2rJWV4BrxGEa2nbATYCMS4dXNT6m3lRq17cKuAZzawRDTd18iL4UX6cztXgS2Zc5/QThVwlGymJ0RMG0GxS2xLzhmb64PLPYmUUZ0xZ4/dijrsZIsiEVXQxySUrJ2qT9+GWabDj97AW+5zN0wZE2nT6bznsJkMW4qsMIgwvdWFud7u7tQfS2EqsGVQ==" recognizers="BlinkCardRecognizer" include-success-frame="true" scan-from-camera="true" dir="rtl"></blinkcard-in-browser>
 
     <script type="text/javascript">
 
+var parcelRequire;
+// Important: if attributes or properties are changed, whole component is rerendered
 const blinkCard = document.querySelector('blinkcard-in-browser');
+
+blinkCard.engineLocation = window.location.origin + '/resources';
+blinkCard.workerLocation = window.location.origin + `/resources/BlinkCardWasmSDK.worker.min.js`;
+blinkCard.showScanningLine = true;
+
+// Second way of setting recognizers is to set property "recognizers"
+//blinkCard.recognizers = ['BlinkCardRecognizer'];
+
+// Set desired recognizer options
+/*blinkCard.recognizerOptions = {
+  'BlinkCardRecognizer': {
+    anonymizationSettings: {
+      cardNumberAnonymizationSettings: {
+        mode: 0,
+        prefixDigitsVisible: 0,
+        suffixDigitsVisible: 0
+      },
+      cardNumberPrefixAnonymizationMode: 0,
+      cvvAnonymizationMode: 0,
+      ibanAnonymizationMode: 0,
+      ownerAnonymizationMode: 0
+    }
+  }
+};*/
+
+// Second way of changing translations, see src/utils/translations.ts for possible translation keys
+/*blinkCard.translations = {
+  'action-message': 'Do something'
+};*/
 
 blinkCard.addEventListener('fatalError', (ev) => {
   console.log('fatalError', ev.detail);
@@ -73,6 +121,11 @@ blinkCard.addEventListener('scanSuccess', (ev) => {
 blinkCard.addEventListener('feedback', (ev) => {
   console.log('feedback', ev.detail);
 });
+
+// DEVELOPMENT HELPERS
+window.setAttribute = (attribute, value) => {
+  blinkCard.setAttribute(attribute, value);
+};
 </script>
   </body>
 </html>

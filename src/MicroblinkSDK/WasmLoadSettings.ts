@@ -3,7 +3,7 @@
  */
 
 import { SDKError } from "./SDKError";
-import { defaultWasmModuleName } from "../defaultWasmModule";
+import { defaultWasmModuleName, defaultWasmFlavor } from "../defaultWasmModule";
 import { WasmType } from "./WasmType";
 import * as ErrorTypes from "./ErrorTypes";
 
@@ -71,6 +71,13 @@ export class WasmSDKLoadSettings
     wasmType: WasmType | null = null;
 
     /**
+     * Flavor of the WASM that will be loaded. By default, the SDK will automatically determine the best
+     * WASM flavor to load.
+     * If there are no flavors, use "", i.e. empty string.
+     */
+    wasmFlavor: string = defaultWasmFlavor();
+
+    /**
      * Defines the number of workers that will be used for multi-threaded processing of the images. If not set, the
      * number of worker used will match the number of detected CPU cores on a device.
      *
@@ -87,7 +94,6 @@ export class WasmSDKLoadSettings
      * The default value is null.
      */
     loadProgressCallback: OptionalLoadProgressCallback = null;
-
 
     /**
      * Name of the file containing the WebAssembly module.
