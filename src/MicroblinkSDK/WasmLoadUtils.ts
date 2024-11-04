@@ -14,7 +14,13 @@ import {
 
 import { WasmType } from "./WasmType";
 
-function isIOSUserAgent()
+export function isSafari()
+{
+    const userAgent = navigator.userAgent.toLowerCase();
+    return userAgent.includes( "safari" ) && !userAgent.includes( "chrome" );
+}
+
+export function isIOSUserAgent()
 {
     const pattern = /iOS|iPhone|iPad|iPod/i; // 'i' flag for case-insensitive matching
     return pattern.test( navigator.userAgent );
@@ -38,7 +44,7 @@ export default async function checkThreadsSupport(): Promise<boolean>
 
     // Safari has issues with shared memory
     // https://github.com/emscripten-core/emscripten/issues/19374
-    if ( isIOSUserAgent() )
+    if ( isSafari() )
     {
         return false;
     }
