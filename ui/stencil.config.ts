@@ -10,6 +10,10 @@ import autoprefixer from 'autoprefixer';
 export const config: Config = {
   namespace: 'blinkcard-in-browser',
   taskQueue: 'async',
+  extras: {
+    // fix for loading in Vite
+    experimentalImportInjection: true,
+  },
   outputTargets: [
     {
       type: 'dist',

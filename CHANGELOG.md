@@ -1,5 +1,14 @@
 # Release notes
 
+## 2.10.0
+
+### Improvements
+
+- Adjusted thresholds for screen detection model in order to decrease FAR and FRR of existing model
+- Significant improvements in photocopy detection. Both the False Rejection Rate and False Acceptance Rate are reduced by ~50% as measured on the default match level.
+- Improved automatic camera selection for iOS devices
+- Fixed a memory leak in Safari
+
 ## 2.9.0
 
 ### Improvements

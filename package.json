@@ -1,6 +1,6 @@
 {
   "name": "@microblink/blinkcard-in-browser-sdk",
-  "version": "2.9.0",
+  "version": "2.10.0",
   "description": "BlinkCard SDK is credit or payment cards scanning library for WebAssembly-enabled browsers.",
   "homepage": "https://github.com/BlinkCard/blinkcard-in-browser",
   "repository": "github:BlinkCard/blinkcard-in-browser",
