@@ -199,6 +199,7 @@ export enum RecognitionStatus {
   Ready                     = 'Ready',
   Processing                = 'Processing',
   DetectionFailed           = 'DetectionFailed',
+  WrongSide                 = 'WrongSide',
   EmptyResultState          = 'EmptyResultState',
   OnFirstSideResult         = 'OnFirstSideResult',
   ScanSuccessful            = 'ScanSuccessful',
@@ -255,6 +256,7 @@ export enum CameraExperienceState {
   Done            = 'Done',
   DoneAll         = 'DoneAll',
   Flip            = 'Flip',
+  WrongSide       = 'WrongSide',
   MoveCloser      = 'MoveCloser',
   MoveFarther     = 'MoveFarther'
 }
@@ -265,6 +267,7 @@ export interface CameraExperienceTimeoutDurations {
   done: number,
   doneAll: number,
   flip: number,
+  wrongSide: number,
   moveCloser: number,
   moveFarther: number
 }
@@ -275,6 +278,7 @@ export const CameraExperienceStateDuration = new Map([
   [ CameraExperienceState.Done, 300 ],
   [ CameraExperienceState.DoneAll, 400 ],
   [ CameraExperienceState.Flip, 4000 ],
+  [ CameraExperienceState.WrongSide, 1500 ],
   [ CameraExperienceState.MoveCloser, 2500 ],
   [ CameraExperienceState.MoveFarther, 2500 ]
 ]);

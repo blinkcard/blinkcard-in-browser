@@ -1,5 +1,15 @@
 # Release notes
 
+## 2.11.0
+
+### Improvements
+- Improved data extraction accuracy across all supported card types
+
+### UI changes
+- Added an error message when scanning the wrong side of the card
+- Minor changes in scanning instruction messages 
+
+
 ## 2.10.0
 
 ### Improvements
