@@ -4,6 +4,9 @@
  * Copyright (c) Microblink Ltd. All rights reserved.
  */
 
+
+// THIS FILE RUNS ON THE MAIN THREAD
+
 import * as Messages from "./Messages";
 import { CapturedFrame } from "../FrameCapture";
 
@@ -20,12 +23,11 @@ import
     ProductIntegrationInfo
 } from "../DataStructures.js";
 
-import { ClearTimeoutCallback } from "../ClearTimeoutCallback";
 import { MetadataCallbacks, DisplayablePoints, DisplayableQuad } from "../MetadataCallbacks";
 import { WasmSDKLoadSettings, OptionalLoadProgressCallback } from "../WasmLoadSettings";
 import { WasmType } from "../WasmType";
 import { nativeJsonizationEnabled } from "../../defaultWasmModule";
-import { SDKError } from "../SDKError";
+import { SDKError, SerializableSDKError } from "../SDKError";
 
 
 // ============================================ /
@@ -51,14 +53,21 @@ function defaultEventHandler(
         }
         else
         {
-            reject( resultMsg.error );
+            if ( typeof resultMsg.error === "string" || resultMsg.error === null )
+            {
+                reject( resultMsg.error );
+            }
+            else
+            {
+                reject( new SDKError( resultMsg.error ) );
+            }
         }
     };
 }
 
 function defaultResultEventHandler(
     successResolver: EventHandler,
-    reject: ( reason: SDKError | string | null ) => void
+    reject: ( reason: SerializableSDKError | string | null ) => void
 ): EventHandler
 {
     return ( msg: Messages.ResponseMessage ) =>
@@ -70,7 +79,14 @@ function defaultResultEventHandler(
         }
         else
         {
-            reject( resultMsg.error );
+            if ( typeof resultMsg.error === "string" || resultMsg.error === null )
+            {
+                reject( resultMsg.error );
+            }
+            else
+            {
+                reject( new SDKError( resultMsg.error ) );
+            }
         }
     };
 }
@@ -79,7 +95,7 @@ function defaultResultEventHandler(
 function wrapParameters( params: Array< any > ): Array< Messages.WrappedParameter >
 {
     // convert params
-    const wrappedPrameters = [];
+    const wrappedPrameters = [] as Array< Messages.WrappedParameter >;
     for ( let param of params )
     {
         let paramType = Messages.ParameterType.Any;
@@ -356,7 +372,6 @@ function createRegisteredCallbacks
     msg.onPointsDetection = !!metadataCallbacks.onPointsDetection;
     msg.onQuadDetection   = !!metadataCallbacks.onQuadDetection;
     msg.onFirstSideResult = !!metadataCallbacks.onFirstSideResult;
-    msg.onGlare           = !!metadataCallbacks.onGlare;
 
     return msg;
 }
@@ -367,14 +382,17 @@ class RemoteRecognizerRunner implements RecognizerRunner
 
     private deleted = false;
 
-    constructor( wasmWorker: WasmSDKWorker )
+    recognizers: Array< Recognizer >;
+
+    constructor( wasmWorker: WasmSDKWorker, recognizers: Array< Recognizer > )
     {
         this.wasmSDKWorker = wasmWorker;
+        this.recognizers = recognizers;
     }
 
     processImage( image: CapturedFrame ): Promise< RecognizerResultState >
     {
-        return new Promise< RecognizerResultState >
+        return new Promise< RecognizerResultState >
         (
             ( resolve, reject ) =>
             {
@@ -403,7 +421,7 @@ class RemoteRecognizerRunner implements RecognizerRunner
 
     reconfigureRecognizers
     (
-        recognizers: Array< Recognizer >,
+        recognizers: Array< Recognizer >,
         allowMultipleResults: boolean
     ): Promise< void >
     {
@@ -421,13 +439,14 @@ class RemoteRecognizerRunner implements RecognizerRunner
                 const msg = new Messages.ReconfigureRecognizerRunner( recognizerHandles, allowMultipleResults );
                 const handler = defaultEventHandler( resolve, reject );
                 this.wasmSDKWorker.postMessage( msg, handler );
+                this.recognizers = recognizers;
             }
         );
     }
 
-    setMetadataCallbacks( metadataCallbacks: MetadataCallbacks ): Promise< void >
+    setMetadataCallbacks( metadataCallbacks: MetadataCallbacks ): Promise< void >
     {
-        return new Promise< void >
+        return new Promise< void >
         (
             ( resolve, reject ) =>
             {
@@ -438,9 +457,9 @@ class RemoteRecognizerRunner implements RecognizerRunner
         );
     }
 
-    resetRecognizers( hardReset: boolean ): Promise< void >
+    resetRecognizers( hardReset: boolean ): Promise< void >
     {
-        return new Promise< void >
+        return new Promise< void >
         (
             ( resolve, reject ) =>
             {
@@ -451,7 +470,7 @@ class RemoteRecognizerRunner implements RecognizerRunner
         );
     }
 
-    setDetectionOnlyMode( detectionOnly: boolean ): Promise< void >
+    setDetectionOnlyMode( detectionOnly: boolean ): Promise< void >
     {
         return new Promise< void >
         (
@@ -464,21 +483,7 @@ class RemoteRecognizerRunner implements RecognizerRunner
         );
     }
 
-    setClearTimeoutCallback( clearTimeoutCallback: ClearTimeoutCallback | null ): Promise< void >
-    {
-        return new Promise< void >
-        (
-            ( resolve, reject ) =>
-            {
-                const msg = new Messages.SetClearTimeoutCallback( clearTimeoutCallback !== null );
-                const handler = defaultEventHandler( resolve, reject );
-                this.wasmSDKWorker.registerClearTimeoutCallback( clearTimeoutCallback );
-                this.wasmSDKWorker.postMessage( msg, handler );
-            }
-        );
-    }
-
-    setCameraPreviewMirrored( mirrored: boolean ): Promise< void >
+    setCameraPreviewMirrored( mirrored: boolean ): Promise< void >
     {
         return new Promise< void >
         (
@@ -491,13 +496,13 @@ class RemoteRecognizerRunner implements RecognizerRunner
         );
     }
 
-    delete(): Promise< void >
+    delete(): Promise< void >
     {
         if ( this.deleted )
         {
             return Promise.reject( "Recognizer runner is already deleted." );
         }
-        return new Promise< void >
+        return new Promise< void >
         (
             ( resolve, reject ) =>
             {
@@ -517,9 +522,9 @@ class RemoteRecognizerRunner implements RecognizerRunner
     }
 }
 
-function getRecognizerHandles( remoteRecognizers: Array< RemoteRecognizer > )
+function getRecognizerHandles( remoteRecognizers: Array< RemoteRecognizer > )
 {
-    const recognizerHandles: Array< number > = [];
+    const recognizerHandles: Array< number > = [];
     for ( const remoteRecognizer of remoteRecognizers )
     {
         recognizerHandles.push( remoteRecognizer.getRemoteObjectHandle() );
@@ -538,7 +543,7 @@ class WasmModuleWorkerProxy implements WasmModuleProxy
 
     createRecognizerRunner
     (
-        recognizers          : Array< Recognizer >,
+        recognizers          : Array< Recognizer >,
         allowMultipleResults = false,
         metadataCallbacks    : MetadataCallbacks = {}
     ): Promise< RecognizerRunner >
@@ -547,7 +552,7 @@ class WasmModuleWorkerProxy implements WasmModuleProxy
         (
             ( resolve, reject ) =>
             {
-                const recognizerHandles = getRecognizerHandles( recognizers as Array< RemoteRecognizer > );
+                const recognizerHandles = getRecognizerHandles( recognizers as Array< RemoteRecognizer > );
                 const msg = new Messages.CreateRecognizerRunner
                 (
                     recognizerHandles,
@@ -558,7 +563,7 @@ class WasmModuleWorkerProxy implements WasmModuleProxy
                 (
                     () =>
                     {
-                        resolve( new RemoteRecognizerRunner( this.wasmSDKWorker ) );
+                        resolve( new RemoteRecognizerRunner( this.wasmSDKWorker, recognizers ) );
                     },
                     reject
                 );
@@ -568,7 +573,7 @@ class WasmModuleWorkerProxy implements WasmModuleProxy
     }
 
     /* eslint-disable @typescript-eslint/no-explicit-any */
-    newRecognizer( className: string, ...constructorArgs: any[] ): Promise< Recognizer >
+    newRecognizer( className: string, ...constructorArgs: any[] ): Promise< Recognizer >
     {
         return new Promise< Recognizer >
         (
@@ -600,11 +605,10 @@ export class WasmSDKWorker implements WasmSDK
 {
     /* eslint-disable lines-between-class-members */
     readonly mbWasmModule            : WasmModuleWorkerProxy;
-    private readonly mbWasmWorker            : Worker;
+    readonly mbWasmWorker            : Worker;
     private          eventHandlers           : { [ key: number ] : EventHandler } = {};
     private          metadataCallbacks       : MetadataCallbacks = {};
     private          loadCallback            : OptionalLoadProgressCallback;
-    private          clearTimeoutCallback    : ClearTimeoutCallback | null = null;
     private          recognizersWithCallbacks: Map< number, RemoteRecognizer >;
     private          userId                  : string;
     public           showOverlay             : boolean;
@@ -659,11 +663,6 @@ export class WasmSDKWorker implements WasmSDK
         this.eventHandlers[ message.messageID ] = eventHandler;
         this.metadataCallbacks = metadataCallbacks;
         this.mbWasmWorker.postMessage( message );
-    }
-
-    registerClearTimeoutCallback( callback: ClearTimeoutCallback | null ): void
-    {
-        this.clearTimeoutCallback = callback;
     }
 
     registerRecognizerCallbacks( remoteRecognizerHandle: number, recognizer: RemoteRecognizer ): void
@@ -741,18 +740,6 @@ export class WasmSDKWorker implements WasmSDK
                     if ( typeof this.metadataCallbacks.onFirstSideResult === "function" )
                     {
                         this.metadataCallbacks.onFirstSideResult();
-                    }
-                    break;
-                case Messages.MetadataCallback.clearTimeoutCallback:
-                    if ( this.clearTimeoutCallback && typeof this.clearTimeoutCallback.onClearTimeout === "function" )
-                    {
-                        this.clearTimeoutCallback.onClearTimeout();
-                    }
-                    break;
-                case Messages.MetadataCallback.onGlare:
-                    if ( typeof this.metadataCallbacks.onGlare === "function" )
-                    {
-                        this.metadataCallbacks.onGlare( msg.callbackParameters[ 0 ] as boolean );
                     }
                     break;
                 case Messages.MetadataCallback.recognizerCallback:

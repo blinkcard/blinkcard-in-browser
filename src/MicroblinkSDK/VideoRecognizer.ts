@@ -17,9 +17,10 @@ import { ErrorMessages, videoRecognizerErrors } from "./ErrorTypes";
 
 import { captureFrame } from "./FrameCapture";
 import { SDKError } from "./SDKError";
+import { BlinkCardRecognizerResult } from "../Recognizers/BlinkCard/BlinkCardRecognizer";
 
 
-const TARGET_FPS = 30;
+const TARGET_FPS = 15;
 
 
 const throttle = pThrottle( {
@@ -49,6 +50,7 @@ export enum VideoRecognitionMode {
  */
 export type OnScanningDone = ( recognitionState: RecognizerResultState ) => void;
 
+export type OnFrameProcessed = ( result: BlinkCardRecognizerResult, frame: ImageData ) => void;
 
 /**
  * A wrapper around `RecognizerRunner` that can use it to perform recognition of
@@ -76,6 +78,8 @@ export class VideoRecognizer
         VideoRecognitionMode.Recognition;
 
     private onScanningDone: OnScanningDone | null = null;
+
+    private onFrameProcessed: OnFrameProcessed | null = null;
 
     private cameraFlipped = false;
 
@@ -198,6 +202,7 @@ export class VideoRecognizer
             preferredCameraType,
         );
 
+
         return new VideoRecognizer(
             cameraFeed,
             recognizerRunner,
@@ -236,6 +241,15 @@ export class VideoRecognizer
         };
         return videoRecognizer;
     }
+
+    /**
+     * Sets the callback that will be invoked when frame is processed
+     * @param onFrameProcessed Callback that will be invoked when frame is processed
+     */
+    setOnFrameProcessed = ( onFrameProcessed: OnFrameProcessed | null ) =>
+    {
+        this.onFrameProcessed = onFrameProcessed;
+    };
 
     flipCamera = async () =>
     {
@@ -536,7 +550,18 @@ export class VideoRecognizer
         const processResult = await this.recognizerRunner.processImage(
             cameraFrame
         );
+
+
+        // assumption: only one recognizer is used
+        const currentFrameResult = await this.recognizerRunner.recognizers[0].getResult() as BlinkCardRecognizerResult;
+
         this.threadBusy = false;
+
+        // Trigger onFrameProcessed callback
+        if ( typeof this.onFrameProcessed === "function" )
+        {
+            this.onFrameProcessed( currentFrameResult, cameraFrame.imageData );
+        }
 
         // End processing
 
