@@ -1,5 +1,23 @@
 # Release notes
 
+## 2.11.1
+
+## Hotfix Release
+
+### Improvements
+
+- Restricted inputs:
+    - Card number, CVV, and expiry date now accept digits only
+    - Owner field now accepts letters only
+- Updated illustrations and copy in the help dialog
+- Hoisted help dialog management props to the top-level component
+
+### Fixes
+
+- Improved accuracy of owner field extraction
+- Fixed an issue with frame quality estimation that could cause the recognition process to stall
+- Fixed serialization of `SDKError` when transferring from Worker to main thread
+
 ## 2.11.0
 
 ### Improvements

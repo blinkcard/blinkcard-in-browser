@@ -92,7 +92,7 @@ export class BlinkcardInBrowser implements MicroblinkUI {
    *
    * For more information about different WebAssembly builds, check out the `src/MicroblinkSDK/WasmType.ts` file.
    */
-   @Prop() wasmType: string = '';
+  @Prop() wasmType: string = '';
 
   /**
    * List of recognizers which should be used.
@@ -185,7 +185,7 @@ export class BlinkcardInBrowser implements MicroblinkUI {
    * Configure camera experience state timeout durations
    */
   @Prop() cameraExperienceStateDurations: CameraExperienceTimeoutDurations = null;
- 
+
   /**
    * Set to 'true' if success frame should be included in final scanning results.
    *
@@ -274,6 +274,31 @@ export class BlinkcardInBrowser implements MicroblinkUI {
    * Default value is 'false'.
    */
   @Prop() showModalWindows: boolean = false;
+
+  /**
+   * Dictates if Help Screens usage is allowed (turned on).
+   */
+  @Prop() allowHelpScreens: boolean = false;
+
+  /**
+   * Dictates if Help Screens Floating-Action-Button (Fab) is shown.
+   */
+  @Prop() allowHelpScreensFab: boolean = false;
+
+  /**
+   * Dictates if Help Screens onboarding is allowed.
+   */
+  @Prop() allowHelpScreensOnboarding: boolean = false;
+
+  /**
+   * Dictates if Help Screens onboarding is executed all the time, or just once.
+   */
+  @Prop() allowHelpScreensOnboardingPerpetuity: boolean = false;
+
+  /**
+   * See milliseconds after which a Help Screens "Need Help?" tooltip will be shown.
+   */
+  @Prop() helpScreensTooltipPauseTimeout: number = 15000;
 
   /**
    * Set custom translations for UI component. List of available translation keys can be found in
@@ -536,6 +561,11 @@ export class BlinkcardInBrowser implements MicroblinkUI {
                         galleryOverlayType={ this.galleryOverlayType }
                         galleryDropType={ this.galleryDropType }
                         showActionLabels={ this.showActionLabels }
+                        allowHelpScreens={this.allowHelpScreens}
+                        allowHelpScreensFab={this.allowHelpScreensFab}
+                        allowHelpScreensOnboarding={this.allowHelpScreensOnboarding}
+                        allowHelpScreensOnboardingPerpetuity={this.allowHelpScreensOnboardingPerpetuity}
+                        helpScreensTooltipPauseTimeout={this.helpScreensTooltipPauseTimeout}
                         showScanningLine={this.showScanningLine}
                         showModalWindows={ this.showModalWindows }
                         iconCameraDefault={ this.iconCameraDefault}

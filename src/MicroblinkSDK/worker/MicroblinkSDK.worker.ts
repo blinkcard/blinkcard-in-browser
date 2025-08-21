@@ -19,7 +19,7 @@ import { convertEmscriptenStatusToProgress } from "../LoadProgressUtils";
 import { ClearTimeoutCallback } from "../ClearTimeoutCallback";
 import { setupModule, supportsThreads, waitForThreadWorkers } from "../PThreadHelper";
 import { WasmType } from "../WasmType";
-import { SDKError } from "../SDKError";
+import { SDKError, SerializableSDKError } from "../SDKError";
 import { CapturedFrame } from "../FrameCapture";
 
 interface MessageWithParameters extends Messages.RequestMessage
@@ -120,15 +120,32 @@ export default class MicroblinkWorker
         return handle;
     }
 
-    private notifyError( originalMessage: Messages.RequestMessage, error: SDKError | string )
+    private notifyError( originalMessage: Messages.RequestMessage, error: SDKError | string )
     {
+        // Convert SDKError to SerializableSDKError for proper worker message passing
+        let messageError: SerializableSDKError | string | null = null;
+        if ( error instanceof SDKError )
+        {
+            messageError = new SerializableSDKError(
+                {
+                    code: error.code,
+                    message: error.message
+                },
+                error.details
+            );
+        }
+        else
+        {
+            messageError = error;
+        }
+
         this.context.postMessage
         (
             new Messages.StatusMessage
             (
                 originalMessage.messageID,
                 false,
-                error
+                messageError
             )
         );
     }
