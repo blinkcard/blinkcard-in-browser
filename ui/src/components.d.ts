@@ -16,6 +16,22 @@ export namespace Components {
          */
         "allowHelloMessage": boolean;
         /**
+          * Dictates if Help Screens usage is allowed (turned on).
+         */
+        "allowHelpScreens": boolean;
+        /**
+          * Dictates if Help Screens Floating-Action-Button (Fab) is shown.
+         */
+        "allowHelpScreensFab": boolean;
+        /**
+          * Dictates if Help Screens onboarding is allowed.
+         */
+        "allowHelpScreensOnboarding": boolean;
+        /**
+          * Dictates if Help Screens onboarding is executed all the time, or just once.
+         */
+        "allowHelpScreensOnboardingPerpetuity": boolean;
+        /**
           * Configure camera experience state timeout durations
          */
         "cameraExperienceStateDurations": CameraExperienceTimeoutDurations;
@@ -43,6 +59,10 @@ export namespace Components {
           * Get information about product integration.
          */
         "getProductIntegrationInfo": () => Promise<ProductIntegrationInfo>;
+        /**
+          * See milliseconds after which a Help Screens "Need Help?" tooltip will be shown.
+         */
+        "helpScreensTooltipPauseTimeout": number;
         /**
           * If set to 'true', UI component will not display feedback, i.e. information and error messages.  Setting this attribute to 'false' won't disable 'scanError' and 'scanInfo' events.  Default value is 'false'.
          */
@@ -894,6 +914,22 @@ declare namespace LocalJSX {
          */
         "allowHelloMessage"?: boolean;
         /**
+          * Dictates if Help Screens usage is allowed (turned on).
+         */
+        "allowHelpScreens"?: boolean;
+        /**
+          * Dictates if Help Screens Floating-Action-Button (Fab) is shown.
+         */
+        "allowHelpScreensFab"?: boolean;
+        /**
+          * Dictates if Help Screens onboarding is allowed.
+         */
+        "allowHelpScreensOnboarding"?: boolean;
+        /**
+          * Dictates if Help Screens onboarding is executed all the time, or just once.
+         */
+        "allowHelpScreensOnboardingPerpetuity"?: boolean;
+        /**
           * Configure camera experience state timeout durations
          */
         "cameraExperienceStateDurations"?: CameraExperienceTimeoutDurations;
@@ -917,6 +953,10 @@ declare namespace LocalJSX {
           * Define whether to use 'FULLSCREEN' or 'INLINE' gallery overlay type.  If 'FULLSCREEN' is used, when a user selects an image from which data should be extracted, an overlay will pop up and cover the whole screen.  On the other hand, if 'INLINE' is used, there is no overlay but rather a 'Processing' message inside the UI component.  Default value is 'INLINE'.
          */
         "galleryOverlayType"?: 'FULLSCREEN' | 'INLINE';
+        /**
+          * See milliseconds after which a Help Screens "Need Help?" tooltip will be shown.
+         */
+        "helpScreensTooltipPauseTimeout"?: number;
         /**
           * If set to 'true', UI component will not display feedback, i.e. information and error messages.  Setting this attribute to 'false' won't disable 'scanError' and 'scanInfo' events.  Default value is 'false'.
          */

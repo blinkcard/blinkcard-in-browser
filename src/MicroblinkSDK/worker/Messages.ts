@@ -5,7 +5,7 @@
 import { CapturedFrame } from "../FrameCapture";
 import { WasmSDKLoadSettings } from "../WasmLoadSettings";
 import { WasmType } from "../WasmType";
-import { SDKError } from "../SDKError";
+import { SDKError, SerializableSDKError } from "../SDKError";
 import { ProductIntegrationInfo } from "../DataStructures";
 
 let nextMessageID = 0;
@@ -329,9 +329,9 @@ export class StatusMessage implements ResponseMessage
 
     readonly success: boolean = true;
 
-    readonly error: SDKError | string | null = null;
+    readonly error: SDKError | SerializableSDKError | string | null = null;
 
-    constructor( msgID: number, success: boolean, error: SDKError | string | null )
+    constructor( msgID: number, success: boolean, error: SDKError | SerializableSDKError | string | null )
     {
         this.messageID = msgID;
         this.success = success;

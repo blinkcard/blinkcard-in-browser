@@ -58,7 +58,7 @@ export class SerializableSDKError
         if ( !error.code || !error.message )
         {
             throw new Error(
-                "Instance of SDKError is required to have code and message."
+                "Instance of SerializableSDKError is required to have code and message."
             );
         }
 
