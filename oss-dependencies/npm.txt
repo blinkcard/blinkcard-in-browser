@@ -709,7 +709,7 @@
 ├─ @microblink/blinkcard-in-browser-sdk@2.11.1
 │  ├─ licenses: Custom: https://travis-ci.org/blinkcard/blinkcard-in-browser.svg
 │  ├─ repository: https://github.com/BlinkCard/blinkcard-in-browser
-│  ├─ path: /opt/jenkins/jenkinsData/E2/sdk-blinkcard-in-browser/blinkcard-in-browser
+│  ├─ path: /opt/jenkins/jenkinsData/E6/sdk-blinkcard-in-browser/blinkcard-in-browser
 │  └─ licenseFile: README.md
 ├─ @nicolo-ribaudo/chokidar-2@2.1.8-no-fsevents.2
 │  ├─ licenses: MIT
@@ -763,7 +763,7 @@
 │  ├─ repository: https://github.com/DefinitelyTyped/DefinitelyTyped
 │  ├─ path: node_modules/@types/json-schema
 │  └─ licenseFile: node_modules/@types/json-schema/LICENSE
-├─ @types/node@24.3.0
+├─ @types/node@22.17.2
 │  ├─ licenses: MIT
 │  ├─ repository: https://github.com/DefinitelyTyped/DefinitelyTyped
 │  ├─ path: node_modules/@types/node
@@ -1030,7 +1030,7 @@
 │  ├─ url: sindresorhus.com
 │  ├─ path: node_modules/callsites
 │  └─ licenseFile: node_modules/callsites/license
-├─ caniuse-lite@1.0.30001736
+├─ caniuse-lite@1.0.30001737
 │  ├─ licenses: CC-BY-4.0
 │  ├─ repository: https://github.com/browserslist/caniuse-lite
 │  ├─ publisher: Ben Briggs
@@ -1220,7 +1220,7 @@
 │  ├─ repository: https://github.com/eslint/doctrine
 │  ├─ path: node_modules/doctrine
 │  └─ licenseFile: node_modules/doctrine/LICENSE
-├─ electron-to-chromium@1.5.207
+├─ electron-to-chromium@1.5.208
 │  ├─ licenses: ISC
 │  ├─ repository: https://github.com/kilian/electron-to-chromium
 │  ├─ publisher: Kilian Valkhof
@@ -2693,7 +2693,7 @@
 │  ├─ publisher: Microsoft Corp.
 │  ├─ path: node_modules/typescript
 │  └─ licenseFile: node_modules/typescript/LICENSE.txt
-├─ undici-types@7.10.0
+├─ undici-types@6.21.0
 │  ├─ licenses: MIT
 │  ├─ repository: https://github.com/nodejs/undici
 │  ├─ path: node_modules/undici-types
