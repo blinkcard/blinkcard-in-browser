@@ -437,6 +437,33 @@ el.translations = {
 }
 ```
 
+To override or add translations, you can also use the JSON files located in the `./i18n` directory. This directory contains i18n translation files for the following languages:
+
+- Arabic [ar.json](./i18n/ar.json)
+- Czech [cs.json](./i18n/cs.json)
+- German [de.json](./i18n/de.json)
+- English [en.json](./i18n/en.json)
+- Spanish [es.json](./i18n/es.json)
+- Filipino [fil.json](./i18n/fil.json)
+- French [fr.json](./i18n/fr.json)
+- Hebrew [he.json](./i18n/he.json)
+- Croatian [hr.json](./i18n/hr.json)
+- Hungarian [hu.json](./i18n/hu.json)
+- Indonesian [id.json](./i18n/id.json)
+- Italian [it.json](./i18n/it.json)
+- Malay [ms.json](./i18n/ms.json)
+- Dutch [nl.json](./i18n/nl.json)
+- Portuguese [pt.json](./i18n/pt.json)
+- Romanian [ro.json](./i18n/ro.json)
+- Slovak [sk.json](./i18n/sk.json)
+- Slovenian [sl.json](./i18n/sl.json)
+- Serbian [sr.json](./i18n/sr.json)
+- Thai [th.json](./i18n/th.json)
+- Vietnamese [vi.json](./i18n/vi.json)
+- Chinese (Simplified) [zh_CN.json](./i18n/zh_CN.json)
+- Chinese (Traditional) [zh_TW.json](./i18n/zh_TW.json)
+
+
 #### <a name="customization-rtl-support"></a> RTL support
 
 To use UI component in RTL interfaces, explicitly set `dir="rtl"` attribute on HTML element.
