@@ -23,12 +23,10 @@ jobs:
           node-version: '18.x'
           registry-url: 'https://registry.npmjs.org/'
 
-      # Ensure npm 11.5.1 or later is installed
-      - name: Update npm
-        run: npm install -g npm@latest
-
       - name: Prepare publish
         run: npm ci
 
       - name: Publish package
         run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
