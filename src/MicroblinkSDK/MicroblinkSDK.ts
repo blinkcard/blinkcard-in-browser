@@ -12,6 +12,7 @@ import * as ErrorTypes from "./ErrorTypes";
 
 export * from "./CameraUtils";
 export * from "./DataStructures";
+export * from "./DetectionLevel";
 export * from "./DeviceUtils";
 export * from "./DocumentSide";
 export * from "./ErrorTypes";

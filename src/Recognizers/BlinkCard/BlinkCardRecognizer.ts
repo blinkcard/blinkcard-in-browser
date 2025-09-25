@@ -18,6 +18,7 @@ import
     RecognizerSettings,
     WasmSDK
 } from "../../MicroblinkSDK/DataStructures";
+import { DetectionLevel } from "../../MicroblinkSDK/DetectionLevel";
 
 
 export enum LivenessStatus {
@@ -170,6 +171,15 @@ export class BlinkCardRecognizerSettings implements FullDocumentImageOptions,
      * Whether invalid card number is accepted
      */
     allowInvalidCardNumber = false;
+
+    /**
+     * The level of allowed detected tilt of the document in the image.
+     * Defines the severity of allowed detected tilt of the document in the image, as defined
+     * in {@link DetectionLevel}. Values range from `Off` (detection turned off) to higher
+     * levels of allowed tilt.
+     * By default, this is set to 'Mid'.
+     */
+    tiltDetectionLevel = DetectionLevel.Mid;
 
     /**
      * Whether to return CVV in recognizer results
