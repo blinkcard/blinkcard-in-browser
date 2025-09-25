@@ -706,7 +706,7 @@
 │  ├─ email: justin@ridgewell.name
 │  ├─ path: node_modules/@jridgewell/trace-mapping
 │  └─ licenseFile: node_modules/@jridgewell/trace-mapping/LICENSE
-├─ @microblink/blinkcard-in-browser-sdk@2.11.1
+├─ @microblink/blinkcard-in-browser-sdk@2.12.0
 │  ├─ licenses: Custom: https://travis-ci.org/blinkcard/blinkcard-in-browser.svg
 │  ├─ repository: https://github.com/BlinkCard/blinkcard-in-browser
 │  ├─ path: /opt/jenkins/jenkinsData/E3/sdk-blinkcard-in-browser/blinkcard-in-browser

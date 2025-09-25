@@ -1,5 +1,17 @@
 # Release notes
 
+## 2.12.0
+
+### Improvements
+- Integrated a tilt detector that will improve the quality of captured images and the extracted data
+- Integrated a stability check to ensure consecutive images for extraction are consistent
+- Added translation strings for 23 languages
+
+### Bug fixes
+- Fixed issue with anonymization of vertical cards where in some cases sensitive fields were not anonymized correctly
+- Fixed issue with anonymization of cards when document was scanned at a steep angle
+- Fixed issue with images when extension are enabled that resulted in an incorrect aspect ratio
+
 ## 2.11.1
 
 ## Hotfix Release
