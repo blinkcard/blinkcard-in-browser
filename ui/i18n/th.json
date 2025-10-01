@@ -26,7 +26,7 @@
     "action-message": "สแกนหรือเลือกจากคลังรูปภาพ",
     "action-alt-gallery": "จากคลังรูปภาพ",
     "action-message-image": "จากคลังรูปภาพ",
-    "scanning-not-available": "ไม่สามารถสแกนได้\n\n\n\n\n\n",
+    "scanning-not-available": "ไม่สามารถสแกนได้",
     "network-error": "เครือข่ายเกิดข้อผิดพลาด",
     "check-internet-connection": "ตรวจสอบการเชื่อมต่ออินเทอร์เน็ต",
     "camera-feedback-wrong-side": "พลิกบัตร",
