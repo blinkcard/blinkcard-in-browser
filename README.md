@@ -1,3 +1,11 @@
+# ⚠️⚠️⚠️ OLD REPOSITORY ⚠️⚠️⚠️
+
+> 🛑 **This is the old version of BlinkCard.**  
+> 👉 Please use the new repository instead:  
+> 🔗 [github.com/Microblink/web-sdks](https://github.com/microblink/web-sdks)
+
+---
+
 # BlinkCard In-browser SDK
 
 [![Build Status](https://travis-ci.org/blinkcard/blinkcard-in-browser.svg?branch=master)](https://travis-ci.org/blinkcard/blinkcard-in-browser) [![npm version](https://badge.fury.io/js/%40microblink%2Fblinkcard-in-browser-sdk.svg)](https://badge.fury.io/js/%40microblink%2Fblinkcard-in-browser-sdk)
